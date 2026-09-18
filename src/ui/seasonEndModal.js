@@ -299,8 +299,7 @@ export class SeasonEndModal {
           sound.playEngineRev();
           ToastNotification.show(`🤝 Continuerai a correre con ${teamDisplayName} per il 2° anno!`, 'success');
           modalOverlay.remove();
-          career.initSeasonStandings();
-          career.saveToStorage();
+          career.startNewSeason(null, 1);
           window.dispatchEvent(new CustomEvent('career-data-updated'));
           onComplete();
         };
@@ -311,13 +310,15 @@ export class SeasonEndModal {
       if (renewBtn) {
         renewBtn.onclick = () => {
           const dur = selectedDurations['renewal'] || 1;
-          const res = career.acceptContract(renewalOffer, dur);
+          const res = career.startNewSeason(renewalOffer, dur);
           if (res.success) {
             sound.playChequeredFlag();
             ToastNotification.show(`🤝 Rinnovo confermato per ${dur} anno/i con ${teamDisplayName}!`, 'success');
             modalOverlay.remove();
             window.dispatchEvent(new CustomEvent('career-data-updated'));
             onComplete();
+          } else {
+            ToastNotification.show(res.reason || "Errore nel rinnovo del contratto.", "danger");
           }
         };
       }
@@ -343,7 +344,7 @@ export class SeasonEndModal {
             cancelText: "Valuta Ancora",
             danger: needsBuyout,
             onConfirm: () => {
-              const res = career.acceptContract(chosen, dur);
+              const res = career.startNewSeason(chosen, dur);
               if (res.success) {
                 sound.playChequeredFlag();
                 ToastNotification.show(`🚀 Ufficiale! Benvenuto in ${chosen.teamName}! ${res.paidBuyout > 0 ? `Pagata penale di rescissione di €${res.paidBuyout.toLocaleString()}.` : ''}`, 'success');

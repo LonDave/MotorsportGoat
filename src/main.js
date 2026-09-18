@@ -38,7 +38,7 @@ class AppRouter {
   navigate(route) {
     this.currentRoute = route;
     this.render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }
 
   openModManager() {

@@ -87,7 +87,9 @@ export const AUTO_CATEGORIES = {
       "spa", "hungaroring", "zandvoort", "monza", "madrid", "baku",
       "singapore", "cota", "mexico", "interlagos", "las_vegas", "lusail", "yas_marina"
     ],
-    weekendFormat: { practiceLaps: 10, qualiLaps: 6, raceLapsMultiplier: 1.0, pitStops: true },
+    weekendFormat: { practiceLaps: 10, qualiLaps: 6, raceLapsMultiplier: 1.0, pitStops: true, hasSprint: false },
+    // Circuiti con weekend Sprint in F1 2026 (FP1 + Sprint Quali + Sprint + Qualifica + Gara)
+    sprintCircuits: ["shanghai", "miami", "spa", "cota", "interlagos", "lusail"],
     licensePointsAwarded: 50,
     prizeBudgetPerRace: 480000,
     teams: [

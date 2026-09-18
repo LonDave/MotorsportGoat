@@ -21,12 +21,6 @@ export class HeaderView {
           </div>
 
           <div class="nav-controls">
-            ${hasCareer ? `
-              <button id="btn-return-career" class="nav-pill-btn career-return-btn pulse-glow">
-                ▶ TORNA ALLA CARRIERA (${player.firstName} ${player.lastName})
-              </button>
-            ` : ''}
-
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Audio On/Off">
               ${sound.muted ? '🔇' : '🔊'}
@@ -52,13 +46,15 @@ export class HeaderView {
       <header class="top-nav-bar career-header">
         <!-- RIGA SUPERIORE: LOGO BRAND, IDENTITÀ PILOTA, STATS & CONTROLLI -->
         <div class="career-header-top">
-          <!-- Logo Brand (Non cliccabile: la navigazione alla Home/Menu è gestita dal tasto dedicato sottostante) -->
-          <div class="logo-area static-brand-logo" id="header-brand-logo">
-            <span class="goat-badge">GOAT</span>
-            <span class="logo-title">MOTORSPORT EDITION</span>
+          <!-- Blocco 1: Brand Logo -->
+          <div class="header-brand-block">
+            <div class="logo-area static-brand-logo" id="header-brand-logo">
+              <span class="goat-badge">GOAT</span>
+              <span class="logo-title">MOTORSPORT EDITION</span>
+            </div>
           </div>
 
-          <!-- Identità Pilota -->
+          <!-- Blocco 2: Identità Pilota -->
           <div class="driver-summary-left">
             <div class="mini-helmet-container" title="Casco Ufficiale">
               ${helmetSvg}
@@ -71,17 +67,17 @@ export class HeaderView {
                 <span class="discipline-tag ${player.discipline}">${player.discipline === 'auto' ? '🏎️ AUTO' : '🏍️ MOTO'}</span>
               </div>
               <div class="driver-team-row">
-                <span class="team-bullet" style="background:${team.color || '#e10600'}"></span>
-                <strong class="team-label">${team.displayName}</strong>
-                <span class="separator">•</span>
-                <span class="cat-label">${categoryName}</span>
-                <span class="separator">•</span>
-                <span class="age-label">${player.age} Anni (Stagione ${careerData.seasonNumber})</span>
+                <span class="meta-chip team">
+                  <span class="team-bullet" style="background:${team.color || '#e10600'}"></span>
+                  <strong>${team.displayName}</strong>
+                </span>
+                <span class="meta-chip cat">${categoryName}</span>
+                <span class="meta-chip age">${player.age} Anni • Stag. ${careerData.seasonNumber}</span>
               </div>
             </div>
           </div>
 
-          <!-- Metriche Pilota & Scuderia -->
+          <!-- Riga 3: Metriche Pilota & Scuderia -->
           <div class="driver-stats-center">
             <div class="stat-bubble clickable-ovr-bubble ${player.unspentSkillPoints > 0 ? 'has-points-pulse' : ''}" id="btn-header-ovr-modal" title="Clicca per aprire la Scheda OVR e Assegnare i Punti Abilità">
               <span class="stat-label">OVR ${player.unspentSkillPoints > 0 ? `<span class="unspent-star-badge">+${player.unspentSkillPoints}⭐</span>` : ''}</span>
@@ -101,7 +97,7 @@ export class HeaderView {
             </div>
           </div>
 
-          <!-- Pulsanti di controllo globali (Solo Impostazioni, Audio e Reset) -->
+          <!-- Blocco 4: Controlli Globali (Settings, Audio, Reset) -->
           <div class="nav-controls">
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni di Gioco & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Disattiva/Attiva Suoni">
@@ -115,17 +111,17 @@ export class HeaderView {
         <nav class="career-subnav-bar">
           <button class="subnav-tab ${currentRoute === 'landing' ? 'active' : ''}" data-route="landing" title="Torna alla Landing Page del portale">
             <span class="tab-icon">🌐</span>
-            <span class="tab-title">Home / Menu</span>
+            <span class="tab-title">Home</span>
           </button>
           
           <button class="subnav-tab ${currentRoute === 'dashboard' ? 'active' : ''}" data-route="dashboard">
             <span class="tab-icon">🏠</span>
-            <span class="tab-title">Paddock Hub</span>
+            <span class="tab-title">Paddock</span>
           </button>
 
           <button class="subnav-tab ${currentRoute === 'calendar' ? 'active' : ''}" data-route="calendar">
             <span class="tab-icon">📅</span>
-            <span class="tab-title">Calendario 2026</span>
+            <span class="tab-title">Calendario</span>
           </button>
 
           <button class="subnav-tab ${currentRoute === 'standings' ? 'active' : ''}" data-route="standings">
@@ -135,22 +131,22 @@ export class HeaderView {
 
           <button class="subnav-tab ${currentRoute === 'rd' ? 'active' : ''}" data-route="rd">
             <span class="tab-icon">⚙️</span>
-            <span class="tab-title">Reparto Corse R&D</span>
+            <span class="tab-title">R&D</span>
           </button>
 
           <button class="subnav-tab ${currentRoute === 'market' ? 'active' : ''}" data-route="market">
             <span class="tab-icon">💼</span>
-            <span class="tab-title">Mercato & Contratti</span>
+            <span class="tab-title">Mercato</span>
           </button>
 
           <button class="subnav-tab ${currentRoute === 'lifestyle' ? 'active' : ''}" data-route="lifestyle">
             <span class="tab-icon">🏛️</span>
-            <span class="tab-title">Lifestyle & Sponsor</span>
+            <span class="tab-title">Lifestyle</span>
           </button>
 
           <button class="subnav-tab ${currentRoute === 'goat' ? 'active' : ''}" data-route="goat">
             <span class="tab-icon">👑</span>
-            <span class="tab-title">GOAT Index</span>
+            <span class="tab-title">GOAT</span>
           </button>
         </nav>
       </header>
@@ -165,14 +161,6 @@ export class HeaderView {
       homeLogo.onclick = () => {
         sound.playClick();
         onNavigate('landing');
-      };
-    }
-
-    const returnCareerBtn = container.querySelector('#btn-return-career');
-    if (returnCareerBtn) {
-      returnCareerBtn.onclick = () => {
-        sound.playClick();
-        onNavigate('dashboard');
       };
     }
 
@@ -202,7 +190,20 @@ export class HeaderView {
       };
     }
 
-    // Navigazione a tab della carriera (include 'Home / Menu')
+    // Navigazione a tab della carriera (con auto-scroll interno solo su desktop se la barra dovesse eccedere)
+    const subnavBar = container.querySelector('.career-subnav-bar');
+    const activeTab = container.querySelector('.subnav-tab.active');
+    if (subnavBar && activeTab && window.innerWidth > 768) {
+      setTimeout(() => {
+        try {
+          const barRect = subnavBar.getBoundingClientRect();
+          const tabRect = activeTab.getBoundingClientRect();
+          const offset = (tabRect.left - barRect.left) - (barRect.width / 2) + (tabRect.width / 2);
+          subnavBar.scrollBy({ left: offset, behavior: 'smooth' });
+        } catch (e) {}
+      }, 50);
+    }
+
     container.querySelectorAll('.subnav-tab').forEach(tab => {
       tab.onclick = () => {
         const route = tab.dataset.route;

@@ -586,6 +586,11 @@ export class CareerEngine {
 
   // Conclusione stagione: assegna titoli, gestisce promozioni e offerte contrattuali
   concludeSeason() {
+    // Se siamo già nella fase di transizione fine stagione, riutilizza il risultato pendente senza incrementare nuovamente anno, età o statistiche!
+    if (this.career.pendingOffseasonResult) {
+      return this.career.pendingOffseasonResult;
+    }
+
     const catData = this.getCurrentCategoryData();
     const champion = this.career.standings.drivers[0];
     const isPlayerChampion = champion && champion.isPlayer;
@@ -598,7 +603,7 @@ export class CareerEngine {
     // Confronto col compagno di squadra
     const teammate = this.getCurrentTeammate();
     const playerStanding = this.career.standings.drivers.find(d => d.isPlayer);
-    const teammateStanding = this.career.standings.drivers.find(d => d.driverId === teammate.id);
+    const teammateStanding = teammate ? this.career.standings.drivers.find(d => d.driverId === teammate.id) : null;
     if (playerStanding && teammateStanding && playerStanding.points > teammateStanding.points) {
       this.career.stats.teammateBeatenCount++;
     }
@@ -639,8 +644,7 @@ export class CareerEngine {
     // Genera offerte contrattuali per il nuovo anno
     const offers = this.generateContractOffers();
 
-    this.saveToStorage();
-    return {
+    const offseasonResult = {
       isPlayerChampion,
       championName: isPlayerChampion ? `${this.player.firstName} ${this.player.lastName}` : db.getDriverName(champion?.driverId, this.player.discipline),
       offers,
@@ -649,6 +653,10 @@ export class CareerEngine {
       yearsLeft: currentContract.yearsLeft,
       buyoutClause: currentContract.buyoutClause || 0
     };
+
+    this.career.pendingOffseasonResult = offseasonResult;
+    this.saveToStorage();
+    return offseasonResult;
   }
 
   // Genera offerte di mercato basate su OVR, categoria, scuderie rivali e promozioni
@@ -802,8 +810,26 @@ export class CareerEngine {
     return offers;
   }
 
+  // Avvia ufficialmente la nuova stagione (con eventuale nuovo contratto firmato o mantenimento del contratto)
+  startNewSeason(offer = null, durationYears = 1) {
+    if (offer) {
+      const res = this.acceptContract(offer, durationYears, true);
+      if (!res.success) return res;
+    }
+
+    // Reset rigoroso del calendario per la nuova stagione e azzeramento classifiche
+    this.career.currentRaceIndex = 0;
+    this.initSeasonStandings();
+
+    // Rimuovi lo stato offseason pendente
+    this.career.pendingOffseasonResult = null;
+    this.saveToStorage();
+
+    return { success: true, newContract: this.career.contract };
+  }
+
   // Accetta una proposta di contratto con durata (1 o 2 anni) e verifica clausola rescissoria
-  acceptContract(offer, durationYears = 1) {
+  acceptContract(offer, durationYears = 1, isNewSeason = false) {
     const currentContract = this.career.contract || {};
     const yearsLeft = currentContract.yearsLeft || 0;
     const isChangingTeam = offer.teamId !== this.career.currentTeamId;
@@ -839,8 +865,10 @@ export class CareerEngine {
       buyoutClause: buyoutClause
     };
 
-    // Se ha cambiato categoria, ripristina la classifica iniziale
-    if (previousCategory !== offer.category) {
+    // Se è inizio nuova stagione OPPURE ha cambiato categoria OPPURE le gare erano terminate, ripristina la classifica iniziale e il calendario da Round 1
+    const catData = this.getCurrentCategoryData();
+    const totalRaces = catData?.calendar?.length || 1;
+    if (isNewSeason || previousCategory !== offer.category || this.career.currentRaceIndex >= totalRaces) {
       this.career.currentRaceIndex = 0;
       this.initSeasonStandings();
     }

@@ -14,16 +14,9 @@ export class LandingView {
 
     const isReal = db.isRealNames;
 
-    const badgeText = isReal 
-      ? 'STAGIONE MOTORSPORT UFFICIALE 2026 • AUTOMOBILISMO & MOTOCICLISMO'
-      : 'STAGIONE MOTORSPORT 2026 • APEX & PROTOTIPI RACING';
-
     const heroLeadText = isReal
       ? `Dalle categorie propedeutiche minori al trionfo nel Campionato Mondiale. Vivi l'esperienza manageriale e di guida più completa: <strong>11 scuderie F1 2026</strong> con <strong>Cadillac</strong> e <strong>Audi</strong>, la <strong>MotoGP</strong> dei giganti, telemetria in tempo reale, sviluppo Reparto Corse e la caccia all'indice GOAT contro le leggende della storia.`
       : `Dalle categorie propedeutiche minori al trionfo nel Campionato Mondiale. Vivi l'esperienza manageriale e di guida più completa: <strong>11 scuderie Formula Apex 2026</strong> con <strong>American Dream</strong> e <strong>German Ring</strong>, la <strong>Moto Apex</strong> dei giganti, telemetria in tempo reale, sviluppo Reparto Corse e la caccia all'indice GOAT contro le leggende della storia.`;
-
-    const stat1Label = isReal ? 'Scuderie F1 2026 (+Cadillac TWG)' : 'Scuderie Formula Apex 2026 (+American Team)';
-    const stat2Label = isReal ? 'GP F1 & Round MotoGP Calendari Ufficiali' : 'GP Apex & Round Moto Apex Calendari';
 
     const autoDesc = isReal
       ? `Dalle dure battaglie a ruote scoperte della Formula 4 e Formula Regional, fino al vertice assoluto della Formula 1 con il nuovo team Cadillac TWG e Audi Revolut, oltre alle sfide del WEC Hypercar e IndyCar.`
@@ -58,25 +51,86 @@ export class LandingView {
       ? 'Un punteggio oggettivo misura la tua eredità contro mostri sacri come Michael Schumacher, Valentino Rossi, Lewis Hamilton, Ayrton Senna e Marc Márquez.'
       : 'Un punteggio oggettivo misura la tua eredità contro leggende eterne come Il Barone Rosso, Il Dottore, Sir Lewis, Il Mago di San Paolo e La Formica Atomica.';
 
-    const spotlight1Title = isReal ? 'Cadillac Formula 1 Team (TWG)' : 'General Motors American Dream (TWG)';
-    const spotlight1Desc = isReal
-      ? `L'undicesima scuderia debutta in Formula 1 con motorizzazione Ferrari e la coppia esperta formata da <strong>Sergio Pérez</strong> e <strong>Valtteri Bottas</strong>.`
-      : `L'undicesima scuderia debutta nel mondiale con motorizzazione Cavallino e la coppia formata da <strong>Checo Ministro Americano</strong> e <strong>Valtteri Baffo Bottas</strong>.`;
-
-    const spotlight2Title = isReal ? 'Audi Revolut F1 Team' : 'Audi German Ring Factory';
-    const spotlight2Desc = isReal
-      ? `Completata l'acquisizione di Sauber, la casa dei quattro cerchi entra ufficialmente in griglia con <strong>Nico Hülkenberg</strong> e la giovane stella <strong>Gabriel Bortoleto</strong>.`
-      : `Completata la transizione con Sauber, la prestigiosa casa tedesca scende in pista con <strong>Nico Il Pompiere</strong> e la giovane promessa <strong>Gabriel Carioca</strong>.`;
-
-    const spotlight3Title = isReal ? 'Hamilton in Rosso Ferrari' : 'Sir Lewis in Rosso Cavallino';
-    const spotlight3Desc = isReal
-      ? `Lewis Hamilton affronta la stagione in tuta Scuderia Ferrari al fianco di Charles Leclerc, mentre Lando Norris difende l'iride col #1 in McLaren.`
-      : `Sir Lewis Spamilton affronta la stagione in tuta Scuderia Cavallino al fianco di Charles Predestinato, mentre Lando Porris difende il titolo con Papaya Rocket.`;
-
-    const spotlight4Title = isReal ? 'Marc Márquez in Ducati Factory & Toprak' : 'La Formica Atomica in Bologna Desmo & Toprak';
-    const spotlight4Desc = isReal
-      ? `Marc Márquez veste il rosso Ducati Lenovo insieme a Pecco Bagnaia, mentre il re del WorldSBK Toprak Razgatlıoğlu debutta in MotoGP con Prima Pramac Yamaha.`
-      : `Marc La Formica Atomica veste il rosso Bologna Desmo insieme a Pecco Nuvola Rossa, mentre il funambolo Toprak debutta nella classe regina con Pramac Factory.`;
+    const tutorialSlides = [
+      {
+        id: 1,
+        category: "SCALATA DELLA CARRIERA",
+        icon: "🏁",
+        title: "Dalle Minori alle Classi Regina",
+        desc: isReal
+          ? "Parti dalle categorie propedeutiche (Formula 4 per le monoposto o Moto3 per le due ruote). Conquista punti, soddisfa le aspettative del team e vinci il titolo iridato per ricevere offerte di promozione in Formula 1, MotoGP, WEC Hypercar e IndyCar."
+          : "Parti dalle categorie propedeutiche (Formula 4 Regional per le monoposto o Moto 3 Junior per le due ruote). Conquista punti, soddisfa le aspettative del team e vinci il titolo iridato per ricevere offerte di promozione in Formula Apex, Moto Apex, Hypercar Endurance e Open Wheel USA.",
+        tips: [
+          { title: "⭐ Promozioni di Fine Anno", text: "Chiudere sul podio mondiale spalanca le porte dei team di categoria superiore." },
+          { title: "📈 Progressione OVR", text: "Ogni gara assegna punti abilità per potenziare Velocità, Sorpasso, Calma e Ritmo." }
+        ]
+      },
+      {
+        id: 2,
+        category: "ASSETTO & TELEMETRIA",
+        icon: "🛠️",
+        title: "Il Bilanciamento Nelle Prove Libere",
+        desc: isReal
+          ? "Nelle sessioni di Prove Libere (FP1, FP2, FP3 nei weekend standard; solo FP1 nei weekend Sprint F1), metti a punto Carico Aerodinamico, Rigidità delle Sospensioni e Rapportatura del Cambio. Il riscontro dei tecnici ti indicherà la direzione esatta per raggiungere il 100% di bilanciamento."
+          : "Nelle sessioni di Prove Libere (FP1, FP2, FP3 nei weekend standard; solo FP1 nei weekend Sprint Apex), metti a punto Carico Aerodinamico, Rigidità delle Sospensioni e Rapportatura del Cambio. Il riscontro dei tecnici ti indicherà la direzione esatta per raggiungere il 100% di bilanciamento.",
+        tips: [
+          { title: "💡 Conservazione Gomme", text: "Un setup con bilanciamento elevato riduce il degrado degli pneumatici in gara fino al 30%." },
+          { title: "⏱️ Pole Position", text: "L'assetto perfetto ti regala i decimi fondamentali per superare i tagli in Qualifica." }
+        ]
+      },
+      {
+        id: 3,
+        category: "STRATEGIA DI GARA",
+        icon: "🛑",
+        title: "Gestione Gomme, Box & Undercut",
+        desc: isReal
+          ? "Durante la corsa, monitora attentamente l'usura del battistrada e il meteo dinamico. Ricorda che in Formula 1 vige l'obbligo regolamentare di utilizzare almeno due mescole slick asciutte differenti. Scegli il momento ideale per il cambio gomme."
+          : "Durante la corsa, monitora attentamente l'usura del battistrada e il meteo dinamico. Ricorda che in Formula Apex vige l'obbligo regolamentare di utilizzare almeno due mescole slick asciutte differenti. Scegli il momento ideale per il cambio gomme.",
+        tips: [
+          { title: "⚡ Mossa Undercut", text: "Fermarsi un giro prima del diretto rivale su gomma nuova consente spesso di sorpassarlo all'uscita dai box." },
+          { title: "🚨 Safety Car", text: "Approfitta delle neutralizzazioni per effettuare pit stop risparmiando tempo prezioso rispetto al ritmo di gara." }
+        ]
+      },
+      {
+        id: 4,
+        category: "INGEGNERIA & SVILUPPO",
+        icon: "⚙️",
+        title: "Reparto Corse & Potenziamenti R&D",
+        desc: isReal
+          ? "Investi i premi gara e i bonus sponsor nei 4 dipartimenti tecnici della tua scuderia: Aerodinamica, Banco Motore, Telaio e Affidabilità Meccanica. Ogni livello incrementa il passo sul giro ed elimina i punti deboli della vettura."
+          : "Investi i premi gara e i bonus sponsor nei 4 dipartimenti tecnici della tua scuderia Apex: Aerodinamica, Banco Motore, Telaio e Affidabilità Meccanica. Ogni livello incrementa il passo sul giro ed elimina i punti deboli della vettura.",
+        tips: [
+          { title: "🛡️ Protezione Anti-DNF", text: "Migliorare l'affidabilità minimizza drasticamente il rischio di ritiri improvvisi per guasto tecnico." },
+          { title: isReal ? "🏎️ Griglia Prestazionale F1" : "🏎️ Griglia Prestazionale Apex", text: "Controlla la graduatoria del centro sviluppo per portare la scuderia in cima alle gerarchie." }
+        ]
+      },
+      {
+        id: 5,
+        category: "MERCATO & CONTRATTI",
+        icon: "💼",
+        title: "Trattative, Accordi e Clausole",
+        desc: isReal
+          ? "Gestisci il tuo futuro professionale come un vero manager. Valuta le proposte di rinnovo o le offerte delle scuderie rivali di Formula 1, MotoGP, WEC e IndyCar: puoi firmare accordi annuali o biennali (con stipendio maggiorato e bonus vittoria). Se decidi di cambiare prima del termine, dovrai pagare la clausola."
+          : "Gestisci il tuo futuro professionale come un vero manager. Valuta le proposte di rinnovo o le offerte delle scuderie rivali di Formula Apex, Moto Apex, Hypercar Endurance e Open Wheel USA: puoi firmare accordi annuali o biennali (con stipendio maggiorato e bonus vittoria). Se decidi di cambiare prima del termine, dovrai pagare la clausola.",
+        tips: [
+          { title: "🔒 Penale di Rescissione", text: "Abbandonare un contratto pluriennale prima della scadenza richiede il pagamento del riscatto." },
+          { title: "🥇 Prima Guida", text: "Il ruolo di prima guida garantisce bonus monetari raddoppiati e priorità nello sviluppo tecnico." }
+        ]
+      },
+      {
+        id: 6,
+        category: "LEGGENDA EREDITARIA",
+        icon: "👑",
+        title: "La Caccia all'Indice GOAT Mondiale",
+        desc: isReal
+          ? "Vincere qualche gara non basta: l'algoritmo GOAT valuta la grandezza della tua eredità storica a confronto con le leggende assolute del motorsport come Schumacher, Hamilton, Rossi e Senna. Conquista Titoli Mondiali, podi e pole position, e acquista proprietà e simulatori a Monte Carlo."
+          : "Vincere qualche gara non basta: l'algoritmo GOAT valuta la grandezza della tua eredità storica a confronto con le leggende eterne come Il Barone Rosso, Sir Lewis, Il Dottore e Il Mago di San Paolo. Conquista Titoli Mondiali, podi e pole, e acquista proprietà e simulatori a Monte Carlo.",
+        tips: [
+          { title: "🏆 Titoli con Più Scuderie", text: isReal ? "Vincere titoli con team F1/MotoGP differenti conferisce un moltiplicatore di punteggio prestigio GOAT." : "Vincere titoli con scuderie Apex differenti conferisce un moltiplicatore di punteggio prestigio GOAT." },
+          { title: "🏰 Status da Superstar", text: "Investire nell'HQ personale e nel lifestyle aumenta la tua notorietà e attrae sponsor d'élite." }
+        ]
+      }
+    ];
 
     container.innerHTML = `
       <div class="landing-page-root">
@@ -85,11 +139,6 @@ export class LandingView {
           <div class="landing-hero-backdrop"></div>
           
           <div class="landing-hero-container">
-            <div class="hero-top-badge">
-              <span class="pulse-dot"></span>
-              <span>${badgeText}</span>
-            </div>
-
             <h1 class="landing-main-title">
               <span class="title-sub">IL NUOVO</span>
               <span class="title-gold">GOAT</span>
@@ -126,26 +175,6 @@ export class LandingView {
                   </div>
                 </button>
               `}
-            </div>
-
-            <!-- STATISTICHE CHIAVE IN EVIDENZA -->
-            <div class="landing-key-stats">
-              <div class="key-stat-box">
-                <span class="stat-number">11</span>
-                <span class="stat-label">${stat1Label}</span>
-              </div>
-              <div class="key-stat-box">
-                <span class="stat-number">24+17</span>
-                <span class="stat-label">${stat2Label}</span>
-              </div>
-              <div class="key-stat-box">
-                <span class="stat-number">2</span>
-                <span class="stat-label">Discipline a Scelta: Auto o Moto</span>
-              </div>
-              <div class="key-stat-box">
-                <span class="stat-number">100%</span>
-                <span class="stat-label">Simulazione Telemetria & Strategia Box</span>
-              </div>
             </div>
           </div>
         </section>
@@ -266,45 +295,56 @@ export class LandingView {
           </div>
         </section>
 
-        <!-- SEZIONE FOCUS GRIGLIA 2026 -->
-        <section class="landing-section season2026-spotlight">
+        <!-- SEZIONE TUTORIAL & GUIDE STRATEGICHE EVERGREEN -->
+        <section class="landing-section tutorial-carousel-section">
           <div class="section-header-box">
-            <span class="section-tag">AGGIORNAMENTO SETTEMBRE 2026</span>
-            <h2 class="section-heading">LE GRANDI NOVITÀ DEL MONDIALE 2026</h2>
-            <p class="section-desc">Roster, cambi di casacca e nuovi team ufficiali integrati al 100%.</p>
+            <span class="section-tag">ACCADEMIA PILOTI & STRATEGIA</span>
+            <h2 class="section-heading">GUIDA RAPIDA AL GIOCO</h2>
+            <p class="section-desc">Tutto ciò che devi sapere per dominare la pista, sviluppare il veicolo e scalare la Hall of Fame mondiale.</p>
           </div>
 
-          <div class="spotlight-grid">
-            <div class="spotlight-card">
-              <div class="spotlight-header">
-                <span class="spot-flag">🇺🇸</span>
-                <strong>${spotlight1Title}</strong>
-              </div>
-              <p>${spotlight1Desc}</p>
+          <div class="tutorial-carousel-container" id="tutorial-carousel">
+            <div class="tutorial-carousel-track">
+              ${tutorialSlides.map((slide, idx) => `
+                <div class="tutorial-slide ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+                  <div class="slide-badge-row">
+                    <span class="slide-category-pill">
+                      <span>${slide.icon}</span> ${slide.category}
+                    </span>
+                    <span class="slide-counter">0${idx + 1} / 0${tutorialSlides.length}</span>
+                  </div>
+
+                  <div class="slide-main-content">
+                    <div class="slide-text-col">
+                      <h3><span>${slide.icon}</span> ${slide.title}</h3>
+                      <p class="slide-desc">${slide.desc}</p>
+                    </div>
+
+                    <div class="slide-tips-col">
+                      ${slide.tips.map(tip => `
+                        <div class="slide-tip-box">
+                          <strong>${tip.title}</strong>
+                          <p>${tip.text}</p>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
             </div>
 
-            <div class="spotlight-card">
-              <div class="spotlight-header">
-                <span class="spot-flag">🇩🇪</span>
-                <strong>${spotlight2Title}</strong>
+            <!-- CONTROLLI NAVIGAZIONE CAROSELLO -->
+            <div class="tutorial-nav-controls">
+              <div class="tutorial-dots">
+                ${tutorialSlides.map((_, idx) => `
+                  <button class="tutorial-dot ${idx === 0 ? 'active' : ''}" data-slide="${idx}" title="Vai al tutorial ${idx + 1}"></button>
+                `).join('')}
               </div>
-              <p>${spotlight2Desc}</p>
-            </div>
 
-            <div class="spotlight-card">
-              <div class="spotlight-header">
-                <span class="spot-flag">🇮🇹</span>
-                <strong>${spotlight3Title}</strong>
+              <div class="carousel-btn-group">
+                <button id="tutorial-prev-btn" class="carousel-nav-btn" title="Tutorial precedente">‹</button>
+                <button id="tutorial-next-btn" class="carousel-nav-btn" title="Tutorial successivo">›</button>
               </div>
-              <p>${spotlight3Desc}</p>
-            </div>
-
-            <div class="spotlight-card">
-              <div class="spotlight-header">
-                <span class="spot-flag">🏍️</span>
-                <strong>${spotlight4Title}</strong>
-              </div>
-              <p>${spotlight4Desc}</p>
             </div>
           </div>
         </section>
@@ -316,7 +356,6 @@ export class LandingView {
               <span class="goat-badge">GOAT</span>
               <span class="logo-title">MOTORSPORT EDITION 2026</span>
             </div>
-            <p class="footer-text">Ispirato a ilnuovogoat.it — Simulatore di carriera completo per appassionati di corse.</p>
             <div class="footer-actions">
               <button id="footer-btn-start" class="btn-footer-cta">
                 ${hasSave ? 'Continua la tua Carriera ➔' : 'Avvia Nuova Carriera ➔'}
@@ -383,6 +422,92 @@ export class LandingView {
           onNavigate('creation');
         }
       };
+    }
+
+    // ==========================================
+    // LOGICA INTERATTIVA TUTORIAL CAROUSEL
+    // ==========================================
+    const carouselEl = container.querySelector('#tutorial-carousel');
+    if (carouselEl) {
+      const slides = carouselEl.querySelectorAll('.tutorial-slide');
+      const dots = carouselEl.querySelectorAll('.tutorial-dot');
+      const prevBtn = carouselEl.querySelector('#tutorial-prev-btn');
+      const nextBtn = carouselEl.querySelector('#tutorial-next-btn');
+      const total = slides.length;
+      let currentIndex = 0;
+      let autoPlayTimer = null;
+
+      const goToSlide = (newIdx, playSfx = true) => {
+        currentIndex = (newIdx + total) % total;
+        slides.forEach((s, idx) => {
+          s.classList.toggle('active', idx === currentIndex);
+        });
+        dots.forEach((d, idx) => {
+          d.classList.toggle('active', idx === currentIndex);
+        });
+        if (playSfx) sound.playClick();
+      };
+
+      if (prevBtn) {
+        prevBtn.onclick = () => {
+          stopAutoPlay();
+          goToSlide(currentIndex - 1);
+        };
+      }
+
+      if (nextBtn) {
+        nextBtn.onclick = () => {
+          stopAutoPlay();
+          goToSlide(currentIndex + 1);
+        };
+      }
+
+      dots.forEach((dot, idx) => {
+        dot.onclick = () => {
+          stopAutoPlay();
+          goToSlide(idx);
+        };
+      });
+
+      // Supporto Swipe Touch su Smartphone
+      let touchStartX = 0;
+      let touchEndX = 0;
+      carouselEl.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carouselEl.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 45) {
+          stopAutoPlay();
+          if (diff > 0) {
+            goToSlide(currentIndex + 1); // Swipe sinistra -> successivo
+          } else {
+            goToSlide(currentIndex - 1); // Swipe destra -> precedente
+          }
+        }
+      }, { passive: true });
+
+      // Auto-play continuo ogni 8 secondi con pausa all'hover
+      const startAutoPlay = () => {
+        if (!autoPlayTimer) {
+          autoPlayTimer = setInterval(() => {
+            goToSlide(currentIndex + 1, false);
+          }, 8000);
+        }
+      };
+
+      const stopAutoPlay = () => {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+        }
+      };
+
+      carouselEl.addEventListener('mouseenter', stopAutoPlay);
+      carouselEl.addEventListener('mouseleave', startAutoPlay);
+      startAutoPlay();
     }
   }
 }

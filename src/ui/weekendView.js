@@ -19,8 +19,8 @@ export class WeekendView {
       return;
     }
 
-    // Determina la sequenza realistica delle sessioni in base al campionato
-    const sessionsList = this.getSessionsList(careerData.currentCategory, player.discipline);
+    // Determina la sequenza realistica delle sessioni in base al campionato e al circuito
+    const sessionsList = this.getSessionsList(careerData.currentCategory, player.discipline, catData, circuit);
 
     // Stato del weekend di gara
     const state = {
@@ -34,7 +34,8 @@ export class WeekendView {
       practiceSelectedTyre: 'MEDIUM',
       qualySelectedTyre: 'SOFT',
       practiceStates: {},
-      qualifyingState: null,
+      qualifyingStates: {},  // keyed by session.id (e.g. 'sprint_quali', 'quali')
+      qualifyingState: null, // alias for the LAST completed qualifying session (used for race grid)
       raceState: null,
       playerTactics: {
         paceMode: 'BALANCED',
@@ -46,7 +47,8 @@ export class WeekendView {
       timingTowerMode: 'interval',
       simulationSpeed: 1,
       isAutoPlaying: false,
-      autoPlayTimer: null
+      autoPlayTimer: null,
+      mobileRaceTab: 'cockpit'
     };
 
     const renderCurrentPhase = () => {
@@ -57,6 +59,12 @@ export class WeekendView {
       }
 
       const currentSession = state.sessionsList[state.currentSessionIndex];
+
+      // Reset raceState when switching between sprint and race sessions
+      if ((currentSession.type === 'sprint' || currentSession.type === 'race') && state.activeRaceSessionId !== currentSession.id) {
+        state.raceState = null;
+        state.activeRaceSessionId = currentSession.id;
+      }
 
       if (currentSession.type === 'practice') {
         this.renderPracticeSession(container, state, currentSession, circuit, team, catData, player, renderCurrentPhase);
@@ -72,19 +80,68 @@ export class WeekendView {
     renderCurrentPhase();
   }
 
-  // Costruisce il calendario delle sessioni veritiero per la categoria
-  static getSessionsList(categoryKey, discipline) {
+  // Costruisce il calendario delle sessioni veritiero per la categoria e il circuito corrente
+  static getSessionsList(categoryKey, discipline, catData, circuit) {
+    const fmt = catData?.weekendFormat || {};
+    const isReal = db.isRealNames;
+
     if (discipline === 'auto') {
       if (categoryKey === 'auto_f1') {
+        // Controlla se questo circuito è un weekend Sprint F1
+        const sprintCircuits = catData?.sprintCircuits || [];
+        const isSprint = circuit && sprintCircuits.includes(circuit.id);
+
+        if (isSprint) {
+          // Weekend Sprint F1: FP1 + Sprint Qualifying + Sprint Race + Qualifying + Race
+          return [
+            { id: "fp1", name: "Prove Libere 1 (FP1)", type: "practice", sub: "Venerdì • Installazione e Messa a Punto Base" },
+            { id: "sprint_quali", name: isReal ? "Sprint Shootout (Qualifiche Sprint)" : "Sprint Apex Shootout", type: "qualifying", sub: "Sabato Mattina • Griglia per la Gara Sprint" },
+            { id: "sprint", name: isReal ? "Gara Sprint F1 (Sabato)" : "Sprint Apex Race (Sabato)", type: "sprint", sub: "Sabato Pomeriggio • 17 Giri con Punti Mondiali" },
+            { id: "quali", name: isReal ? "Qualifiche Ufficiali (Q1-Q2-Q3)" : "Qualifiche Apex (Q1-Q2-Q3)", type: "qualifying", sub: "Sabato Sera • Shootout per la Pole Position" },
+            { id: "race", name: isReal ? "Gran Premio della Domenica" : "Grand Prix Apex della Domenica", type: "race", sub: "Domenica • 100% Gara Mondiale" },
+            { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni & Classifica Campionato" }
+          ];
+        } else {
+          // Weekend Standard F1: FP1 + FP2 + FP3 + Qualifying + Race
+          return [
+            { id: "fp1", name: "Prove Libere 1 (FP1)", type: "practice", sub: "Venerdì • Installazione & Assetto Base" },
+            { id: "fp2", name: "Prove Libere 2 (FP2)", type: "practice", sub: "Venerdì • Simulazione Passo Gara & Degrado Gomme" },
+            { id: "fp3", name: "Prove Libere 3 (FP3)", type: "practice", sub: "Sabato Mattina • Simulazione Qualifica al Limite" },
+            { id: "quali", name: isReal ? "Qualifiche Ufficiali (Q1-Q2-Q3)" : "Qualifiche Apex (Q1-Q2-Q3)", type: "qualifying", sub: "Sabato Pomeriggio • Shootout per la Pole Position" },
+            { id: "race", name: isReal ? "Gran Premio della Domenica" : "Grand Prix Apex della Domenica", type: "race", sub: "Domenica • 100% Gara Mondiale" },
+            { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni & Classifica Campionato" }
+          ];
+        }
+      } else if (categoryKey === 'auto_wec') {
+        // WEC Hypercar: 3 prove libere + Hyperpole + Gara endurance
         return [
-          { id: "fp1", name: "Prove Libere 1 (FP1)", type: "practice", sub: "Venerdì • Installazione & Assetto Base" },
-          { id: "fp2", name: "Prove Libere 2 (FP2)", type: "practice", sub: "Venerdì • Simulazione Passo Gara & Degrado Gomme" },
-          { id: "fp3", name: "Prove Libere 3 (FP3)", type: "practice", sub: "Sabato Mattina • Simulazione Qualifica al Limite" },
-          { id: "quali", name: "Qualifiche Ufficiali (Q1-Q2-Q3)", type: "qualifying", sub: "Sabato Pomeriggio • Shootout per la Pole Position" },
-          { id: "race", name: "Gran Premio della Domenica", type: "race", sub: "Domenica • 100% Gara Mondiale" },
-          { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni & Classifica Campionato" }
+          { id: "fp1", name: isReal ? "Free Practice 1 (Endurance)" : "Prove Libere Endurance 1", type: "practice", sub: "Giovedì • Verifica Affidabilità e Traiettorie" },
+          { id: "fp2", name: isReal ? "Free Practice 2 (Endurance)" : "Prove Libere Endurance 2", type: "practice", sub: "Venerdì Mattina • Simulazione Stint Lunghi e Degrado" },
+          { id: "fp3", name: isReal ? "Free Practice 3 (Endurance)" : "Prove Libere Endurance 3", type: "practice", sub: "Venerdì Pomeriggio • Ultime Verifiche Affidabilità" },
+          { id: "quali", name: isReal ? "Hyperpole (Qualifiche WEC)" : "Hyperpole Endurance", type: "qualifying", sub: "Venerdì Sera • 6 Migliori Auto a Qualificarsi" },
+          { id: "race", name: isReal ? "Gara Endurance WEC" : "Gara Endurance", type: "race", sub: "Sabato/Domenica • Distanza Endurance Multi-stint" },
+          { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni & Classifica WEC" }
+        ];
+      } else if (categoryKey === 'auto_indy') {
+        // IndyCar: 2 prove libere + qualifiche (1 giro secco) + gara
+        return [
+          { id: "fp1", name: isReal ? "Practice 1 (IndyCar)" : "Practice 1 Open Wheel USA", type: "practice", sub: "Venerdì • Messa a Punto Ovale/Stradale" },
+          { id: "fp2", name: isReal ? "Practice 2 (IndyCar)" : "Practice 2 Open Wheel USA", type: "practice", sub: "Sabato Mattina • Ultimi Aggiustamenti Assetto" },
+          { id: "quali", name: isReal ? "Qualifiche IndyCar (Fast 6)" : "Qualifiche Open Wheel Fast 6", type: "qualifying", sub: "Sabato Pomeriggio • Giro Secco per la Pole" },
+          { id: "race", name: isReal ? "IndyCar Race" : "Open Wheel USA Race", type: "race", sub: "Domenica • Gara Ufficiale" },
+          { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni" }
+        ];
+      } else if (categoryKey === 'auto_f2') {
+        // Formula 2: 1 prove libere + qualifiche + Sprint Race (sabato) + Feature Race (domenica)
+        return [
+          { id: "fp1", name: isReal ? "Prove Libere F2" : "Prove Libere Formula 2 World Series", type: "practice", sub: "Venerdì • Sessione Unica di Messa a Punto" },
+          { id: "quali", name: isReal ? "Qualifiche F2 (Griglia Feature Race)" : "Qualifiche Formula 2 World Series", type: "qualifying", sub: "Sabato Mattina • Griglia per la Feature Race (e Sprint invertita)" },
+          { id: "sprint", name: isReal ? "Sprint Race F2 (Sabato)" : "Sprint Race Formula 2 (Sabato)", type: "sprint", sub: "Sabato Pomeriggio • Griglia Invertita Top 10, Punti Mondiali" },
+          { id: "race", name: isReal ? "Feature Race F2 (Domenica)" : "Feature Race Formula 2 (Domenica)", type: "race", sub: "Domenica • Gara Principale con Punti Mondiali" },
+          { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni F2" }
         ];
       } else {
+        // Formula 3, Formula 4: prova libera unica + qualifica + gara
         return [
           { id: "fp1", name: "Prove Libere (Practice)", type: "practice", sub: "Sessione Unica di Messa a Punto" },
           { id: "quali", name: "Qualifiche Ufficiali", type: "qualifying", sub: "Griglia di Partenza" },
@@ -94,19 +151,33 @@ export class WeekendView {
       }
     } else {
       if (categoryKey === 'moto_gp') {
+        // MotoGP 2026: FP1 + Practice (pre-Q2) + Sprint Qualifying + Sprint Race + Qualifying + Race
         return [
-          { id: "fp1", name: "Free Practice 1 (FP1)", type: "practice", sub: "Venerdì Mattina • Studio Traiettorie" },
-          { id: "practice", name: "Practice (Pre-Qualifiche Q2)", type: "practice", sub: "Venerdì Pomeriggio • Top 10 Diretta in Q2" },
-          { id: "quali", name: "Qualifiche Ufficiali (Q1 & Q2)", type: "qualifying", sub: "Sabato • Caccia alla Pole" },
-          { id: "sprint", name: "Gara Sprint (Sabato)", type: "sprint", sub: "Sabato Pomeriggio • Distanza 50% con Punti Mondiali" },
-          { id: "race", name: "Gran Premio della Domenica", type: "race", sub: "Domenica • GP Ufficiale 1000cc" },
+          { id: "fp1", name: isReal ? "Free Practice 1 (FP1)" : "Free Practice 1 Moto Apex", type: "practice", sub: "Venerdì Mattina • Studio Traiettorie e Feeling" },
+          { id: "practice", name: isReal ? "Practice Session (Pre-Q2)" : "Practice Pre-Qualifiche Moto Apex", type: "practice", sub: "Venerdì Pomeriggio • Top 10 Accesso Diretto Q2" },
+          { id: "sprint_quali", name: isReal ? "Sprint Qualifying (Q1 & Q2 Sprint)" : "Sprint Qualifying Moto Apex", type: "qualifying", sub: "Sabato Mattina • Griglia per la Gara Sprint" },
+          { id: "sprint", name: isReal ? "MotoGP Sprint Race (Sabato)" : "Moto Apex Sprint Race", type: "sprint", sub: "Sabato Pomeriggio • 50% dei Giri con Punti Mondiali" },
+          { id: "quali", name: isReal ? "Qualifiche Ufficiali (Q1 & Q2)" : "Qualifiche Ufficiali Moto Apex (Q1 & Q2)", type: "qualifying", sub: "Sabato Sera • Caccia alla Pole Position" },
+          { id: "race", name: isReal ? "Gran Premio della Domenica" : "Moto Apex Grand Prix della Domenica", type: "race", sub: "Domenica • GP Ufficiale 1000cc" },
           { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni & Inni Nazionali" }
         ];
-      } else {
+      } else if (categoryKey === 'moto_sbk') {
+        // WorldSBK: FP1 + FP2 + Superpole (sabato) + Gara 1 (sabato PM) + Superpole Race (domenica AM) + podio
+        // Per semplicità giocabilità: FP1 + FP2 + Superpole + Sprint (Superpole Race) + Race (Gara 1) + Podio
         return [
-          { id: "fp1", name: "Prove Libere (FP)", type: "practice", sub: "Assetto e Feeling" },
-          { id: "quali", name: "Qualifiche (Q1/Q2)", type: "qualifying", sub: "Griglia di Partenza" },
-          { id: "race", name: "Gran Premio Ufficiale", type: "race", sub: "Gara Mondiale" },
+          { id: "fp1", name: isReal ? "Free Practice 1 (WorldSBK)" : "Prove Libere 1 SBK Series", type: "practice", sub: "Venerdì Mattina • Messa a Punto Base" },
+          { id: "fp2", name: isReal ? "Free Practice 2 (WorldSBK)" : "Prove Libere 2 SBK Series", type: "practice", sub: "Venerdì Pomeriggio • Assetto Definitivo" },
+          { id: "quali", name: isReal ? "Superpole (Qualifiche WorldSBK)" : "Superpole SBK Series", type: "qualifying", sub: "Sabato Mattina • Giro Secco per la Pole Position" },
+          { id: "race", name: isReal ? "Gara 1 WorldSBK (Sabato)" : "Gara 1 SBK Series (Sabato)", type: "race", sub: "Sabato Pomeriggio • Prima Gara Ufficiale con Punti Mondiali" },
+          { id: "sprint", name: isReal ? "Superpole Race (Domenica Mattina)" : "Superpole Race SBK (Domenica)", type: "sprint", sub: "Domenica Mattina • Gara Corta 10 Giri con Punti Mondiali" },
+          { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Premiazioni & Classifica WorldSBK" }
+        ];
+      } else {
+        // Moto3, Moto2: prove libere + qualifica + gara
+        return [
+          { id: "fp1", name: isReal ? "Free Practice (FP)" : "Free Practice Moto Junior", type: "practice", sub: "Assetto e Feeling Pneumatici" },
+          { id: "quali", name: isReal ? "Qualifiche Ufficiali (Q1 & Q2)" : "Qualifiche Junior (Q1 & Q2)", type: "qualifying", sub: "Griglia di Partenza" },
+          { id: "race", name: isReal ? "Gran Premio Ufficiale" : "Moto Junior Grand Prix", type: "race", sub: "Gara Mondiale" },
           { id: "podium", name: "Cerimonia del Podio", type: "podium", sub: "Podio" }
         ];
       }
@@ -120,10 +191,22 @@ export class WeekendView {
         ${sessionsList.map((s, idx) => {
           const isDone = idx < currentIndex;
           const isCurrent = idx === currentIndex;
+          let stepLabel = "Sessione";
+          if (s.type === 'practice') {
+            if (s.id === 'fp1') stepLabel = 'FP1';
+            else if (s.id === 'fp2') stepLabel = 'FP2';
+            else if (s.id === 'fp3') stepLabel = 'FP3';
+            else stepLabel = 'Prove';
+          }
+          if (s.type === 'qualifying') stepLabel = s.id === 'sprint_quali' ? 'SQ' : 'Qualifiche';
+          if (s.type === 'sprint') stepLabel = 'Sprint';
+          if (s.type === 'race') stepLabel = 'Gara';
+          if (s.type === 'podium') stepLabel = 'Podio';
+
           return `
-            <div class="stepper-step ${isCurrent ? 'current' : ''} ${isDone ? 'done' : ''}">
+            <div class="stepper-step ${isCurrent ? 'current' : ''} ${isDone ? 'done' : ''}" title="${s.name}">
               <span class="step-badge">${isDone ? '✓' : idx + 1}</span>
-              <span class="step-title">${s.name.split(' ')[0]}</span>
+              <span class="step-title">${stepLabel}</span>
             </div>
           `;
         }).join('<div class="stepper-line"></div>')}
@@ -177,7 +260,7 @@ export class WeekendView {
                 <span>+5 Minuti ⏩</span>
               </button>
               <button id="btn-skip-practice" class="speed-ctrl-btn skip pulse-glow" title="Simula istantaneamente tutti i minuti rimanenti della sessione">
-                <span>⏭️ Salta Sessione (Simula Tempi)</span>
+                <span>⏭️ Salta Sessione</span>
               </button>
             ` : `
               <button id="btn-proceed-next-session" class="speed-ctrl-btn next pulse-glow">
@@ -250,7 +333,7 @@ export class WeekendView {
 
               <div class="practice-action-buttons">
                 <button id="btn-run-stint" class="btn-primary-action" ${isFinished ? 'disabled' : ''}>
-                  <span>⏱️ Manda in Pista • Esegui Stint (Nuovo Giro Veloce)</span>
+                  <span>⏱️ Manda in Pista • Esegui Stint</span>
                 </button>
               </div>
 
@@ -452,15 +535,17 @@ export class WeekendView {
   // 2. QUALIFICHE: A ZERO ASSOLUTO, CONTO ALLA ROVESCIA, METEO & GOMME
   // =========================================================================
   static renderQualifyingSession(container, state, session, circuit, team, catData, player, nextPhase) {
-    if (!state.qualifyingState) {
+    if (!state.qualifyingStates[session.id]) {
       const bestBonus = Object.values(state.practiceStates).reduce((max, r) => {
         return Math.max(max, r?.feedback?.lapTimeBonusSec || 0);
       }, 0);
 
-      state.qualifyingState = RaceEngine.initQualifyingState(
+      state.qualifyingStates[session.id] = RaceEngine.initQualifyingState(
         circuit, catData, catData.roster, player, team, bestBonus, player.discipline
       );
     }
+    // aggiorna l'alias qualifyingState con lo stato più recente (usato per la griglia di gara)
+    state.qualifyingState = state.qualifyingStates[session.id];
 
     const qualy = state.qualifyingState;
     const isFinished = qualy.isFinished;
@@ -506,7 +591,7 @@ export class WeekendView {
                 <span>🔥 Fai Giro Lanciato</span>
               </button>
               <button id="btn-skip-quali" class="speed-ctrl-btn skip" title="Simula istantaneamente tutte le fasi rimanenti">
-                <span>⏭️ Salta Qualifiche (Simula Griglia)</span>
+                <span>⏭️ Salta Qualifiche</span>
               </button>
             ` : `
               <button id="btn-start-race-action" class="speed-ctrl-btn start-race pulse-glow">
@@ -701,7 +786,13 @@ export class WeekendView {
   // =========================================================================
   static renderRaceSession(container, state, session, circuit, team, catData, player, nextPhase) {
     if (!state.raceState) {
-      const grid = state.qualifyingState ? state.qualifyingState.grid : state.qualifyingGrid;
+      // Per i weekend sprint, la gara sprint usa la griglia sprint_quali, la gara principale usa la griglia 'quali'
+      const qualId = session.type === 'sprint' && state.qualifyingStates?.sprint_quali
+        ? 'sprint_quali'
+        : 'quali';
+      const grid = state.qualifyingStates?.[qualId]?.grid
+        || state.qualifyingState?.grid
+        || state.qualifyingGrid;
       const isSprint = session.type === 'sprint';
       state.raceState = RaceEngine.initRaceState(grid, circuit, catData, isSprint, player.discipline, state.setupSettings, player);
     }
@@ -883,10 +974,32 @@ export class WeekendView {
           </div>
         </div>
 
+        <!-- BARRA RAPIDA TELEMETRIA SU MOBILE (STICKY / COMPATTA) -->
+        <div class="mobile-race-quick-bar">
+          <div class="quick-chip pos">P${playerDriver.currentPos}</div>
+          <div class="quick-chip lap">Giro ${race.currentLap}/${race.totalLaps}</div>
+          <div class="quick-chip tyre ${playerDriver.tyreCompound.toLowerCase()}">
+            <span class="tyre-dot">●</span> ${playerDriver.tyreCompound} ${Math.round(playerDriver.tyreLife)}%
+          </div>
+          <div class="quick-chip gap">
+            ${playerDriver.currentPos === 1 ? 'LEADER' : '+' + playerDriver.gapToLeaderSec.toFixed(1) + 's'}
+          </div>
+        </div>
+
+        <!-- SWITCHER A TAB PER MOBILE & TABLET (<900px) -->
+        <div class="mobile-race-view-toggle">
+          <button class="mobile-tab-btn ${state.mobileRaceTab === 'cockpit' ? 'active' : ''}" data-tab="cockpit">
+            🏎️ Cockpit & Box
+          </button>
+          <button class="mobile-tab-btn ${state.mobileRaceTab === 'tower' ? 'active' : ''}" data-tab="tower">
+            ⏱️ Classifica Live (${playerDriver ? 'P' + playerDriver.currentPos : 'P--'})
+          </button>
+        </div>
+
         <!-- GRIGLIA PRINCIPALE DELLA GARA: COLONNINA F1 A SINISTRA + COCKPIT A DESTRA -->
-        <div class="race-main-broadcast-grid">
+        <div class="race-main-broadcast-grid ${state.mobileRaceTab === 'tower' ? 'show-tower-mobile' : 'show-cockpit-mobile'}">
           <!-- ===============================================================
-               COLONNINA DEI TEMPI TIPO QUELLA DELLA F1 (TIMING TOWER)
+               COLONNINA DEI TEMPI DINAMICA TIPO F1 (TIMING TOWER)
                =============================================================== -->
           <div class="f1-timing-tower-card">
             <div class="tower-header">
@@ -902,9 +1015,10 @@ export class WeekendView {
             </div>
 
             <div class="f1-tower-rows-container">
-              ${race.drivers.map((d) => {
+              ${[...race.drivers].sort((a, b) => a.currentPos - b.currentPos).map((d) => {
                 const isLeader = d.currentPos === 1;
                 const posDelta = d.startPos - d.currentPos;
+                const lapDelta = d.lastPos ? d.lastPos - d.currentPos : 0;
                 let deltaHtml = '<span class="pos-delta same">-</span>';
                 if (posDelta > 0) deltaHtml = `<span class="pos-delta gain">▲${posDelta}</span>`;
                 if (posDelta < 0) deltaHtml = `<span class="pos-delta loss">▼${Math.abs(posDelta)}</span>`;
@@ -924,7 +1038,7 @@ export class WeekendView {
                 if (d.status === 'PITTING') gapStr = 'IN PIT';
 
                 return `
-                  <div class="f1-tower-row ${d.isPlayer ? 'player-row' : ''} ${d.status === 'DNF' ? 'dnf' : ''} ${d.status === 'PITTING' ? 'pitting' : ''}">
+                  <div class="f1-tower-row ${d.isPlayer ? 'player-row' : ''} ${d.status === 'DNF' ? 'dnf' : ''} ${d.status === 'PITTING' ? 'pitting' : ''} ${lapDelta > 0 ? 'pos-up' : (lapDelta < 0 ? 'pos-down' : '')}">
                     <div class="tower-pos-box">
                       <span class="pos-num">${d.status === 'DNF' ? 'OUT' : d.currentPos}</span>
                       ${deltaHtml}
@@ -1096,6 +1210,15 @@ export class WeekendView {
     `;
 
     // Event listeners Gara
+    // Switcher Tab Mobile (Cockpit vs Timing Tower)
+    container.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        sound.playClick();
+        state.mobileRaceTab = btn.dataset.tab;
+        this.renderRaceSession(container, state, session, circuit, team, catData, player, nextPhase);
+      };
+    });
+
     const toggleTowerBtn = container.querySelector('#btn-toggle-tower-mode');
     if (toggleTowerBtn) {
       toggleTowerBtn.onclick = () => {
