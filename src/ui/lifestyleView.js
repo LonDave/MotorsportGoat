@@ -27,59 +27,37 @@ export class LifestyleView {
           </div>
 
           <!-- CRUSCOTTO FINANZIARIO & NET WORTH -->
-          <div class="dash-card net-worth-hero-card" style="
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.7));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #f59e0b;
-            border-radius: 16px;
-            padding: 20px 24px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-          ">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-              <div>
-                <span style="font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #f59e0b; text-transform: uppercase;">
+          <div class="dash-card net-worth-hero-card">
+            <div class="net-worth-main-flex">
+              <div class="net-worth-title-block">
+                <span class="net-worth-subtag">
                   Patrimonio Netto da Superstar (Net Worth)
                 </span>
-                <div style="display: flex; align-items: baseline; gap: 12px; margin-top: 4px;">
-                  <h2 style="font-size: 32px; font-weight: 900; color: #fff; margin: 0; font-family: var(--font-display, sans-serif);">
+                <div class="net-worth-val-row">
+                  <h2 class="net-worth-amount">
                     €${finSummary.netWorth.toLocaleString()}
                   </h2>
-                  <span style="font-size: 13px; color: #94a3b8;">
+                  <span class="net-worth-breakdown">
                     (Liquidità: <strong style="color: #4ade80;">€${careerData.money.toLocaleString()}</strong> • Asset: <strong style="color: #38bdf8;">€${finSummary.assetsValue.toLocaleString()}</strong>)
                   </span>
                 </div>
               </div>
 
               <!-- RENDITA PASSIVA A GRAN PREMIO -->
-              <div style="
-                background: rgba(0, 0, 0, 0.35);
-                border: 1px solid rgba(245, 158, 11, 0.3);
-                border-radius: 12px;
-                padding: 10px 18px;
-                text-align: right;
-              ">
-                <span style="font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Rendite Passive / GP</span>
-                <div style="font-size: 18px; font-weight: 900; color: #f59e0b; margin-top: 2px;">
-                  +€${finSummary.passiveIncomePerRace.toLocaleString()} <span style="font-size: 12px; color: #cbd5e1;">/ Gara</span>
+              <div class="net-worth-passive-badge">
+                <span class="passive-lbl">Rendite Passive / GP</span>
+                <div class="passive-val">
+                  +€${finSummary.passiveIncomePerRace.toLocaleString()} <span class="passive-unit">/ Gara</span>
                 </div>
               </div>
             </div>
 
             <!-- PERK ATTIVI IN PISTA -->
             ${finSummary.activePerks.length > 0 ? `
-              <div style="margin-top: 16px; pt-3; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <strong style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Perk & Bonus Attivi:</strong>
+              <div class="active-perks-row">
+                <strong class="perks-lbl">Perk & Bonus Attivi:</strong>
                 ${finSummary.activePerks.map(p => `
-                  <span style="
-                    background: rgba(56, 189, 248, 0.12);
-                    border: 1px solid rgba(56, 189, 248, 0.3);
-                    color: #38bdf8;
-                    font-size: 11px;
-                    font-weight: 700;
-                    padding: 3px 10px;
-                    border-radius: 6px;
-                  ">
+                  <span class="perk-chip">
                     ⚡ ${p}
                   </span>
                 `).join('')}
@@ -88,12 +66,12 @@ export class LifestyleView {
           </div>
 
           <!-- TAB SELECTOR -->
-          <div class="standings-tab-bar" style="margin-bottom: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <div class="standings-tab-bar lifestyle-tabs-bar">
             <button class="tab-btn ${this.currentTab === 'hq' ? 'active' : ''}" data-tab="hq">
               🏛️ Strutture HQ & Staff Personale (5)
             </button>
             <button class="tab-btn ${this.currentTab === 'assets' ? 'active' : ''}" data-tab="assets">
-              🏰 Investimenti, Immobili & Business (${finSummary.ownedAssetsCount}/${LIFESTYLE_ASSETS_CONFIG.length})
+              🏰 Investimenti & Immobili (${finSummary.ownedAssetsCount}/${LIFESTYLE_ASSETS_CONFIG.length})
             </button>
             <button class="tab-btn ${this.currentTab === 'camps' ? 'active' : ''}" data-tab="camps">
               ⏱️ Stage & Ritiri Intensivi (${TRAINING_CAMPS_CONFIG.length})
@@ -110,7 +88,7 @@ export class LifestyleView {
                   <p class="section-subtext">Le infrastrutture personali garantiscono Punti Telemetria (PT) continui per l'R&D, sponsor personali e immunità ai cali prestazionali in gara.</p>
                 </div>
 
-                <div class="hq-items-list" style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="hq-items-list">
                   ${Object.keys(HQ_CONFIG).map(key => {
                     const cfg = HQ_CONFIG[key];
                     const level = hq[key] || 0;
@@ -119,57 +97,43 @@ export class LifestyleView {
                     const canAfford = careerData.money >= nextCost;
 
                     return `
-                      <div class="hq-item-row" style="
-                        background: rgba(15, 23, 42, 0.6);
-                        border: 1px solid rgba(255, 255, 255, 0.08);
-                        border-left: 4px solid #38bdf8;
-                        border-radius: 12px;
-                        padding: 16px 20px;
-                        display: flex;
-                        align-items: center;
-                        gap: 16px;
-                      ">
-                        <div class="hq-icon-box" style="font-size: 28px; background: rgba(56, 189, 248, 0.1); border-radius: 10px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                      <div class="hq-item-row ${isMax ? 'is-maxed' : ''}">
+                        <div class="hq-icon-box">
                           ${cfg.icon}
                         </div>
 
-                        <div class="hq-info-box" style="flex: 1;">
-                          <div style="display: flex; align-items: center; gap: 10px;">
-                            <strong style="font-size: 15px; color: #fff;">${cfg.name}</strong>
-                            <span style="font-size: 11px; font-weight: 800; background: ${level > 0 ? '#38bdf8' : 'rgba(255,255,255,0.1)'}; color: ${level > 0 ? '#000' : '#94a3b8'}; padding: 2px 7px; border-radius: 5px;">
+                        <div class="hq-info-box">
+                          <div class="hq-title-line">
+                            <strong class="hq-name">${cfg.name}</strong>
+                            <span class="hq-lvl-tag ${level > 0 ? 'active' : ''}">
                               Livello ${level}/5
                             </span>
                           </div>
-                          <span style="font-size: 12px; color: #94a3b8; display: block; margin: 4px 0 8px;">
+                          <span class="hq-desc">
                             ${cfg.desc}
                           </span>
 
-                          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
-                            <span style="color: #38bdf8; font-weight: 700;">Beneficio Attuale: ${level > 0 ? cfg.perkText(level) : 'Inattivo (Lvl 0)'}</span>
-                            ${!isMax ? `<span style="color: #cbd5e1;">Prossimo Livello: <strong>${cfg.perkText(level + 1)}</strong></span>` : ''}
+                          <div class="hq-perk-summary">
+                            <span class="current-perk">Beneficio: ${level > 0 ? cfg.perkText(level) : 'Inattivo (Lvl 0)'}</span>
+                            ${!isMax ? `<span class="next-perk">Prossimo: <strong>${cfg.perkText(level + 1)}</strong></span>` : ''}
                           </div>
 
                           <!-- Barra a 5 segmenti -->
-                          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 6px;">
+                          <div class="hq-meter-bar">
                             ${[1, 2, 3, 4, 5].map(step => `
-                              <div style="
-                                height: 100%;
-                                border-radius: 3px;
-                                background: ${step <= level ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)'};
-                                box-shadow: ${step <= level ? '0 0 8px rgba(56, 189, 248, 0.4)' : 'none'};
-                              "></div>
+                              <div class="hq-meter-unit ${step <= level ? 'active' : ''}"></div>
                             `).join('')}
                           </div>
                         </div>
 
-                        <div class="hq-action-box" style="min-width: 140px; text-align: right;">
+                        <div class="hq-action-box">
                           ${!isMax ? `
-                            <button class="buy-hq-btn modal-btn btn-primary ${!canAfford ? 'disabled' : ''}" data-type="${key}" ${!canAfford ? 'disabled' : ''} style="width: 100%; padding: 10px 14px;">
-                              <div style="font-weight: 800; font-size: 12px;">POTENZIA ➔</div>
-                              <div style="font-size: 11px; opacity: 0.9;">€${nextCost.toLocaleString()}</div>
+                            <button class="buy-hq-btn modal-btn btn-primary ${!canAfford ? 'disabled' : ''}" data-type="${key}" ${!canAfford ? 'disabled' : ''}>
+                              <div class="btn-lbl-main">POTENZIA ➔</div>
+                              <div class="btn-lbl-cost">€${nextCost.toLocaleString()}</div>
                             </button>
                           ` : `
-                            <span style="display: inline-block; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80; font-weight: 900; font-size: 12px; padding: 6px 14px; border-radius: 8px;">
+                            <span class="hq-max-badge">
                               LIVELLO MAX ⭐
                             </span>
                           `}
@@ -189,7 +153,7 @@ export class LifestyleView {
                   <p class="section-subtext">Ogni bene produce vantaggi fiscali, rendite monetarie passive costanti a ogni GP, immunità ai viaggi intercontinentali o boost per il punteggio GOAT.</p>
                 </div>
 
-                <div class="luxury-items-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+                <div class="luxury-items-grid">
                   ${LIFESTYLE_ASSETS_CONFIG.map(item => {
                     const isAuto = player.discipline === 'auto';
                     let resolvedName = item.name;
@@ -203,45 +167,36 @@ export class LifestyleView {
                     const canAfford = careerData.money >= item.price;
 
                     return `
-                      <div class="luxury-item-card ${alreadyOwned ? 'owned' : ''}" style="
-                        background: rgba(15, 23, 42, 0.65);
-                        border: 1px solid ${alreadyOwned ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255, 255, 255, 0.08)'};
-                        border-top: 4px solid ${alreadyOwned ? '#22c55e' : '#f59e0b'};
-                        border-radius: 14px;
-                        padding: 18px;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 12px;
-                      ">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                          <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 32px;">${item.icon}</span>
+                      <div class="luxury-item-card ${alreadyOwned ? 'owned' : ''}">
+                        <div class="luxury-header">
+                          <div class="luxury-icon-title">
+                            <span class="luxury-icon">${item.icon}</span>
                             <div>
-                              <strong style="font-size: 15px; color: #fff;">${resolvedName}</strong>
-                              <div style="font-size: 11px; color: #f59e0b; font-weight: 700; margin-top: 2px;">
+                              <strong class="luxury-title">${resolvedName}</strong>
+                              <div class="luxury-perk-badge">
                                 ${item.perkBadge}
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; margin: 0; flex: 1;">
+                        <p class="luxury-desc">
                           ${item.desc}
                         </p>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; pt-2; border-top: 1px solid rgba(255, 255, 255, 0.06);">
-                          <div>
-                            <div style="font-size: 10px; color: #64748b; text-transform: uppercase;">Valore Asset</div>
-                            <strong style="font-size: 15px; color: #4ade80;">€${item.price.toLocaleString()}</strong>
+                        <div class="luxury-footer">
+                          <div class="luxury-price-box">
+                            <div class="luxury-price-lbl">Valore Asset</div>
+                            <strong class="luxury-price-val">€${item.price.toLocaleString()}</strong>
                           </div>
 
-                          <div>
+                          <div class="luxury-action-col">
                             ${alreadyOwned ? `
-                              <span style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80; font-weight: 800; font-size: 11px; padding: 6px 12px; border-radius: 6px;">
+                              <span class="luxury-owned-tag">
                                 POSSEDUTO ✅
                               </span>
                             ` : `
-                              <button class="buy-luxury-btn modal-btn btn-primary ${!canAfford ? 'disabled' : ''}" data-item-id="${item.id}" ${!canAfford ? 'disabled' : ''} style="padding: 8px 16px; font-size: 12px; font-weight: 800;">
+                              <button class="buy-luxury-btn modal-btn btn-primary ${!canAfford ? 'disabled' : ''}" data-item-id="${item.id}" ${!canAfford ? 'disabled' : ''}>
                                 ACQUISTA ASSET ✍️
                               </button>
                             `}
@@ -262,42 +217,33 @@ export class LifestyleView {
                   <p class="section-subtext">Pianifica stage atletici, sessioni prolungate al simulatore o ritiri specialistici prima del prossimo weekend di gara.</p>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                <div class="camps-grid">
                   ${TRAINING_CAMPS_CONFIG.map(camp => {
                     const canAfford = careerData.money >= camp.cost;
 
                     return `
-                      <div style="
-                        background: rgba(15, 23, 42, 0.65);
-                        border: 1px solid rgba(255, 255, 255, 0.08);
-                        border-left: 4px solid #a855f7;
-                        border-radius: 12px;
-                        padding: 16px;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 12px;
-                      ">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                          <span style="font-size: 28px;">${camp.icon}</span>
-                          <div>
-                            <strong style="font-size: 15px; color: #fff;">${camp.name}</strong>
-                            <div style="font-size: 12px; color: #c084fc; font-weight: 700;">
+                      <div class="camp-item-card">
+                        <div class="camp-header">
+                          <span class="camp-icon">${camp.icon}</span>
+                          <div class="camp-info">
+                            <strong class="camp-title">${camp.name}</strong>
+                            <div class="camp-effect">
                               Effetto: ${camp.effect}
                             </div>
                           </div>
                         </div>
 
-                        <p style="font-size: 12px; color: #94a3b8; line-height: 1.4; margin: 0; flex: 1;">
+                        <p class="camp-desc">
                           ${camp.desc}
                         </p>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; pt-2; border-top: 1px solid rgba(255, 255, 255, 0.06);">
-                          <div>
-                            <div style="font-size: 10px; color: #64748b; text-transform: uppercase;">Costo Stage</div>
-                            <strong style="font-size: 14px; color: #fbbf24;">€${camp.cost.toLocaleString()}</strong>
+                        <div class="camp-footer">
+                          <div class="camp-cost-box">
+                            <div class="camp-cost-lbl">Costo Stage</div>
+                            <strong class="camp-cost-val">€${camp.cost.toLocaleString()}</strong>
                           </div>
 
-                          <button class="execute-camp-btn modal-btn btn-primary ${!canAfford ? 'disabled' : ''}" data-camp-id="${camp.id}" ${!canAfford ? 'disabled' : ''} style="padding: 8px 14px; font-size: 12px; font-weight: 800;">
+                          <button class="execute-camp-btn modal-btn btn-primary ${!canAfford ? 'disabled' : ''}" data-camp-id="${camp.id}" ${!canAfford ? 'disabled' : ''}>
                             PRENOTA STAGE ➔
                           </button>
                         </div>

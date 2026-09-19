@@ -59,14 +59,14 @@ export class StandingsView {
           <table class="motorsport-table full-table">
             <thead>
               <tr>
-                <th class="text-center" style="width: 60px;">POS</th>
-                <th>PILOTA</th>
-                <th>SCUDERIA</th>
-                <th class="text-center">VITTORIE</th>
-                <th class="text-center">PODI</th>
-                <th class="text-center">POLE</th>
-                <th class="text-right">DISTACCO</th>
-                <th class="text-right">PUNTI TOTALI</th>
+                <th class="text-center col-pos" style="width: 50px;">POS</th>
+                <th class="col-driver">PILOTA</th>
+                <th class="col-team">SCUDERIA</th>
+                <th class="text-center col-wins">VITTORIE</th>
+                <th class="text-center col-podiums">PODI</th>
+                <th class="text-center col-poles">POLE</th>
+                <th class="text-right col-gap">DISTACCO</th>
+                <th class="text-right col-points">PUNTI</th>
               </tr>
             </thead>
             <tbody>
@@ -87,10 +87,10 @@ export class StandingsView {
 
                 return `
                   <tr class="${isPlayer ? 'player-standings-row highlight' : ''}">
-                    <td class="pos-cell text-center">
+                    <td class="pos-cell text-center col-pos">
                       <span class="pos-badge pos-${pos}">${pos}</span>
                     </td>
-                    <td class="driver-cell">
+                    <td class="driver-cell col-driver">
                       <div class="driver-cell-flex">
                         <span class="team-color-strip" style="background:${teamInfo.color || '#888'}"></span>
                         <div class="driver-names-box">
@@ -99,15 +99,15 @@ export class StandingsView {
                         </div>
                       </div>
                     </td>
-                    <td class="team-cell">
+                    <td class="team-cell col-team">
                       <span class="team-bullet-small" style="background:${teamInfo.color || '#888'}"></span>
                       ${teamInfo?.displayName || teamInfo?.realName || teamInfo?.fictionalName || teamInfo?.name || 'Scuderia'}
                     </td>
-                    <td class="stat-cell text-center"><strong>${entry.wins || 0}</strong></td>
-                    <td class="stat-cell text-center">${entry.podiums || 0}</td>
-                    <td class="stat-cell text-center">${entry.poles || 0}</td>
-                    <td class="gap-cell text-right"><small>${gap}</small></td>
-                    <td class="points-cell text-right">
+                    <td class="stat-cell text-center col-wins"><strong>${entry.wins || 0}</strong></td>
+                    <td class="stat-cell text-center col-podiums">${entry.podiums || 0}</td>
+                    <td class="stat-cell text-center col-poles">${entry.poles || 0}</td>
+                    <td class="gap-cell text-right col-gap"><small>${gap}</small></td>
+                    <td class="points-cell text-right col-points">
                       <span class="points-value">${entry.points || 0}</span>
                     </td>
                   </tr>
@@ -131,12 +131,12 @@ export class StandingsView {
           <table class="motorsport-table full-table">
             <thead>
               <tr>
-                <th class="text-center" style="width: 60px;">POS</th>
-                <th>COSTRUTTORE / SCUDERIA</th>
-                <th>LINEUP PILOTI 2026</th>
-                <th class="text-center">PASSO MEZZO</th>
-                <th class="text-right">DISTACCO</th>
-                <th class="text-right">PUNTI TOTALI</th>
+                <th class="text-center col-pos" style="width: 50px;">POS</th>
+                <th class="col-team">COSTRUTTORE / SCUDERIA</th>
+                <th class="col-lineup">LINEUP PILOTI 2026</th>
+                <th class="text-center col-pace">PASSO MEZZO</th>
+                <th class="text-right col-gap">DISTACCO</th>
+                <th class="text-right col-points">PUNTI</th>
               </tr>
             </thead>
             <tbody>
@@ -158,10 +158,10 @@ export class StandingsView {
 
                 return `
                   <tr class="${isPlayerTeam ? 'player-standings-row highlight' : ''}">
-                    <td class="pos-cell text-center">
+                    <td class="pos-cell text-center col-pos">
                       <span class="pos-badge pos-${pos}">${pos}</span>
                     </td>
-                    <td class="team-cell">
+                    <td class="team-cell col-team">
                       <div class="team-cell-flex">
                         <span class="team-color-strip" style="background:${teamInfo.color || '#888'}"></span>
                         <div>
@@ -170,14 +170,14 @@ export class StandingsView {
                         </div>
                       </div>
                     </td>
-                    <td class="lineup-cell">
+                    <td class="lineup-cell col-lineup">
                       <small>${teamDrivers.join(' • ')}</small>
                     </td>
-                    <td class="stat-cell text-center">
+                    <td class="stat-cell text-center col-pace">
                       <span class="car-pace-tag">${player.discipline === 'auto' ? teamInfo.carPace : teamInfo.bikePace}/99</span>
                     </td>
-                    <td class="gap-cell text-right"><small>${gap}</small></td>
-                    <td class="points-cell text-right">
+                    <td class="gap-cell text-right col-gap"><small>${gap}</small></td>
+                    <td class="points-cell text-right col-points">
                       <span class="points-value">${entry.points || 0}</span>
                     </td>
                   </tr>
