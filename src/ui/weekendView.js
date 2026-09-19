@@ -1348,6 +1348,7 @@ export class WeekendView {
     // Registra i risultati ufficiali nella carriera globale con sprint inclusa
     const gpResult = career.recordGrandPrixResults(state.qualifyingState?.grid || state.qualifyingGrid, race, state.sprintResults);
     const earnedSkillPts = gpResult?.earnedSkillPoints || career.career.lastWeekendRecap?.earnedSkillPoints || 1;
+    const tmCollab = gpResult?.teammateContribution || career.career.lastWeekendRecap?.teammateContribution;
 
     const top3 = race.drivers.filter(d => d.status !== 'DNF').slice(0, 3);
 
@@ -1414,6 +1415,32 @@ export class WeekendView {
               <strong class="val skill-val">+${earnedSkillPts} Punti Abilità ⭐</strong>
             </div>
           </div>
+
+          <!-- COLLABORAZIONE COMPAGNO DI SQUADRA & R&D -->
+          ${tmCollab ? `
+            <div class="podium-teammate-collab-card" style="margin: 1.25rem auto 0; max-width: 650px; background: rgba(0, 210, 255, 0.07); border: 1px solid rgba(0, 210, 255, 0.3); border-radius: 14px; padding: 1rem 1.25rem; text-align: left;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.3rem;">🤝</span>
+                  <strong style="color: #00d2ff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">Collaborazione Compagno: ${tmCollab.tmName}</strong>
+                </div>
+                <span style="background: rgba(0, 210, 255, 0.15); color: #00e5ff; font-weight: 700; font-size: 0.8rem; padding: 2px 8px; border-radius: 6px;">R&D & Telemetria</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.88rem; color: #cbd5e1;">
+                <div style="background: rgba(15, 23, 42, 0.5); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                  💼 <strong>Sponsor apportati:</strong> <span style="color: #4ade80; font-weight: 700;">+€${(tmCollab.sponsorMoney || 0).toLocaleString()}</span>
+                </div>
+                <div style="background: rgba(15, 23, 42, 0.5); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                  📡 <strong>Telemetria generata:</strong> <span style="color: #38bdf8; font-weight: 700;">+${tmCollab.totalTelemetry || 0} PT</span> <span style="font-size: 0.75rem; color: #94a3b8;">(+${tmCollab.tmTelemetry || 0} dal compagno)</span>
+                </div>
+              </div>
+              ${tmCollab.breakthrough ? `
+                <div style="margin-top: 0.6rem; background: linear-gradient(90deg, rgba(168, 85, 247, 0.15), rgba(59, 130, 246, 0.15)); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; padding: 8px 12px; font-size: 0.85rem; color: #e9d5ff;">
+                  🚀 <strong>BREAKTHROUGH SIMULATORE:</strong> ${tmCollab.breakthrough.message}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
 
           <div class="podium-action-bar">
             <button id="btn-conclude-weekend" class="start-race-button pulse-glow">

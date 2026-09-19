@@ -378,21 +378,20 @@ export class SeasonEndModal {
           };
 
           const needsBuyout = isUnderContract && buyoutPenalty > 0;
-          let confirmMsg = `Confermi l'accordo di ${dur} anno/i con ${chosen.teamName} (${chosen.categoryName})?`;
           if (needsBuyout) {
-            confirmMsg += `\n\n⚠️ RESCISSIONE ANTICIPATA: Verrà addebitata la penale di rescissione di €${buyoutPenalty.toLocaleString()} per liberarti dal vecchio contratto.`;
+            ToastNotification.confirm({
+              title: "Rescissione e Firma Accordo",
+              message: `Confermi l'accordo di ${dur} anno/i con ${chosen.teamName} (${chosen.categoryName})?\n\n⚠️ RESCISSIONE ANTICIPATA: Verrà addebitata la penale di rescissione di €${buyoutPenalty.toLocaleString()} per liberarti dal vecchio contratto.`,
+              confirmText: `Paga €${buyoutPenalty.toLocaleString()} e Firma ✍️`,
+              cancelText: "Valuta Ancora",
+              danger: true,
+              onConfirm: () => {
+                setTimeout(() => openSigningModalFlow(), 50);
+              }
+            });
+          } else {
+            openSigningModalFlow();
           }
-
-          ToastNotification.confirm({
-            title: needsBuyout ? "Rescissione e Firma Accordo" : "Firma Nuovo Contratto",
-            message: confirmMsg,
-            confirmText: needsBuyout ? `Paga €${buyoutPenalty.toLocaleString()} e Firma ✍️` : "Firma Contratto ✍️",
-            cancelText: "Valuta Ancora",
-            danger: needsBuyout,
-            onConfirm: () => {
-              openSigningModalFlow();
-            }
-          });
         };
       });
     };

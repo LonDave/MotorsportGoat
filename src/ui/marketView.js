@@ -16,6 +16,8 @@ export class MarketView {
     const teamDisplayName = currentTeam?.displayName || currentTeam?.realName || currentTeam?.fictionalName || currentTeam?.name || 'Scuderia';
     const teamColor = currentTeam?.color || '#e10600';
     const categoryName = db.getSeriesName(careerData.currentCategory, player.discipline);
+    const catData = career.getCurrentCategoryData() || {};
+    const catTeams = catData.teams || [];
 
     const offers = careerData.contractOffers || career.generateContractOffers();
     const currentContract = careerData.contract || { yearsLeft: 1, durationYears: 1, buyoutClause: 0 };
@@ -35,13 +37,16 @@ export class MarketView {
           <div class="weekend-top-header">
             <span class="session-badge">PADDOCK & TRATTATIVE</span>
             <h2>Mercato Piloti & Contratti Ufficiali</h2>
-            <p class="header-sub">Gestisci il tuo ingaggio, consulta i piloti svincolati ed esplora le notizie di mercato AI del motorsport mondiale.</p>
+            <p class="header-sub">Gestisci il tuo ingaggio, consulta le formazioni delle scuderie, i piloti svincolati e le trattative AI del motorsport mondiale.</p>
           </div>
 
           <!-- TAB SELECTOR MERCATO -->
-          <div class="standings-tab-bar" style="margin-bottom: 24px; display: flex; gap: 10px;">
+          <div class="standings-tab-bar" style="margin-bottom: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
             <button class="tab-btn ${this.currentTab === 'offers' ? 'active' : ''}" data-tab="offers">
               📋 Trattative & Offerte (${offers.length})
+            </button>
+            <button class="tab-btn ${this.currentTab === 'grid' ? 'active' : ''}" data-tab="grid">
+              🏎️ Griglia Scuderie & Formazioni
             </button>
             <button class="tab-btn ${this.currentTab === 'free_agents' ? 'active' : ''}" data-tab="free_agents">
               🆓 Piloti Svincolati (${freeAgents.length})
@@ -200,7 +205,119 @@ export class MarketView {
               </div>
             ` : ''}
 
-            <!-- TAB 2: PILOTI SVINCOLATI (FREE AGENTS) -->
+            <!-- TAB 2: GRIGLIA & FORMAZIONI SCUDERIE -->
+            ${this.currentTab === 'grid' ? `
+              <div class="dash-card offers-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+                  <div>
+                    <h3 class="card-title">Schieramento Ufficiale Categoria: ${categoryName}</h3>
+                    <p class="section-subtext">Roster attivi delle scuderie, competitività delle vetture e movimenti di mercato aggiornati.</p>
+                  </div>
+                  <span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">
+                    ${catTeams.length} Scuderie • ${(catData.maxDriversPerTeam || 2) * catTeams.length} Sedili Ufficiali
+                  </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 14px;">
+                  ${catTeams.map(t => {
+                    const isPlayerTeam = t.id === careerData.currentTeamId;
+                    const tName = db.getTeamName(t.id, player.discipline, careerData.currentCategory) || t.name;
+                    const tColor = t.color || '#e10600';
+                    const devInfo = careerData.teamDevelopment?.[t.id];
+                    const carRating = isPlayerTeam 
+                      ? Math.round(career.getPlayerTeam()?.performance || 75) 
+                      : Math.round(devInfo?.currentPace || t.carPerformance || t.bikePerformance || 75);
+
+                    // Costruisce la lista piloti attivi rispettando le modifiche di mercato e il giocatore
+                    let driversList = [];
+                    if (isPlayerTeam) {
+                      driversList.push({
+                        id: 'player',
+                        name: `${player.name} ${player.surname || ''}`,
+                        ovr: player.ovr || 75,
+                        isPlayer: true,
+                        role: 'Tu (1° Pilota)',
+                        flag: player.nationality || '🇮🇹'
+                      });
+                      const tm = career.getCurrentTeammate();
+                      if (tm) {
+                        const tmOvr = (careerData.aiDriverAttributes?.[tm.id]?.ovr) || tm.ovr || 75;
+                        driversList.push({
+                          id: tm.id,
+                          name: db.getDriverName(tm.id, player.discipline) || tm.name,
+                          ovr: tmOvr,
+                          isPlayer: false,
+                          role: 'Compagno di Squadra',
+                          flag: tm.nationality || '🏁'
+                        });
+                      }
+                    } else {
+                      const roster = (catData.roster || []).filter(r => {
+                        const effTeam = (careerData.teamDriverOverrides && careerData.teamDriverOverrides[r.id]) || r.teamId;
+                        return effTeam === t.id;
+                      });
+                      roster.forEach((r, rIdx) => {
+                        const ovr = (careerData.aiDriverAttributes?.[r.id]?.ovr) || r.ovr || 75;
+                        driversList.push({
+                          id: r.id,
+                          name: db.getDriverName(r.id, player.discipline) || r.name,
+                          ovr,
+                          isPlayer: false,
+                          role: rIdx === 0 ? '1° Pilota' : '2° Pilota',
+                          flag: r.nationality || '🏁'
+                        });
+                      });
+                    }
+
+                    return `
+                      <div style="
+                        background: rgba(15, 23, 42, 0.6);
+                        border: 1px solid ${isPlayerTeam ? 'rgba(245, 158, 11, 0.5)' : 'rgba(255, 255, 255, 0.08)'};
+                        border-left: 5px solid ${tColor};
+                        border-radius: 12px;
+                        padding: 14px 16px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+                        ${isPlayerTeam ? 'box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);' : ''}
+                      ">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="team-badge-bullet" style="background:${tColor}; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 6px ${tColor};"></span>
+                            <div>
+                              <strong style="font-size: 15px; color: #fff;">${tName}</strong>
+                              ${isPlayerTeam ? '<span style="margin-left: 6px; font-size: 10px; background: #f59e0b; color: #000; font-weight: 800; padding: 1px 6px; border-radius: 4px;">IL TUO TEAM</span>' : ''}
+                            </div>
+                          </div>
+                          <div style="text-align: right;">
+                            <div style="font-size: 11px; color: #94a3b8;">Vettura</div>
+                            <strong style="font-size: 13px; color: #38bdf8;">${carRating} / 99</strong>
+                          </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px;">
+                          ${driversList.length === 0 ? '<div style="font-size: 12px; color: #94a3b8;">Nessun pilota assegnato</div>' : ''}
+                          ${driversList.map(d => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                              <div style="display: flex; align-items: center; gap: 6px;">
+                                <span>${d.flag}</span>
+                                <strong style="color: ${d.isPlayer ? '#fbbf24' : '#f8fafc'};">${d.name}</strong>
+                                <small style="font-size: 10px; color: #64748b;">(${d.role})</small>
+                              </div>
+                              <span style="background: ${d.ovr >= 90 ? 'linear-gradient(135deg, #eab308, #ca8a04)' : (d.ovr >= 80 ? 'rgba(59, 130, 246, 0.3)' : 'rgba(255, 255, 255, 0.1)')}; color: ${d.ovr >= 90 ? '#000' : '#fff'}; font-weight: 800; padding: 2px 7px; border-radius: 5px; font-size: 11px;">
+                                ${d.ovr} OVR
+                              </span>
+                            </div>
+                          `).join('')}
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- TAB 3: PILOTI SVINCOLATI (FREE AGENTS) -->
             ${this.currentTab === 'free_agents' ? `
               <div class="dash-card offers-card">
                 <h3 class="card-title">Piloti Svincolati Disponibili (Free Agents)</h3>

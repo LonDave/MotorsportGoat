@@ -74,6 +74,193 @@ export const BACKGROUND_PROFILES = {
   }
 };
 
+// Configurazione Dettagliata Sottocomponenti R&D Reparto Corse
+export const RD_SUBCOMPONENTS_CONFIG = {
+  // 🌬️ AERODINAMICA
+  aero_front_wing: {
+    id: 'aero_front_wing',
+    dept: 'aero',
+    deptName: 'Aerodinamica',
+    name: 'Ala Anteriore & Flap Flessibili',
+    desc: 'Migliora l\'inserimento in curva veloce, la sensibilità direzionale e il controllo dei vortici turbolenti.',
+    icon: '🏎️',
+    maxLevel: 5,
+    baseCost: 20000,
+    costMult: 14000,
+    basePoints: 35,
+    pointsMult: 20,
+    paceGain: 0.6,
+    reliabilityGain: 0,
+    spec: '+0.6 Passo • Inserimento in Curva & Bilanciamento'
+  },
+  aero_floor_venturi: {
+    id: 'aero_floor_venturi',
+    dept: 'aero',
+    deptName: 'Aerodinamica',
+    name: 'Fondo Venturi & Canali Effetto Suolo',
+    desc: 'Genera elevatissimo carico aerodinamico dal sottovettura mantenendo minima la resistenza all\'avanzamento.',
+    icon: '🌪️',
+    maxLevel: 5,
+    baseCost: 28000,
+    costMult: 18000,
+    basePoints: 50,
+    pointsMult: 28,
+    paceGain: 0.8,
+    reliabilityGain: 0,
+    spec: '+0.8 Passo • Carico Globale & Efficienza ad Alta Velocità'
+  },
+  aero_rear_wing_drs: {
+    id: 'aero_rear_wing_drs',
+    dept: 'aero',
+    deptName: 'Aerodinamica',
+    name: 'Ala Posteriore & Meccanismo DRS',
+    desc: 'Ottimizza lo scarico d\'aria sul retrotreno e la velocità di punta in rettilineo a DRS aperto.',
+    icon: '⚡',
+    maxLevel: 5,
+    baseCost: 22000,
+    costMult: 15000,
+    basePoints: 40,
+    pointsMult: 22,
+    paceGain: 0.6,
+    reliabilityGain: 0,
+    spec: '+0.6 Passo • Velocità di Punta & Sorpassi'
+  },
+
+  // 🔥 POWER UNIT & MOTORE
+  engine_ice_combustion: {
+    id: 'engine_ice_combustion',
+    dept: 'engine',
+    deptName: 'Power Unit & Motore',
+    name: 'Motore Termico (ICE) & Precamera',
+    desc: 'Aumenta la pressione nella camera di scoppio e i cavalli vapore effettivi a pieno regime di rotazione.',
+    icon: '🔥',
+    maxLevel: 5,
+    baseCost: 30000,
+    costMult: 20000,
+    basePoints: 55,
+    pointsMult: 30,
+    paceGain: 0.8,
+    reliabilityGain: 0,
+    spec: '+0.8 Passo • Cavalli Vapore & Allungo'
+  },
+  engine_ers_hybrid: {
+    id: 'engine_ers_hybrid',
+    dept: 'engine',
+    deptName: 'Power Unit & Motore',
+    name: 'Sistema Ibrido ERS & MGU-K',
+    desc: 'Aumenta il recupero dell\'energia cinetica in staccata e la spinta della coppia elettrica istantanea in trazione.',
+    icon: '🔋',
+    maxLevel: 5,
+    baseCost: 25000,
+    costMult: 17000,
+    basePoints: 45,
+    pointsMult: 25,
+    paceGain: 0.7,
+    reliabilityGain: 0,
+    spec: '+0.7 Passo • Trazione Ibrida & Erogazione Coppia'
+  },
+  engine_ecu_exhaust: {
+    id: 'engine_ecu_exhaust',
+    dept: 'engine',
+    deptName: 'Power Unit & Motore',
+    name: 'Mappature ECU & Scarichi Inconel',
+    desc: 'Mappature progressive del gas, isolamento termico avanzato e riduzione degli stress da detonazione.',
+    icon: '💻',
+    maxLevel: 5,
+    baseCost: 18000,
+    costMult: 12000,
+    basePoints: 30,
+    pointsMult: 18,
+    paceGain: 0.5,
+    reliabilityGain: 2,
+    spec: '+0.5 Passo • +2% Affidabilità Termica'
+  },
+
+  // ⚙️ TELAIO & SOSPENSIONI
+  chassis_suspension: {
+    id: 'chassis_suspension',
+    dept: 'chassis',
+    deptName: 'Telaio & Sospensioni',
+    name: 'Cinematica Sospensioni & Barre Antirollio',
+    desc: 'Ottimizza l\'assorbimento delle asperità e dei cordoli, preservando l\'impronta a terra degli pneumatici.',
+    icon: '⚙️',
+    maxLevel: 5,
+    baseCost: 22000,
+    costMult: 15000,
+    basePoints: 40,
+    pointsMult: 22,
+    paceGain: 0.6,
+    reliabilityGain: 0,
+    spec: '+0.6 Passo • Grip Meccanico & Gestione Gomme'
+  },
+  chassis_monocoque: {
+    id: 'chassis_monocoque',
+    dept: 'chassis',
+    deptName: 'Telaio & Sospensioni',
+    name: 'Monoscocca in Carbonio Ultraleggera',
+    desc: 'Riduce la massa sospesa complessiva, abbassando il baricentro ed esaltando la reattività nei cambi di direzione.',
+    icon: '🏎️',
+    maxLevel: 5,
+    baseCost: 26000,
+    costMult: 18000,
+    basePoints: 45,
+    pointsMult: 25,
+    paceGain: 0.7,
+    reliabilityGain: 0,
+    spec: '+0.7 Passo • Agilità & Reattività nei Settori Lenti'
+  },
+  chassis_brakes: {
+    id: 'chassis_brakes',
+    dept: 'chassis',
+    deptName: 'Telaio & Sospensioni',
+    name: 'Impianto Frenante Carbon-Carbon & Condotti',
+    desc: 'Staccate fulminee, minor surriscaldamento del liquido freni e controllo calibrato delle temperature cerchi.',
+    icon: '🛑',
+    maxLevel: 5,
+    baseCost: 18000,
+    costMult: 12000,
+    basePoints: 30,
+    pointsMult: 18,
+    paceGain: 0.5,
+    reliabilityGain: 2,
+    spec: '+0.5 Passo • +2% Affidabilità in Staccata'
+  },
+
+  // 🛡️ AFFIDABILITÀ & CONTROLLO QUALITÀ
+  rel_sensor_telemetry: {
+    id: 'rel_sensor_telemetry',
+    dept: 'reliability',
+    deptName: 'Affidabilità & Qualità',
+    name: 'Sensoristica Real-Time & Predictive Quality',
+    desc: 'Reti di sensori wireless sui componenti critici per rilevare anomalie prima che provochino un guasto in gara.',
+    icon: '📡',
+    maxLevel: 5,
+    baseCost: 16000,
+    costMult: 11000,
+    basePoints: 25,
+    pointsMult: 15,
+    paceGain: 0,
+    reliabilityGain: 4,
+    spec: '+4% Affidabilità • Prevenzione Guasti Elettronici'
+  },
+  rel_dyno_stress_test: {
+    id: 'rel_dyno_stress_test',
+    dept: 'reliability',
+    deptName: 'Affidabilità & Qualità',
+    name: 'Procedure Banco Prova Dinamico & Durabilità',
+    desc: 'Stress test termomeccanici al banco prova su cambio, scatola differenziale e circuito idraulico ad alta pressione.',
+    icon: '🛡️',
+    maxLevel: 5,
+    baseCost: 18000,
+    costMult: 13000,
+    basePoints: 30,
+    pointsMult: 18,
+    paceGain: 0,
+    reliabilityGain: 4,
+    spec: '+4% Affidabilità • Resistenza Meccanica & Cambio'
+  }
+};
+
 export class CareerEngine {
   constructor() {
     this.player = null;
@@ -193,6 +380,7 @@ export class CareerEngine {
 
     // Inizializza sviluppo e gerarchia iniziale dei mezzi per tutte le scuderie
     this.initTeamDevelopment();
+    this.initRdSystem();
 
     // Configura compagno di squadra iniziale ed eventuale pilota svincolato per rispettare i limiti di categoria
     const initTeamDrivers = (catData?.roster || []).filter(r => r.teamId === initialTeam.id);
@@ -426,25 +614,101 @@ export class CareerEngine {
     this.career.chosenTeammateId = chosenTeammateId;
     this.career.teamBenchedDriverId = replacedDriverId;
 
+    if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
     if (!this.career.freeAgents) this.career.freeAgents = [];
-    if (replacedDriverId && !this.career.freeAgents.some(fa => fa.driverId === replacedDriverId)) {
-      this.career.freeAgents.push({
-        driverId: replacedDriverId,
-        originalTeamId: teamId,
-        category: catKey,
-        year: this.career.currentYear || 2026
-      });
+
+    if (chosenTeammateId) {
+      this.career.teamDriverOverrides[chosenTeammateId] = teamId;
+      this.career.freeAgents = this.career.freeAgents.filter(fa => fa.driverId !== chosenTeammateId);
+    }
+
+    if (replacedDriverId) {
+      this.career.teamDriverOverrides[replacedDriverId] = 'free_agent';
+      if (!this.career.freeAgents.some(fa => fa.driverId === replacedDriverId)) {
+        this.career.freeAgents.push({
+          driverId: replacedDriverId,
+          originalTeamId: teamId,
+          category: catKey,
+          year: this.career.currentYear || 2026
+        });
+      }
 
       const repName = db.getDriverName(replacedDriverId, this.player?.discipline);
       const teamName = db.getTeamName(teamId, this.player?.discipline, catKey);
       if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
       this.career.aiTransferNews.unshift(
-        `📢 MERCATO: ${repName} lascia ${teamName} e diventa Free Agent a seguito dell'ingaggio di ${this.player?.firstName} ${this.player?.lastName}!`
+        `📢 MERCATO: ${repName} lascia il sedile di ${teamName} a seguito dell'arrivo di ${this.player?.firstName} ${this.player?.lastName}!`
       );
     }
   }
 
-  // Trasferimenti di mercato dinamici per i piloti AI e ingaggio Free Agents
+  // La scuderia lasciata dal giocatore effettua mercato per ingaggiare un pilota di rimpiazzo
+  signMarketReplacementForVacatedSeat(vacatedTeamId, categoryKey, preferredCandidateId = null) {
+    if (!this.career || !vacatedTeamId) return null;
+    const discipline = this.player?.discipline || 'auto';
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const cat = categories[categoryKey];
+    if (!cat || !cat.teams || !cat.roster) return null;
+
+    if (!this.career.freeAgents) this.career.freeAgents = [];
+    if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
+    if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+
+    const oldTeamName = db.getTeamName(vacatedTeamId, discipline, categoryKey);
+
+    // 1. Candidato 1: Il pilota liberato dal nuovo team del giocatore (se compatibile con la categoria o disciplina)
+    let candidateDriverId = null;
+    if (preferredCandidateId && preferredCandidateId !== 'player' && preferredCandidateId !== this.career.chosenTeammateId) {
+      candidateDriverId = preferredCandidateId;
+    }
+
+    // 2. Candidato 2: Se nessun preferredCandidateId o non compatibile, cerca il miglior Free Agent della serie
+    if (!candidateDriverId) {
+      const catFAs = this.career.freeAgents
+        .filter(fa => fa.category === categoryKey || !fa.category)
+        .map(fa => ({ ...fa, driver: db.getDriver(fa.driverId, discipline) }))
+        .filter(fa => fa.driver && fa.driverId !== this.career.chosenTeammateId)
+        .sort((a, b) => (b.driver.ovr || 75) - (a.driver.ovr || 75));
+
+      if (catFAs.length > 0) {
+        candidateDriverId = catFAs[0].driverId;
+      }
+    }
+
+    // 3. Candidato 3: Qualsiasi altro Free Agent globale
+    if (!candidateDriverId && this.career.freeAgents.length > 0) {
+      const anyFA = this.career.freeAgents.find(fa => fa.driverId !== this.career.chosenTeammateId);
+      if (anyFA) candidateDriverId = anyFA.driverId;
+    }
+
+    // 4. Candidato 4: Poaching da un team rivale con più piloti
+    if (!candidateDriverId) {
+      const otherTeams = cat.teams.filter(t => t.id !== vacatedTeamId && t.id !== this.career.currentTeamId);
+      for (const t of otherTeams) {
+        const tDrivers = cat.roster.filter(d => (this.career.teamDriverOverrides[d.id] || d.teamId) === t.id);
+        if (tDrivers.length > 1) {
+          const poached = tDrivers[Math.floor(Math.random() * tDrivers.length)];
+          candidateDriverId = poached.id;
+          break;
+        }
+      }
+    }
+
+    if (candidateDriverId) {
+      this.career.teamDriverOverrides[candidateDriverId] = vacatedTeamId;
+      this.career.freeAgents = this.career.freeAgents.filter(fa => fa.driverId !== candidateDriverId);
+
+      const driverName = db.getDriverName(candidateDriverId, discipline);
+      this.career.aiTransferNews.unshift(
+        `📢 MERCATO: ${oldTeamName} corre ai ripari dopo l'addio di ${this.player.firstName} ${this.player.lastName} e ingaggia ufficialmente ${driverName}!`
+      );
+      return candidateDriverId;
+    }
+
+    return null;
+  }
+
+  // Trasferimenti di mercato dinamici per i piloti AI nello stesso campionato e ingaggio Free Agents
   aiDriverTransfers() {
     if (!this.career) return;
     if (!this.career.freeAgents) this.career.freeAgents = [];
@@ -457,20 +721,118 @@ export class CareerEngine {
     const cat = categories[catKey];
     if (!cat || !cat.roster || !cat.teams) return;
 
-    // 1. Ingaggio Free Agent da parte di team AI con piloti più deboli
+    const playerTeamId = this.career.currentTeamId;
+
+    // Helper: piloti attivi di una scuderia AI
+    const getActiveTeamDrivers = (teamId) => {
+      return cat.roster.filter(d => {
+        const effTeam = this.career.teamDriverOverrides[d.id] || d.teamId;
+        return effTeam === teamId;
+      });
+    };
+
+    // 1. TRASFERIMENTI INTRA-CAMPIONATO TRA SCUDERIE RIVALI (Poaching da parte dei Top Team)
+    const sortedTeams = [...cat.teams]
+      .map(t => {
+        const dev = this.career.teamDevelopment?.[t.id];
+        const pace = dev?.carPace || t.carPace || t.bikePace || 75;
+        return { ...t, currentPace: pace };
+      })
+      .sort((a, b) => b.currentPace - a.currentPace);
+
+    const topTeams = sortedTeams.filter(t => t.id !== playerTeamId).slice(0, 4);
+    const midLowTeams = sortedTeams.filter(t => t.id !== playerTeamId && !topTeams.some(tt => tt.id === t.id));
+
+    if (topTeams.length > 0 && midLowTeams.length > 0 && Math.random() < 0.85) {
+      const buyerTeam = topTeams[Math.floor(Math.random() * topTeams.length)];
+      const buyerDrivers = getActiveTeamDrivers(buyerTeam.id);
+
+      let bestRisingDriver = null;
+      let sellerTeam = null;
+
+      for (const mTeam of midLowTeams) {
+        const mDrivers = getActiveTeamDrivers(mTeam.id);
+        for (const md of mDrivers) {
+          const ovr = (this.career.aiDriverAttributes?.[md.id]?.ovr) || md.ovr || 75;
+          if (!bestRisingDriver || ovr > (bestRisingDriver.ovr || 75)) {
+            bestRisingDriver = { ...md, ovr };
+            sellerTeam = mTeam;
+          }
+        }
+      }
+
+      if (bestRisingDriver && sellerTeam && buyerDrivers.length > 0) {
+        const sortedBuyerDrivers = [...buyerDrivers].sort((a, b) => {
+          const ovrA = (this.career.aiDriverAttributes?.[a.id]?.ovr) || a.ovr || 75;
+          const ovrB = (this.career.aiDriverAttributes?.[b.id]?.ovr) || b.ovr || 75;
+          return ovrA - ovrB;
+        });
+        const replacedBuyerDriver = sortedBuyerDrivers[0];
+        const buyerOvr = (this.career.aiDriverAttributes?.[replacedBuyerDriver.id]?.ovr) || replacedBuyerDriver.ovr || 75;
+
+        if (bestRisingDriver.ovr >= buyerOvr - 1 && bestRisingDriver.id !== replacedBuyerDriver.id) {
+          this.career.teamDriverOverrides[bestRisingDriver.id] = buyerTeam.id;
+          this.career.teamDriverOverrides[replacedBuyerDriver.id] = sellerTeam.id;
+
+          const buyerName = db.getTeamName(buyerTeam.id, discipline, catKey);
+          const sellerName = db.getTeamName(sellerTeam.id, discipline, catKey);
+          const starName = db.getDriverName(bestRisingDriver.id, discipline);
+          const repName = db.getDriverName(replacedBuyerDriver.id, discipline);
+
+          this.career.aiTransferNews.unshift(
+            `🔥 COLPO INTRA-CAMPIONATO: ${buyerName} strappa la stella ${starName} da ${sellerName}! ${repName} compie il percorso inverso.`
+          );
+        }
+      }
+    }
+
+    // 2. SCAMBIO DIRETTO DI MERCATO TRA SCUDERIE RIVALI (Driver Trade)
+    if (Math.random() < 0.70 && cat.teams.length >= 4) {
+      const candidateTeams = cat.teams.filter(t => t.id !== playerTeamId);
+      const teamA = candidateTeams[Math.floor(Math.random() * candidateTeams.length)];
+      const remaining = candidateTeams.filter(t => t.id !== teamA.id);
+      const teamB = remaining[Math.floor(Math.random() * remaining.length)];
+
+      if (teamA && teamB) {
+        const driversA = getActiveTeamDrivers(teamA.id);
+        const driversB = getActiveTeamDrivers(teamB.id);
+
+        if (driversA.length > 0 && driversB.length > 0) {
+          const dA = driversA[Math.floor(Math.random() * driversA.length)];
+          const dB = driversB[Math.floor(Math.random() * driversB.length)];
+
+          if (dA.id !== dB.id) {
+            this.career.teamDriverOverrides[dA.id] = teamB.id;
+            this.career.teamDriverOverrides[dB.id] = teamA.id;
+
+            const nameA = db.getDriverName(dA.id, discipline);
+            const nameB = db.getDriverName(dB.id, discipline);
+            const tNameA = db.getTeamName(teamA.id, discipline, catKey);
+            const tNameB = db.getTeamName(teamB.id, discipline, catKey);
+
+            this.career.aiTransferNews.unshift(
+              `🔄 SCAMBIO DI MERCATO: Accordo tra scuderie! ${nameA} passa in ${tNameB}, mentre ${nameB} approda in ${tNameA}.`
+            );
+          }
+        }
+      }
+    }
+
+    // 3. INGAGGIO FREE AGENTS DA PARTE DEI TEAM CON PILOTI PIÙ DEBOLI
     const availableFAs = [...this.career.freeAgents];
     availableFAs.forEach(fa => {
       const faDriver = db.getDriver(fa.driverId, discipline);
       if (!faDriver) return;
-      const faOvr = faDriver.ovr || 80;
+      const faOvr = faDriver.ovr || 78;
 
-      const candidateTeams = cat.teams.filter(t => t.id !== this.career.currentTeamId);
+      const candidateTeams = cat.teams.filter(t => t.id !== playerTeamId);
       for (const team of candidateTeams) {
-        const teamDrivers = cat.roster.filter(d => {
-          const effTeam = this.career.teamDriverOverrides[d.id] || d.teamId;
-          return effTeam === team.id;
+        const teamDrivers = getActiveTeamDrivers(team.id);
+        const weakerDriver = teamDrivers.find(d => {
+          const ovr = (this.career.aiDriverAttributes?.[d.id]?.ovr) || d.ovr || 75;
+          return ovr < faOvr - 2;
         });
-        const weakerDriver = teamDrivers.find(d => (d.ovr || 75) < faOvr - 3);
+
         if (weakerDriver) {
           this.career.teamDriverOverrides[fa.driverId] = team.id;
           this.career.teamDriverOverrides[weakerDriver.id] = 'free_agent';
@@ -485,45 +847,16 @@ export class CareerEngine {
           const faName = db.getDriverName(fa.driverId, discipline);
           const teamName = db.getTeamName(team.id, discipline, catKey);
           this.career.aiTransferNews.unshift(
-            `🔥 BOMBA DI MERCATO: ${faName} firma ufficialmente con ${teamName} per la nuova stagione!`
+            `💼 MERCATO AI: ${teamName} ingaggia lo svincolato ${faName} per alzare il livello del team!`
           );
           break;
         }
       }
     });
 
-    // 2. Scambio AI dinamico casuale tra due scuderie rivali
-    if (Math.random() < 0.65 && cat.teams.length >= 4) {
-      const rivalTeams = cat.teams.filter(t => t.id !== this.career.currentTeamId);
-      const teamA = rivalTeams[Math.floor(Math.random() * rivalTeams.length)];
-      const otherTeams = rivalTeams.filter(t => t.id !== teamA.id);
-      const teamB = otherTeams[Math.floor(Math.random() * otherTeams.length)];
-
-      if (teamA && teamB) {
-        const driversA = cat.roster.filter(d => (this.career.teamDriverOverrides[d.id] || d.teamId) === teamA.id);
-        const driversB = cat.roster.filter(d => (this.career.teamDriverOverrides[d.id] || d.teamId) === teamB.id);
-
-        if (driversA.length > 0 && driversB.length > 0) {
-          const dA = driversA[Math.floor(Math.random() * driversA.length)];
-          const dB = driversB[Math.floor(Math.random() * driversB.length)];
-
-          this.career.teamDriverOverrides[dA.id] = teamB.id;
-          this.career.teamDriverOverrides[dB.id] = teamA.id;
-
-          const nameA = db.getDriverName(dA.id, discipline);
-          const nameB = db.getDriverName(dB.id, discipline);
-          const tNameA = db.getTeamName(teamA.id, discipline, catKey);
-          const tNameB = db.getTeamName(teamB.id, discipline, catKey);
-
-          this.career.aiTransferNews.unshift(
-            `🔄 MERCATO PILOTI AI: ${nameA} approda in ${tNameB}, mentre ${nameB} passa in ${tNameA}!`
-          );
-        }
-      }
-    }
-
-    if (this.career.aiTransferNews.length > 12) {
-      this.career.aiTransferNews = this.career.aiTransferNews.slice(0, 12);
+    // Mantieni le notizie più recenti
+    if (this.career.aiTransferNews.length > 20) {
+      this.career.aiTransferNews = this.career.aiTransferNews.slice(0, 20);
     }
   }
 
@@ -656,6 +989,18 @@ export class CareerEngine {
     const bonusPace = (upgrades.aero * 1.5) + (upgrades.engine * 1.5) + (upgrades.chassis * 1.2);
     const bonusReliability = upgrades.reliability * 2.5;
 
+    // Bonus derivanti dai sottocomponenti R&D specialistici
+    const subComps = this.career?.rdSubComponents || {};
+    let subPaceGain = 0;
+    let subRelGain = 0;
+    for (const [key, lvl] of Object.entries(subComps)) {
+      const cfg = RD_SUBCOMPONENTS_CONFIG[key];
+      if (cfg && lvl > 0) {
+        subPaceGain += (cfg.paceGain || 0) * lvl;
+        subRelGain += (cfg.reliabilityGain || 0) * lvl;
+      }
+    }
+
     const dev = this.career?.teamDevelopment?.[team.id];
     const basePace = (dev && dev.carPace !== undefined) ? dev.carPace : (team.carPace || team.bikePace || 75);
     const baseReliability = (dev && dev.reliability !== undefined) ? dev.reliability : (team.reliability || 85);
@@ -664,9 +1009,9 @@ export class CareerEngine {
 
     return {
       ...team,
-      carPace: Math.min(99, Math.round(basePace + bonusPace)),
-      bikePace: Math.min(99, Math.round(basePace + bonusPace)),
-      reliability: Math.min(99, Math.round(baseReliability + bonusReliability)),
+      carPace: Math.min(99, Math.round(basePace + bonusPace + subPaceGain)),
+      bikePace: Math.min(99, Math.round(basePace + bonusPace + subPaceGain)),
+      reliability: Math.min(99, Math.round(baseReliability + bonusReliability + subRelGain)),
       displayName: resolvedName || team.realName || team.fictionalName || team.name || 'Scuderia',
       color: team.color || '#e10600'
     };
@@ -704,6 +1049,116 @@ export class CareerEngine {
     }
 
     return { name: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
+  }
+
+  // Inizializza il sistema R&D avanzato, sottocomponenti e punti telemetria
+  initRdSystem() {
+    if (!this.career) return;
+    if (this.career.rdTelemetryPoints === undefined) {
+      this.career.rdTelemetryPoints = 120;
+    }
+    if (!this.career.rdSubComponents) {
+      this.career.rdSubComponents = {
+        aero_front_wing: 0,
+        aero_floor_venturi: 0,
+        aero_rear_wing_drs: 0,
+        engine_ice_combustion: 0,
+        engine_ers_hybrid: 0,
+        engine_ecu_exhaust: 0,
+        chassis_suspension: 0,
+        chassis_monocoque: 0,
+        chassis_brakes: 0,
+        rel_sensor_telemetry: 0,
+        rel_dyno_stress_test: 0
+      };
+    }
+    if (!this.career.rdFocus) {
+      this.career.rdFocus = 'balanced';
+    }
+    if (!this.career.teammateCollaborationStats) {
+      this.career.teammateCollaborationStats = {
+        totalMoneyContributed: 0,
+        totalTelemetryContributed: 0,
+        upgradesDelivered: 0,
+        lastBreakthrough: null
+      };
+    }
+  }
+
+  // Elabora la collaborazione tecnica ed economica del compagno di squadra dopo ogni weekend
+  processTeammateCollaboration(finishPos = 10) {
+    if (!this.career) return null;
+    this.initRdSystem();
+
+    const tm = this.getCurrentTeammate();
+    const discipline = this.player?.discipline || 'auto';
+    const tmFeedback = tm?.technicalFeedback || tm?.attributes?.technicalFeedback || 65;
+    const tmMarketability = tm?.marketability || tm?.attributes?.marketability || 60;
+    const tmName = tm?.name || db.getDriverName(tm?.id, discipline) || "Compagno di Squadra";
+
+    // 1. Contributo Sponsor Commerciale del Compagno (€)
+    const sponsorMoney = Math.round(5000 + (tmMarketability * 160));
+    this.career.money += sponsorMoney;
+
+    // 2. Dati e Punti Telemetrici R&D (PT) generati dal lavoro in pista e al simulatore
+    const tmTelemetry = Math.round(8 + (tmFeedback * 0.30));
+    const playerFeedback = this.player?.attributes?.technicalFeedback || 60;
+    const playerTelemetry = Math.round(12 + (playerFeedback * 0.35) + (finishPos <= 10 ? 8 : 2));
+    const totalTelemetry = tmTelemetry + playerTelemetry;
+
+    this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + totalTelemetry;
+
+    // 3. Probabilità di Upgrade Autonomo / Breakthrough dal Simulatore da parte del compagno (~25-35%)
+    let breakthrough = null;
+    const breakthroughChance = 0.16 + (tmFeedback / 450);
+    if (Math.random() < breakthroughChance) {
+      const compKeys = Object.keys(RD_SUBCOMPONENTS_CONFIG);
+      const chosenCompKey = compKeys[Math.floor(Math.random() * compKeys.length)];
+      const compCfg = RD_SUBCOMPONENTS_CONFIG[chosenCompKey];
+      const currentLvl = this.career.rdSubComponents[chosenCompKey] || 0;
+
+      if (currentLvl < (compCfg.maxLevel || 5)) {
+        this.career.rdSubComponents[chosenCompKey] = currentLvl + 1;
+        breakthrough = {
+          type: 'component_upgrade',
+          componentName: compCfg.name,
+          deptName: compCfg.deptName,
+          newLevel: currentLvl + 1,
+          message: `Il compagno ${tmName} ha completato una sessione intensiva al simulatore testando con successo: ${compCfg.name} (Livello ${currentLvl + 1})!`
+        };
+      } else {
+        const bonusMoney = 15000;
+        this.career.money += bonusMoney;
+        breakthrough = {
+          type: 'sponsor_bonus',
+          amount: bonusMoney,
+          message: `Il compagno ${tmName} ha chiuso una partnership commerciale esclusiva portando un extra budget di €${bonusMoney.toLocaleString()}!`
+        };
+      }
+
+      if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+      this.career.aiTransferNews.unshift(
+        `🤝 COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
+      );
+    }
+
+    // Aggiorna statistiche cumulative di collaborazione
+    const stats = this.career.teammateCollaborationStats;
+    stats.totalMoneyContributed = (stats.totalMoneyContributed || 0) + sponsorMoney;
+    stats.totalTelemetryContributed = (stats.totalTelemetryContributed || 0) + tmTelemetry;
+    if (breakthrough) {
+      stats.upgradesDelivered = (stats.upgradesDelivered || 0) + 1;
+      stats.lastBreakthrough = breakthrough;
+    }
+
+    return {
+      tmName,
+      sponsorMoney,
+      tmTelemetry,
+      playerTelemetry,
+      totalTelemetry,
+      breakthrough
+    };
   }
 
   // Registra i risultati al termine di un Gran Premio
@@ -802,7 +1257,7 @@ export class CareerEngine {
     // Totale: da 2 a 5 punti abilità per weekend completato!
     let earnedSkillPoints = 0;
     if ((this.player.ovr || 60) < 99) {
-      earnedSkillPoints = 2; // Base garantita per ogni weekend completato
+      earnedSkillPoints = 2;
       if (playerResult) {
         const pos = playerResult.currentPos;
         if (pos <= 10) earnedSkillPoints += 1;
@@ -818,10 +1273,14 @@ export class CareerEngine {
       this.player.unspentSkillPoints = (this.player.unspentSkillPoints || 0) + earnedSkillPoints;
     }
 
+    // Collaborazione Compagno di Squadra: apporto sponsor, punti telemetria e upgrade simulatore
+    const teammateContribution = this.processTeammateCollaboration(playerResult ? playerResult.currentPos : 10);
+
     this.career.lastWeekendRecap = {
       earnedSkillPoints,
       finishPos: playerResult ? playerResult.currentPos : 10,
-      isPole: !!(qualifyingGrid && qualifyingGrid[0]?.isPlayer)
+      isPole: !!(qualifyingGrid && qualifyingGrid[0]?.isPlayer),
+      teammateContribution
     };
 
     // Avanza indice del calendario
@@ -835,7 +1294,8 @@ export class CareerEngine {
       isSeasonEnd,
       nextRaceIndex: this.career.currentRaceIndex,
       earnedSkillPoints,
-      earnedPoints: racePts
+      earnedPoints: racePts,
+      teammateContribution
     };
   }
 
@@ -1377,8 +1837,9 @@ export class CareerEngine {
   acceptContract(offer, durationYears = 1, isNewSeason = false, selectionData = null) {
     const currentContract = this.career.contract || {};
     const yearsLeft = currentContract.yearsLeft || 0;
-    const isChangingTeam = offer.teamId !== this.career.currentTeamId;
+    const previousTeamId = this.career.currentTeamId;
     const previousCategory = this.career.currentCategory;
+    const isChangingTeam = offer.teamId !== previousTeamId;
     let paidBuyout = 0;
 
     // Se è una promozione a fine stagione (isNewSeason) o offerta di promozione, NESSUNA penale rescissoria deve essere addebitata!
@@ -1397,20 +1858,32 @@ export class CareerEngine {
       paidBuyout = buyoutToPay;
     }
 
-    // Se si cambia team o categoria:
-    // 1. Reintegra il pilota precedentemente escluso (benched) nella sua vecchia scuderia
-    const oldBenchedId = this.career.teamBenchedDriverId;
+    // 1. Determina compagno e pilota sostituito nel nuovo team
+    let chosenId = selectionData?.chosenTeammateId || (Array.isArray(selectionData?.chosenTeammateIds) ? selectionData.chosenTeammateIds[0] : null);
+    let repId = selectionData?.replacedDriverId || (Array.isArray(selectionData?.replacedDriverIds) ? selectionData.replacedDriverIds[0] : null);
+
     if (isChangingTeam || previousCategory !== offer.category) {
-      if (oldBenchedId) {
-        if (this.career.freeAgents) {
-          this.career.freeAgents = this.career.freeAgents.filter(fa => fa.driverId !== oldBenchedId);
-        }
-        if (this.career.teamDriverOverrides && this.career.teamDriverOverrides[oldBenchedId] === 'free_agent') {
-          delete this.career.teamDriverOverrides[oldBenchedId];
-        }
+      const categories = this.player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+      const newCat = categories[offer.category];
+      const maxDrivers = newCat?.maxDriversPerTeam || 2;
+      const teamDrivers = (newCat?.roster || []).filter(d => {
+        const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
+        return effTeam === offer.teamId;
+      });
+
+      if (!chosenId && teamDrivers.length > 0) {
+        const sorted = [...teamDrivers].sort((a, b) => (b.ovr || 75) - (a.ovr || 75));
+        chosenId = sorted[0].id;
+        repId = teamDrivers.find(d => d.id !== chosenId)?.id || sorted[sorted.length - 1]?.id;
       }
-      this.career.teamBenchedDriverId = null;
-      this.career.chosenTeammateId = null;
+
+      // Configura la nuova lineup del nuovo team
+      this.setTeamDrivers(offer.teamId, offer.category, chosenId, repId);
+
+      // 2. LA VECCHIA SCUDERIA EFFETTUA MERCATO PER RIMPIAZZARE IL GIOCATORE
+      if (previousTeamId) {
+        this.signMarketReplacementForVacatedSeat(previousTeamId, previousCategory, repId);
+      }
     }
 
     const salary = durationYears === 2 
@@ -1429,33 +1902,17 @@ export class CareerEngine {
       buyoutClause: buyoutClause
     };
 
-    // 2. Configura compagno e pilota sostituito per il nuovo team
-    if (selectionData && (selectionData.chosenTeammateId || selectionData.chosenTeammateIds)) {
-      const chosenId = selectionData.chosenTeammateId || (Array.isArray(selectionData.chosenTeammateIds) ? selectionData.chosenTeammateIds[0] : null);
-      const repId = selectionData.replacedDriverId || (Array.isArray(selectionData.replacedDriverIds) ? selectionData.replacedDriverIds[0] : null);
-      this.setTeamDrivers(offer.teamId, offer.category, chosenId, repId);
-    } else if (isChangingTeam || previousCategory !== offer.category) {
-      const categories = this.player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
-      const newCat = categories[offer.category];
-      const maxDrivers = newCat?.maxDriversPerTeam || 2;
-      const teamDrivers = (newCat?.roster || []).filter(d => {
-        const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
-        return effTeam === offer.teamId;
-      });
-      if (teamDrivers.length >= maxDrivers) {
-        const sorted = [...teamDrivers].sort((a, b) => (b.ovr || 75) - (a.ovr || 75));
-        const chosenTeammate = sorted[0];
-        const toBench = teamDrivers.find(d => d.id !== chosenTeammate.id) || teamDrivers[teamDrivers.length - 1];
-        this.setTeamDrivers(offer.teamId, offer.category, chosenTeammate.id, toBench.id);
-      }
-    }
-
     // Pulisce offerte pendenti memorizzate dopo la firma
     this.career.contractOffers = null;
 
     // Se ha cambiato categoria, azzera gli upgrade della vettura precedente
     if (previousCategory !== offer.category) {
       this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
+      if (this.career.rdSubComponents) {
+        for (const k in this.career.rdSubComponents) {
+          this.career.rdSubComponents[k] = 0;
+        }
+      }
     }
 
     // Se è inizio nuova stagione OPPURE ha cambiato categoria OPPURE le gare erano terminate, ripristina la classifica iniziale e il calendario da Round 1
@@ -1535,6 +1992,7 @@ export class CareerEngine {
       earnedPoints: gpResult.earnedPoints,
       pointsEarned: gpResult.earnedPoints,
       earnedSkillPoints: gpResult.earnedSkillPoints,
+      teammateContribution: gpResult.teammateContribution,
       isSeasonEnd: gpResult.isSeasonEnd
     };
   }
@@ -1565,7 +2023,7 @@ export class CareerEngine {
     };
   }
 
-  // Acquisto Upgrade R&D Vettura/Moto
+  // Acquisto Upgrade R&D Vettura/Moto (Macro Reparto Legacy)
   buyCarUpgrade(dept) {
     const cost = 25000 * ((this.career.carUpgrades[dept] || 0) + 1);
     if (this.career.money < cost) {
@@ -1579,6 +2037,52 @@ export class CareerEngine {
     this.career.carUpgrades[dept] = (this.career.carUpgrades[dept] || 0) + 1;
     this.saveToStorage();
     return { success: true, message: `Aggiornamento R&D ${dept.toUpperCase()} installato con successo!` };
+  }
+
+  // Acquisto Upgrade Sottocomponente R&D Dettagliato
+  buySubComponentUpgrade(compKey) {
+    this.initRdSystem();
+    const cfg = RD_SUBCOMPONENTS_CONFIG[compKey];
+    if (!cfg) {
+      return { success: false, message: "Componente R&D non riconosciuto." };
+    }
+
+    const currentLvl = this.career.rdSubComponents[compKey] || 0;
+    if (currentLvl >= (cfg.maxLevel || 5)) {
+      return { success: false, message: `${cfg.name} è già al massimo livello consentito (${cfg.maxLevel}/5).` };
+    }
+
+    const cost = cfg.baseCost + (currentLvl * cfg.costMult);
+    const ptsCost = cfg.basePoints + (currentLvl * cfg.pointsMult);
+
+    if (this.career.money < cost) {
+      return {
+        success: false,
+        message: `Fondi insufficienti! Richiesti €${cost.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.`
+      };
+    }
+
+    if ((this.career.rdTelemetryPoints || 0) < ptsCost) {
+      return {
+        success: false,
+        message: `Dati telemetrici insufficienti! Richiesti ${ptsCost} Punti Telemetria (PT), disponibili ${this.career.rdTelemetryPoints || 0} PT.`
+      };
+    }
+
+    this.career.money -= cost;
+    this.career.rdTelemetryPoints -= ptsCost;
+    this.career.rdSubComponents[compKey] = currentLvl + 1;
+
+    this.saveToStorage();
+
+    const gainStr = cfg.paceGain > 0 ? `+${cfg.paceGain} Passo Mezzo` : `+${cfg.reliabilityGain}% Affidabilità`;
+    return {
+      success: true,
+      message: `Upgrade installato! ${cfg.name} portato al Livello ${currentLvl + 1} (${gainStr}).`,
+      newLevel: currentLvl + 1,
+      cost,
+      ptsCost
+    };
   }
 
   // Acquisto Upgrade HQ / Stile di vita
@@ -1639,7 +2143,7 @@ export class CareerEngine {
     db.setTeamDevelopment(this.career.teamDevelopment);
   }
 
-  // Sviluppo progressivo delle vetture per i team AI durante la stagione
+  // Sviluppo progressivo e collaborativo delle vetture per i team AI durante la stagione
   developAiCars() {
     if (!this.career) return;
     if (!this.career.teamDevelopment || Object.keys(this.career.teamDevelopment).length === 0) {
@@ -1672,8 +2176,30 @@ export class CareerEngine {
       const teamDev = this.career.teamDevelopment[team.id];
       const paceVal = teamDev.carPace || 75;
       const baseGain = paceVal > 85 ? 0.35 : (paceVal > 78 ? 0.28 : 0.22);
-      const randBonus = Math.random() * 0.2;
-      teamDev.devPoints = (teamDev.devPoints || 0) + baseGain + randBonus;
+      const randBonus = Math.random() * 0.15;
+
+      // Collaborazione Piloti AI: il feedback tecnico e gli sponsor dei piloti accelerano lo sviluppo vettura
+      const teamDrivers = cat.roster.filter(d => {
+        const effTeam = this.career.teamDriverOverrides[d.id] || d.teamId;
+        return effTeam === team.id;
+      });
+
+      let sumFeedback = 0;
+      let sumMarket = 0;
+      teamDrivers.forEach(d => {
+        const aiAttrs = this.career.aiDriverAttributes?.[d.id] || {};
+        sumFeedback += (aiAttrs.technicalFeedback !== undefined ? aiAttrs.technicalFeedback : (d.technicalFeedback || 70));
+        sumMarket += (aiAttrs.marketability !== undefined ? aiAttrs.marketability : (d.marketability || 65));
+      });
+      const dCount = Math.max(1, teamDrivers.length);
+      const avgFeedback = sumFeedback / dCount;
+      const avgMarket = sumMarket / dCount;
+
+      const technicalBonus = (avgFeedback - 70) * 0.005; // Fino a +0.12 per top piloti
+      const sponsorBonus = (avgMarket - 65) * 0.003;     // Fino a +0.08 per piloti famosi
+      const totalGain = Math.max(0.12, baseGain + randBonus + technicalBonus + sponsorBonus);
+
+      teamDev.devPoints = (teamDev.devPoints || 0) + totalGain;
 
       // Al raggiungimento di 1 punto sviluppo: +1 a carPace
       if (teamDev.devPoints >= 1.0) {
@@ -1681,8 +2207,18 @@ export class CareerEngine {
         if (teamDev.carPace < 98) {
           teamDev.carPace += 1;
           teamDev.seasonPaceGain = (teamDev.seasonPaceGain || 0) + 1;
+
+          if (Math.random() < 0.25 && teamDrivers.length > 0) {
+            const teamName = db.getTeamName(team.id, discipline, currentCatKey);
+            const leadDriver = teamDrivers[0];
+            const dName = db.getDriverName(leadDriver.id, discipline);
+            if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+            this.career.aiTransferNews.unshift(
+              `🛠️ R&D PADDOCK: ${teamName} delibera un nuovo pacchetto evolutivo dopo i test condotti da ${dName}!`
+            );
+          }
         }
-        if (Math.random() < 0.30 && teamDev.reliability < 98) {
+        if (Math.random() < 0.35 && teamDev.reliability < 98) {
           teamDev.reliability += 1;
         }
       }
@@ -1851,6 +2387,7 @@ export class CareerEngine {
             };
           }
           this.syncAndReconcileStats();
+          this.initRdSystem();
           // Calcola il roster attivo per prevenire problemi di terzi piloti nei vecchi salvataggi
           this.getActiveRoster();
           // Sincronizza gli attributi AI cresciuti al database per i calcoli di gara

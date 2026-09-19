@@ -41,7 +41,7 @@ export class TeammateSelectionModal {
       top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(4, 6, 12, 0.88);
       backdrop-filter: blur(12px);
-      z-index: 10000;
+      z-index: 100100 !important;
       display: flex;
       align-items: center;
       justify-content: center;
