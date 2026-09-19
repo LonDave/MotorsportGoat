@@ -48,7 +48,7 @@ export class HeaderView {
         <div class="career-header-top">
           <!-- Blocco 1: Brand Logo -->
           <div class="header-brand-block">
-            <div class="logo-area static-brand-logo" id="header-brand-logo">
+            <div class="logo-area clickable-home-logo" id="header-brand-logo" title="Vai alla Dashboard">
               <span class="goat-badge">GOAT</span>
               <span class="logo-title">MOTORSPORT EDITION</span>
             </div>
@@ -182,6 +182,14 @@ export class HeaderView {
   }
 
   static bindCareerHeaderEvents(container, onNavigate, onOpenModManager) {
+    const brandLogo = container.querySelector('#header-brand-logo');
+    if (brandLogo) {
+      brandLogo.onclick = () => {
+        sound.playClick();
+        onNavigate('dashboard');
+      };
+    }
+
     const ovrBubble = container.querySelector('#btn-header-ovr-modal');
     if (ovrBubble) {
       ovrBubble.onclick = () => {

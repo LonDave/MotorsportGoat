@@ -80,14 +80,17 @@ export class MarketView {
                 ${isUnderContract ? `
                   <span class="alert-icon">🔒</span>
                   <div>
-                    <strong>CONTRATTO IN CORSO (${currentContract.yearsLeft} Anno/i Rimanenti)</strong>
-                    <p>Sei vincolato contrattualmente con <strong>${teamDisplayName}</strong>. Se intendi trasferirti in un'altra scuderia prima della scadenza dovrai corrispondere una <strong>penale di rescissione di €${buyoutRequired.toLocaleString()}</strong>.</p>
+                    <strong class="alert-banner-title">CONTRATTO IN CORSO (${currentContract.yearsLeft} ${currentContract.yearsLeft === 1 ? 'Anno Rimanente' : 'Anni Rimanenti'})</strong>
+                    <p>Sei attualmente vincolato alla scuderia <strong>${teamDisplayName}</strong>.${buyoutRequired > 0 
+                      ? ` In caso di trasferimento verso un'altra scuderia prima della naturale scadenza, sarà richiesta una <strong>clausola di rescissione di €${buyoutRequired.toLocaleString()}</strong>.`
+                      : ` Il tuo accordo per questa stagione non prevede penali di rescissione (€0): puoi valutare liberamente altre offerte senza costi di svincolo.`
+                    }</p>
                   </div>
                 ` : `
                   <span class="alert-icon">✨</span>
                   <div>
-                    <strong>PILOTA LIBERO SUL MERCATO (FREE AGENT)</strong>
-                    <p>Il tuo contratto è giunto al termine. Puoi rinnovare o firmare con qualsiasi nuova scuderia a costo zero (€0 penale di rescissione).</p>
+                    <strong class="alert-banner-title">PILOTA LIBERO SUL MERCATO (FREE AGENT)</strong>
+                    <p>Il tuo contratto è giunto al termine. Puoi rinnovare con la tua scuderia o firmare con qualsiasi nuova scuderia a costo zero (€0 penale di rescissione).</p>
                   </div>
                 `}
               </div>
@@ -112,9 +115,9 @@ export class MarketView {
                       <div class="offer-header">
                         <div class="offer-team-title">
                           <span class="team-badge-bullet" style="background:${offer.color || '#888'}; box-shadow: 0 0 8px ${offer.color || '#888'}"></span>
-                          <div>
-                            <strong>${offer.teamName || 'Scuderia'}</strong>
-                            <small class="cat-subtitle">${offer.categoryName || ''} • Competitività Mezzo: ${offer.carPace || 75}/99</small>
+                          <div class="offer-team-info">
+                            <strong class="offer-team-name">${offer.teamName || 'Scuderia'}</strong>
+                            <span class="cat-subtitle">${offer.categoryName || ''} • Competitività Mezzo: <strong>${offer.carPace || 75}/99</strong></span>
                           </div>
                         </div>
                         ${offer.isPromotion 
@@ -137,21 +140,21 @@ export class MarketView {
 
                       <div class="offer-financials">
                         <div class="fin-col">
-                          <span>Stipendio a Gara</span>
+                          <span class="fin-lbl">Stipendio a Gara</span>
                           <strong class="salary-val">€${salary.toLocaleString()}</strong>
                         </div>
                         <div class="fin-col">
-                          <span>Bonus Vittoria</span>
-                          <strong>€${offer.winBonus.toLocaleString()}</strong>
+                          <span class="fin-lbl">Bonus Vittoria</span>
+                          <strong class="bonus-val">€${offer.winBonus.toLocaleString()}</strong>
                         </div>
                         <div class="fin-col">
-                          <span>Ruolo</span>
+                          <span class="fin-lbl">Ruolo nel Team</span>
                           <strong class="role-text">${offer.role}</strong>
                         </div>
                         <div class="fin-col">
-                          <span>Clausola Rescissione</span>
-                          <strong class="${duration === 2 ? 'buyout-tag' : ''}">
-                            ${duration === 2 ? `€${offer.buyoutClause2yr.toLocaleString()}` : 'Nessuna (€0)'}
+                          <span class="fin-lbl">Clausola Rescissione</span>
+                          <strong class="buyout-val ${duration === 2 ? 'buyout-tag' : ''}">
+                            ${duration === 2 ? `€${(offer.buyoutClause2yr || 15000).toLocaleString()}` : 'Nessuna (€0)'}
                           </strong>
                         </div>
                       </div>

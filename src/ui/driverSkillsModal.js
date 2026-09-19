@@ -26,7 +26,7 @@ export class DriverSkillsModal {
       fitness: 0
     };
 
-    let availablePoints = player.unspentSkillPoints || 0;
+    let availablePoints = player.ovr >= 99 ? 0 : (player.unspentSkillPoints || 0);
     const initialOvr = player.ovr;
 
     const modalOverlay = document.createElement('div');
@@ -45,8 +45,8 @@ export class DriverSkillsModal {
 
     const renderContent = () => {
       const totalDraftSpent = Object.values(draftAllocations).reduce((sum, v) => sum + v, 0);
-      const remainingPoints = availablePoints - totalDraftSpent;
-      const previewOvr = career.previewOvrWithAllocations(draftAllocations);
+      const remainingPoints = initialOvr >= 99 ? 0 : Math.max(0, availablePoints - totalDraftSpent);
+      const previewOvr = initialOvr >= 99 ? 99 : career.previewOvrWithAllocations(draftAllocations);
       const ovrDelta = previewOvr - initialOvr;
 
       modalOverlay.innerHTML = `
@@ -54,14 +54,14 @@ export class DriverSkillsModal {
           <!-- HEADER MODAL -->
           <div class="modal-card-header skills-modal-header">
             <div class="header-titles">
-              <span class="modal-badge gold">
-                ${isPostWeekend ? '🏁 WEEKEND COMPLETATO • SVILUPPO PILOTA' : '⚡ SCHEDA OVR & ABILITÀ PILOTA'}
+              <span class="modal-badge ${initialOvr >= 99 ? 'gold' : ''}">
+                ${initialOvr >= 99 ? '👑 PILOTA LEGGENDARIO • CAP 99 OVR RAGGIUNTO' : (isPostWeekend ? '🏁 WEEKEND COMPLETATO • SVILUPPO PILOTA' : '⚡ SCHEDA OVR & ABILITÀ PILOTA')}
               </span>
               <h2 class="skills-modal-title">
                 ${player.firstName} ${player.lastName} (${player.age} Anni)
               </h2>
               <small class="skills-modal-subtitle">
-                Distribuisci i Punti Abilità per far crescere il tuo pilota curva dopo curva.
+                ${initialOvr >= 99 ? 'Hai raggiunto il livello massimo assoluto nel motorsport (99 OVR).' : 'Distribuisci i Punti Abilità per far crescere il tuo pilota curva dopo curva.'}
               </small>
             </div>
             <button id="btn-close-skills-modal" class="modal-close-icon" title="Chiudi finestra">✕</button>
@@ -80,11 +80,11 @@ export class DriverSkillsModal {
                 <small class="ovr-peak-tag">Picco Massimo Raggiunto: <strong>${career.career?.stats?.peakOvr || initialOvr} OVR</strong></small>
               </div>
 
-              <div class="skill-points-counter-box ${remainingPoints > 0 ? 'pulse-border' : ''}">
+              <div class="skill-points-counter-box ${initialOvr >= 99 ? 'gold-border' : (remainingPoints > 0 ? 'pulse-border' : '')}">
                 <span class="pts-lbl">PUNTI ABILITÀ DISPONIBILI</span>
-                <strong class="pts-val">${remainingPoints} ⭐</strong>
+                <strong class="pts-val">${initialOvr >= 99 ? 'CAP 99 OVR 👑' : `${remainingPoints} ⭐`}</strong>
                 <small class="pts-hint">
-                  ${remainingPoints > 0 ? 'Clicca [+] sugli attributi per assegnarli' : 'Guadagna nuovi punti completando i GP'}
+                  ${initialOvr >= 99 ? 'Livello massimo raggiunto! Sei al vertice assoluto.' : (remainingPoints > 0 ? 'Clicca [+] sugli attributi per assegnarli' : 'Guadagna nuovi punti completando i GP')}
                 </small>
               </div>
             </div>
@@ -101,7 +101,7 @@ export class DriverSkillsModal {
                 const baseVal = Math.round(player.attributes[attr.key] || 50);
                 const addedVal = draftAllocations[attr.key] || 0;
                 const totalVal = baseVal + addedVal;
-                const canAdd = remainingPoints > 0 && totalVal < 99;
+                const canAdd = initialOvr < 99 && previewOvr < 99 && remainingPoints > 0 && totalVal < 99;
                 const canRemove = addedVal > 0;
 
                 return `
@@ -155,7 +155,7 @@ export class DriverSkillsModal {
       modalOverlay.querySelectorAll('.btn-plus').forEach(btn => {
         btn.onclick = () => {
           const key = btn.dataset.key;
-          if (remainingPoints > 0 && (player.attributes[key] + draftAllocations[key]) < 99) {
+          if (initialOvr < 99 && remainingPoints > 0 && (player.attributes[key] + draftAllocations[key]) < 99) {
             sound.playClick();
             draftAllocations[key]++;
             renderContent();

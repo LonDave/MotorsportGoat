@@ -99,7 +99,7 @@ export class ToastNotification {
     this.init();
 
     const overlay = document.createElement('div');
-    overlay.className = 'in-game-modal-overlay';
+    overlay.className = 'in-game-modal-overlay confirmation-dialog-overlay';
 
     overlay.innerHTML = `
       <div class="in-game-modal-card">
@@ -117,7 +117,7 @@ export class ToastNotification {
       </div>
     `;
 
-    this.modalContainer.appendChild(overlay);
+    document.body.appendChild(overlay);
     sound.playRadioBeep();
 
     requestAnimationFrame(() => {
@@ -126,11 +126,13 @@ export class ToastNotification {
 
     const closeModal = (callback) => {
       overlay.classList.remove('modal-visible');
+      if (callback) {
+        try { callback(); } catch (e) { console.error(e); }
+      }
       setTimeout(() => {
         if (overlay.parentElement) {
           overlay.parentElement.removeChild(overlay);
         }
-        if (callback) callback();
       }, 250);
     };
 

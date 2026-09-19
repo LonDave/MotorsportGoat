@@ -968,7 +968,7 @@ export class WeekendView {
               </button>
             ` : `
               <button id="btn-proceed-podium" class="speed-ctrl-btn podium pulse-glow">
-                <span>VAI AL PODIO & PREMIAZIONI 🏆</span>
+                <span>${session.type === 'sprint' ? 'COMPLETA SPRINT & AVANZA ➔' : 'VAI AL PODIO & PREMIAZIONI 🏆'}</span>
               </button>
             `}
           </div>
@@ -1305,6 +1305,9 @@ export class WeekendView {
     if (proceedPodiumBtn) {
       proceedPodiumBtn.onclick = () => {
         sound.playChequeredFlag();
+        if (session.type === 'sprint') {
+          state.sprintResults = state.raceState;
+        }
         state.currentSessionIndex++;
         nextPhase();
       };
@@ -1342,8 +1345,8 @@ export class WeekendView {
     const isPodium = pos <= 3;
     const isPoints = pos <= 10;
 
-    // Registra i risultati ufficiali nella carriera globale
-    const gpResult = career.recordGrandPrixResults(state.qualifyingState?.grid || state.qualifyingGrid, race);
+    // Registra i risultati ufficiali nella carriera globale con sprint inclusa
+    const gpResult = career.recordGrandPrixResults(state.qualifyingState?.grid || state.qualifyingGrid, race, state.sprintResults);
     const earnedSkillPts = gpResult?.earnedSkillPoints || career.career.lastWeekendRecap?.earnedSkillPoints || 1;
 
     const top3 = race.drivers.filter(d => d.status !== 'DNF').slice(0, 3);

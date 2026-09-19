@@ -70,7 +70,7 @@ export class LifestyleView {
                       ${alreadyOwned ? `
                         <span class="owned-badge">POSSEDUTO ✅</span>
                       ` : `
-                        <button class="buy-luxury-btn" data-item='${JSON.stringify(item)}'>
+                        <button class="buy-luxury-btn" data-item-id="${item.id}">
                           ACQUISTA
                         </button>
                       `}
@@ -107,7 +107,9 @@ export class LifestyleView {
 
     container.querySelectorAll('.buy-luxury-btn').forEach(btn => {
       btn.onclick = () => {
-        const item = JSON.parse(btn.dataset.item);
+        const itemId = btn.dataset.itemId;
+        const item = luxuryCatalog.find(i => i.id === itemId);
+        if (!item) return;
         const res = career.buyLifestyleItem(item);
         if (res.success) {
           sound.playChequeredFlag();

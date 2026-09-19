@@ -3,6 +3,7 @@ import { MOTO_CATEGORIES } from '../data/motoDatabase.js';
 import { CIRCUITS_DATA } from '../data/circuitsDatabase.js';
 import { db } from '../data/databaseManager.js';
 import { GoatScorer } from './goatScorer.js';
+import { RaceEngine } from './raceEngine.js';
 
 // Profili di Background con statistiche di partenza ribassate, realistiche ed equilibrate
 export const BACKGROUND_PROFILES = {
@@ -167,7 +168,8 @@ export class CareerEngine {
         startYear: 2026,
         currentYear: 2026,
         specialWins: {},
-        teammateBeatenCount: 0
+        teammateBeatenCount: 0,
+        byCategory: {}
       },
       carUpgrades: { aero: 0, engine: 0, chassis: 0, reliability: 0 },
       hqUpgrades: { simulatorLevel: 0, gymLevel: 0, prAgencyLevel: 0, telemetryCoachLevel: 0 },
@@ -189,7 +191,111 @@ export class CareerEngine {
       (attrs.consistency * 0.14) +
       (attrs.wetSkill * 0.10) +
       (attrs.technicalFeedback * 0.10);
-    return Math.round(total);
+    return Math.min(99, Math.round(total));
+  }
+
+  // Ottiene o inizializza le statistiche suddivise per categoria
+  getCategoryStats(catKey = null) {
+    const key = catKey || this.career?.currentCategory;
+    if (!this.career || !this.career.stats) {
+      return { racesStarted: 0, wins: 0, podiums: 0, poles: 0, worldTitles: 0 };
+    }
+    if (!this.career.stats.byCategory) {
+      this.career.stats.byCategory = {};
+    }
+    if (!this.career.stats.byCategory[key]) {
+      this.career.stats.byCategory[key] = {
+        racesStarted: 0,
+        wins: 0,
+        podiums: 0,
+        poles: 0,
+        worldTitles: 0
+      };
+    }
+    return this.career.stats.byCategory[key];
+  }
+
+  // Sincronizza e riconcilia le statistiche complessive e suddivise per categoria
+  syncAndReconcileStats() {
+    if (!this.career || !this.career.stats) return;
+    const stats = this.career.stats;
+    if (!stats.byCategory) {
+      stats.byCategory = {};
+    }
+
+    const discipline = this.player?.discipline || 'auto';
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    Object.keys(categories).forEach(catKey => {
+      if (!stats.byCategory[catKey]) {
+        stats.byCategory[catKey] = { racesStarted: 0, wins: 0, podiums: 0, poles: 0, worldTitles: 0 };
+      }
+    });
+
+    // 1. Se ci sono stagioni storiche (history), verifica che i titoli e vittorie registrati siano presenti
+    if (Array.isArray(this.career.history) && this.career.history.length > 0) {
+      this.career.history.forEach(h => {
+        const catKey = h.category;
+        if (catKey && stats.byCategory[catKey]) {
+          const s = stats.byCategory[catKey];
+          if (h.playerPos === 1 && (!s.worldTitles || s.worldTitles === 0)) {
+            s.worldTitles = Math.max(s.worldTitles || 0, 1);
+          }
+        }
+      });
+    }
+
+    // 2. Calcola le somme attuali per categoria
+    let sumTitles = 0, sumWins = 0, sumPodiums = 0, sumPoles = 0, sumRaces = 0;
+    Object.values(stats.byCategory).forEach(c => {
+      sumTitles += (c.worldTitles || 0);
+      sumWins += (c.wins || 0);
+      sumPodiums += (c.podiums || 0);
+      sumPoles += (c.poles || 0);
+      sumRaces += (c.racesStarted || 0);
+    });
+
+    // 3. Riconciliazione discrepanze con la categoria appropriata
+    const diffTitles = Math.max(0, (stats.worldTitles || 0) - sumTitles);
+    const diffWins = Math.max(0, (stats.wins || 0) - sumWins);
+    const diffPodiums = Math.max(0, (stats.podiums || 0) - sumPodiums);
+    const diffPoles = Math.max(0, (stats.poles || 0) - sumPoles);
+    const diffRaces = Math.max(0, (stats.racesStarted || 0) - sumRaces);
+
+    if (diffTitles > 0 || diffWins > 0 || diffPodiums > 0 || diffPoles > 0 || diffRaces > 0) {
+      let targetCat = 'auto_f4';
+      if (Array.isArray(this.career.history) && this.career.history.length > 0) {
+        const lastHist = this.career.history[this.career.history.length - 1];
+        if (lastHist && lastHist.category && stats.byCategory[lastHist.category]) {
+          targetCat = lastHist.category;
+        }
+      }
+      if (!stats.byCategory[targetCat]) {
+        targetCat = this.career.currentCategory || (discipline === 'auto' ? 'auto_f4' : 'moto_3');
+      }
+
+      const target = stats.byCategory[targetCat];
+      target.worldTitles = (target.worldTitles || 0) + diffTitles;
+      target.wins = (target.wins || 0) + diffWins;
+      target.podiums = (target.podiums || 0) + diffPodiums;
+      target.poles = (target.poles || 0) + diffPoles;
+      target.racesStarted = (target.racesStarted || 0) + diffRaces;
+    }
+
+    // 4. Allinea perfettamente i totali globali alla somma esatta di tutte le categorie
+    let finalTitles = 0, finalWins = 0, finalPodiums = 0, finalPoles = 0, finalRaces = 0;
+    Object.values(stats.byCategory).forEach(c => {
+      finalTitles += (c.worldTitles || 0);
+      finalWins += (c.wins || 0);
+      finalPodiums += (c.podiums || 0);
+      finalPoles += (c.poles || 0);
+      finalRaces += (c.racesStarted || 0);
+    });
+
+    stats.worldTitles = finalTitles;
+    stats.wins = finalWins;
+    stats.podiums = finalPodiums;
+    stats.poles = finalPoles;
+    stats.racesStarted = finalRaces;
   }
 
   // Inizializza la classifica piloti e team all'inizio di ogni stagione
@@ -281,24 +387,45 @@ export class CareerEngine {
   recordGrandPrixResults(qualifyingGrid, raceResults, sprintResults = null) {
     const stats = this.career.stats;
     const currentCircuit = this.getNextCircuit();
+    const currentCatKey = this.career.currentCategory;
+    const catStats = this.getCategoryStats(currentCatKey);
 
-    // Pole position
-    if (qualifyingGrid && qualifyingGrid[0]?.isPlayer) {
-      stats.poles++;
+    // Pole position (aggiorna sia statistiche globali/categoria che classifica piloti ufficiale)
+    if (qualifyingGrid && qualifyingGrid.length > 0) {
+      const poleDriver = qualifyingGrid[0];
+      const isPlayerPole = !!(poleDriver.isPlayer || poleDriver.driverId === 'player');
+      const poleDriverId = isPlayerPole ? "player" : (poleDriver.driverId || poleDriver.id);
+      
+      let poleEntry = this.career.standings.drivers.find(d => d.driverId === poleDriverId || (isPlayerPole && d.isPlayer));
+      if (!poleEntry) {
+        poleEntry = { driverId: poleDriverId, points: 0, wins: 0, podiums: 0, poles: 0, isPlayer: isPlayerPole };
+        this.career.standings.drivers.push(poleEntry);
+      }
+      poleEntry.poles = (poleEntry.poles || 0) + 1;
+
+      if (isPlayerPole) {
+        stats.poles++;
+        catStats.poles = (catStats.poles || 0) + 1;
+      }
     }
 
     // Risultato gara principale
     const playerResult = raceResults.drivers.find(d => d.isPlayer);
     if (playerResult) {
       stats.racesStarted++;
+      catStats.racesStarted = (catStats.racesStarted || 0) + 1;
       const pos = playerResult.currentPos;
       if (pos === 1) {
         stats.wins++;
+        catStats.wins = (catStats.wins || 0) + 1;
         if (currentCircuit) {
           stats.specialWins[currentCircuit.id] = (stats.specialWins[currentCircuit.id] || 0) + 1;
         }
       }
-      if (pos <= 3) stats.podiums++;
+      if (pos <= 3) {
+        stats.podiums++;
+        catStats.podiums = (catStats.podiums || 0) + 1;
+      }
 
       // Punti gara
       const racePts = raceResults.isSprint ? 0 : this.getPointsForPosition(pos);
@@ -308,9 +435,9 @@ export class CareerEngine {
       this.addTeamPoints(this.career.currentTeamId, racePts);
 
       // Assegna stipendio e premi gara
-      let earnings = this.career.contract.salaryPerRace || 5000;
-      if (pos === 1) earnings += (this.career.contract.winBonus || 10000);
-      else if (pos <= 3) earnings += Math.round((this.career.contract.winBonus || 10000) * 0.4);
+      let earnings = this.career.contract?.salaryPerRace || 5000;
+      if (pos === 1) earnings += (this.career.contract?.winBonus || 10000);
+      else if (pos <= 3) earnings += Math.round((this.career.contract?.winBonus || 10000) * 0.4);
 
       this.career.money += earnings;
       stats.careerEarnings += earnings;
@@ -341,15 +468,26 @@ export class CareerEngine {
     // Crescita organica e calcolo Punti Abilità Pilota guadagnati nel weekend
     this.progressPlayerAttributes(playerResult ? playerResult.currentPos : 10);
 
-    let earnedSkillPoints = 1; // +1 Base per aver completato il Gran Premio
-    if (playerResult) {
-      const pos = playerResult.currentPos;
-      if (pos <= 10) earnedSkillPoints += 1; // +1 per arrivo a punti
-      if (pos <= 3) earnedSkillPoints += 1;  // +1 per podio / vittoria
-      if (qualifyingGrid && qualifyingGrid[0]?.isPlayer) earnedSkillPoints += 1; // +1 per Pole Position
+    // Calcolo punti abilità: se il pilota ha già raggiunto 99 OVR, nessun punto ulteriore!
+    let earnedSkillPoints = 0;
+    if ((this.player.ovr || 60) < 99) {
+      if (playerResult) {
+        const pos = playerResult.currentPos;
+        if (pos <= 3) {
+          earnedSkillPoints = 1; // 1 punto per podio o vittoria
+        } else if (pos <= 10 && Math.random() < 0.5) {
+          earnedSkillPoints = 1; // 50% di probabilità per arrivo a punti regolare
+        }
+      }
     }
 
-    this.player.unspentSkillPoints = (this.player.unspentSkillPoints || 0) + earnedSkillPoints;
+    if ((this.player.ovr || 60) >= 99) {
+      this.player.unspentSkillPoints = 0;
+      earnedSkillPoints = 0;
+    } else {
+      this.player.unspentSkillPoints = (this.player.unspentSkillPoints || 0) + earnedSkillPoints;
+    }
+
     this.career.lastWeekendRecap = {
       earnedSkillPoints,
       finishPos: playerResult ? playerResult.currentPos : 10,
@@ -359,13 +497,15 @@ export class CareerEngine {
     // Avanza indice del calendario
     this.career.currentRaceIndex++;
     const catData = this.getCurrentCategoryData();
-    const isSeasonEnd = this.career.currentRaceIndex >= catData.calendar.length;
+    const isSeasonEnd = this.career.currentRaceIndex >= (catData?.calendar?.length || 1);
 
     this.saveToStorage();
+    const racePts = playerResult ? (raceResults.isSprint ? 0 : this.getPointsForPosition(playerResult.currentPos)) : 0;
     return {
       isSeasonEnd,
       nextRaceIndex: this.career.currentRaceIndex,
-      earnedSkillPoints
+      earnedSkillPoints,
+      earnedPoints: racePts
     };
   }
 
@@ -397,63 +537,105 @@ export class CareerEngine {
     }
   }
 
-  // Crescita organica del pilota a fine gara parametrata sull'età e sulle prestazioni
+  // Crescita organica del pilota a fine gara: calibrata in modo progressivo e bloccata a 99 OVR
   progressPlayerAttributes(finishPos) {
+    if ((this.player.ovr || 60) >= 99) {
+      this.player.ovr = 99;
+      this.player.unspentSkillPoints = 0;
+      return;
+    }
+
     const attrs = this.player.attributes;
     const hq = this.career.hqUpgrades || {};
     const age = this.player.age;
 
-    // 1. Curva di crescita anagrafica:
-    // - 16-22 anni (Rookie / Sviluppo rapido): elasticità massima (1.4x -> 1.05x)
-    // - 23-28 anni (Prime): consolidamento prestazionale (1.0x -> 0.7x)
-    // - 29-33 anni (Maturità): crescita rallentata e stabile (0.45x -> 0.2x)
-    // - 34+ anni (Fase avanzata/declino): i riflessi non crescono più in modo spontaneo (0.05x)
+    // 1. Curva di crescita anagrafica bilanciata e progressiva:
     let growthRate = 1.0;
     if (age <= 22) {
-      growthRate = 1.4 - (age - 16) * 0.05;
+      growthRate = 1.0 - (age - 16) * 0.04;
     } else if (age <= 28) {
-      growthRate = 1.0 - (age - 23) * 0.06;
+      growthRate = 0.75 - (age - 23) * 0.05;
     } else if (age <= 33) {
-      growthRate = 0.5 - (age - 29) * 0.06;
+      growthRate = 0.4 - (age - 29) * 0.05;
     } else {
-      growthRate = Math.max(0.05, 0.2 - (age - 34) * 0.03);
+      growthRate = Math.max(0.02, 0.15 - (age - 34) * 0.02);
     }
 
-    // Supporto delle infrastrutture HQ (simulatore e palestra)
-    const simBoost = (hq.simulatorLevel || 0) * 0.03;
-    const gymBoost = (hq.gymLevel || 0) * 0.03;
+    // Supporto delle infrastrutture HQ
+    const simBoost = (hq.simulatorLevel || 0) * 0.01;
+    const gymBoost = (hq.gymLevel || 0) * 0.01;
 
-    // Passo sul giro e qualifica (cresce con la giovane età e col simulatore)
-    const paceGain = (0.10 * growthRate) + simBoost;
+    // Passo sul giro (crescita graduale ~0.03/gara max)
+    const paceGain = (0.03 * growthRate) + simBoost;
     attrs.pace = Math.min(99, Number((attrs.pace + paceGain).toFixed(2)));
 
-    // Forma fisica (cresce fino ai 28-30 anni con palestra)
+    // Forma fisica
     if (age <= 30) {
-      const fitnessGain = (0.08 * growthRate) + gymBoost;
+      const fitnessGain = (0.025 * growthRate) + gymBoost;
       attrs.fitness = Math.min(99, Number((attrs.fitness + fitnessGain).toFixed(2)));
     }
 
-    // Battaglie e staccate: premiate se si chiude a ridosso del vertice
-    let racecraftGain = 0.05 * growthRate;
+    // Racecraft nei duelli
+    let racecraftGain = 0.02 * growthRate;
     if (finishPos <= 3) {
-      racecraftGain += 0.14;
-      attrs.marketability = Math.min(99, Number((attrs.marketability + 0.3).toFixed(2)));
-    } else if (finishPos <= 8) {
-      racecraftGain += 0.07;
+      racecraftGain += 0.04;
       attrs.marketability = Math.min(99, Number((attrs.marketability + 0.1).toFixed(2)));
+    } else if (finishPos <= 8) {
+      racecraftGain += 0.02;
     }
     attrs.racecraft = Math.min(99, Number((attrs.racecraft + racecraftGain).toFixed(2)));
 
-    // Gestione gomme e costanza maturano naturalmente con l'esperienza di gara
-    const tyreGain = 0.07 * Math.min(1.2, 0.6 + (age - 16) * 0.04);
+    // Gomme e costanza
+    const tyreGain = 0.025 * Math.min(1.0, 0.5 + (age - 16) * 0.03);
     attrs.tyreMgmt = Math.min(99, Number((attrs.tyreMgmt + tyreGain).toFixed(2)));
 
-    const constGain = 0.06 * Math.min(1.2, 0.6 + (age - 16) * 0.04);
+    const constGain = 0.02 * Math.min(1.0, 0.5 + (age - 16) * 0.03);
     attrs.consistency = Math.min(99, Number((attrs.consistency + constGain).toFixed(2)));
 
-    // Ricalcola OVR pilota e aggiorna picco storico (Prime OVR)
-    this.player.ovr = this.calculateOvr(attrs);
-    if (this.player.ovr > this.career.stats.peakOvr) {
+    // Ricalcola OVR pilota e applica tetto massimo a 99
+    this.player.ovr = Math.min(99, this.calculateOvr(attrs));
+    if (this.player.ovr >= 99) {
+      this.player.ovr = 99;
+      this.player.unspentSkillPoints = 0;
+    }
+    if (this.player.ovr > (this.career.stats.peakOvr || 0)) {
+      this.career.stats.peakOvr = this.player.ovr;
+    }
+  }
+
+  // Auto-crescita dei punti pilota durante la simulazione rapida (non richiede modale manuale)
+  autoGrowDriverAttributes() {
+    if ((this.player.ovr || 60) >= 99) {
+      this.player.ovr = 99;
+      this.player.unspentSkillPoints = 0;
+      return;
+    }
+
+    const available = this.player.unspentSkillPoints || 0;
+    if (available <= 0) return;
+
+    const coreKeys = ['pace', 'racecraft', 'tyreMgmt', 'consistency', 'wetSkill', 'technicalFeedback'];
+    let remaining = available;
+
+    while (remaining > 0) {
+      // Trova l'attributo attualmente più basso tra i principali (sotto 99)
+      const sorted = coreKeys
+        .filter(k => (this.player.attributes[k] || 60) < 99)
+        .sort((a, b) => (this.player.attributes[a] || 60) - (this.player.attributes[b] || 60));
+
+      if (sorted.length === 0) break;
+      const target = sorted[0];
+      this.player.attributes[target] = Math.min(99, (this.player.attributes[target] || 60) + 1);
+      remaining--;
+    }
+
+    this.player.unspentSkillPoints = remaining;
+    this.player.ovr = Math.min(99, this.calculateOvr(this.player.attributes));
+    if (this.player.ovr >= 99) {
+      this.player.ovr = 99;
+      this.player.unspentSkillPoints = 0;
+    }
+    if (this.player.ovr > (this.career.stats.peakOvr || 0)) {
       this.career.stats.peakOvr = this.player.ovr;
     }
   }
@@ -595,9 +777,21 @@ export class CareerEngine {
     const champion = this.career.standings.drivers[0];
     const isPlayerChampion = champion && champion.isPlayer;
 
+    const playerStandingIndex = this.career.standings.drivers.findIndex(d => d.isPlayer);
+    const playerPos = playerStandingIndex >= 0 ? playerStandingIndex + 1 : 10;
+    const baseLicensePts = catData?.licensePointsAwarded || 30;
+
     if (isPlayerChampion) {
       this.career.stats.worldTitles++;
-      this.career.licensePoints += catData.licensePointsAwarded || 30;
+      const catStats = this.getCategoryStats(this.career.currentCategory);
+      catStats.worldTitles = (catStats.worldTitles || 0) + 1;
+      this.career.licensePoints += baseLicensePts;
+    } else if (playerPos === 2) {
+      this.career.licensePoints += Math.round(baseLicensePts * 0.75);
+    } else if (playerPos === 3) {
+      this.career.licensePoints += Math.round(baseLicensePts * 0.5);
+    } else if (playerPos <= 5) {
+      this.career.licensePoints += Math.round(baseLicensePts * 0.25);
     }
 
     // Confronto col compagno di squadra
@@ -777,7 +971,8 @@ export class CareerEngine {
       const isChamp = this.career.history?.some(h => h.category === currentCatKey && h.playerPos === 1);
       const targetScale = getCategoryScale(targetCatKey);
 
-      if (meetsAge && (playerOvr >= 70 || isChamp || this.career.licensePoints >= 15)) {
+      const isTop3 = this.career.history?.some(h => h.category === currentCatKey && h.playerPos <= 3);
+      if (meetsAge && (playerOvr >= 67 || isChamp || isTop3 || this.career.licensePoints >= 8)) {
         const teamIndex = isChamp ? 0 : Math.min(1, targetCat.teams.length - 1);
         const promoTeam = targetCat.teams[teamIndex] || targetCat.teams[0];
         const pace = promoTeam.carPace || promoTeam.bikePace || 80;
@@ -819,6 +1014,7 @@ export class CareerEngine {
 
     // Reset rigoroso del calendario per la nuova stagione e azzeramento classifiche
     this.career.currentRaceIndex = 0;
+    this.career.contractOffers = null;
     this.initSeasonStandings();
 
     // Rimuovi lo stato offseason pendente
@@ -828,20 +1024,23 @@ export class CareerEngine {
     return { success: true, newContract: this.career.contract };
   }
 
-  // Accetta una proposta di contratto con durata (1 o 2 anni) e verifica clausola rescissoria
+  // Accetta una proposta di contratto (con o senza promozione)
   acceptContract(offer, durationYears = 1, isNewSeason = false) {
     const currentContract = this.career.contract || {};
     const yearsLeft = currentContract.yearsLeft || 0;
     const isChangingTeam = offer.teamId !== this.career.currentTeamId;
     let paidBuyout = 0;
 
-    // Se ha ancora anni di contratto in essere e cambia scuderia, paga la penale!
-    if (isChangingTeam && yearsLeft > 0 && currentContract.buyoutClause > 0) {
+    // Se è una promozione a fine stagione (isNewSeason) o offerta di promozione, NESSUNA penale rescissoria deve essere addebitata!
+    const isPromo = !!offer.isPromotion;
+    const shouldChargeBuyout = isChangingTeam && !isNewSeason && !isPromo && yearsLeft > 0 && currentContract.buyoutClause > 0;
+
+    if (shouldChargeBuyout) {
       const buyoutToPay = currentContract.buyoutClause;
       if (this.career.money < buyoutToPay) {
         return {
           success: false,
-          reason: `Fondi insufficienti! La rescissione anticipata del contratto con il tuo team richiede una penale di €${buyoutToPay.toLocaleString()}. Disponi di €${this.career.money.toLocaleString()}.`
+          reason: `Fondi insufficienti! La rescissione anticipata del contratto richiede una penale di €${buyoutToPay.toLocaleString()}. Disponi di €${this.career.money.toLocaleString()}.`
         };
       }
       this.career.money -= buyoutToPay;
@@ -865,6 +1064,14 @@ export class CareerEngine {
       buyoutClause: buyoutClause
     };
 
+    // Pulisce offerte pendenti memorizzate dopo la firma
+    this.career.contractOffers = null;
+
+    // Se ha cambiato categoria, azzera gli upgrade della vettura precedente
+    if (previousCategory !== offer.category) {
+      this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
+    }
+
     // Se è inizio nuova stagione OPPURE ha cambiato categoria OPPURE le gare erano terminate, ripristina la classifica iniziale e il calendario da Round 1
     const catData = this.getCurrentCategoryData();
     const totalRaces = catData?.calendar?.length || 1;
@@ -878,6 +1085,96 @@ export class CareerEngine {
       success: true,
       paidBuyout,
       newContract: this.career.contract
+    };
+  }
+
+  // Simula un singolo weekend di gara (veloce)
+  simulateSingleWeekend(tactics = null, autoGrow = true) {
+    const circuit = this.getNextCircuit();
+    const catData = this.getCurrentCategoryData();
+    if (!circuit || !catData || this.career.currentRaceIndex >= catData.calendar.length) {
+      return { isSeasonEnd: true };
+    }
+
+    const player = this.player;
+    const team = this.getPlayerTeam();
+    const isReal = db.isRealNames;
+    const defaultTactics = tactics || {
+      paceMode: 'BALANCED',
+      powerMode: 'STANDARD',
+      boxThisLap: false,
+      newCompound: 'HARD'
+    };
+
+    // 1. Simula Qualifiche
+    const qualy = RaceEngine.initQualifyingState(circuit, catData, catData.roster, player, team, 0.2, player.discipline);
+    RaceEngine.fastForwardQualifyingToEnd(qualy, player, team, circuit, player.discipline);
+    const qualyGrid = qualy.grid;
+
+    // 2. Eventuale Gara Sprint (se prevista dalla categoria/circuito)
+    const hasSprint = catData.weekendFormat?.hasSprint || (catData.sprintCircuits && catData.sprintCircuits.includes(circuit.id));
+    let sprintResults = null;
+    if (hasSprint) {
+      const sprintState = RaceEngine.initRaceState(qualyGrid, circuit, catData, true, player.discipline, null, player);
+      RaceEngine.fastForwardToEnd(sprintState, defaultTactics, player.discipline);
+      sprintResults = sprintState;
+    }
+
+    // 3. Gara Principale
+    const raceState = RaceEngine.initRaceState(qualyGrid, circuit, catData, false, player.discipline, null, player);
+    RaceEngine.fastForwardToEnd(raceState, defaultTactics, player.discipline);
+
+    // 4. Registra risultati ufficiali
+    const gpResult = this.recordGrandPrixResults(qualyGrid, raceState, sprintResults);
+
+    // 5. Crescita automatica attributi in simulazione
+    if (autoGrow) {
+      this.autoGrowDriverAttributes();
+    }
+
+    const playerDriver = raceState.drivers.find(d => d.isPlayer);
+    const finishPos = playerDriver ? playerDriver.currentPos : 10;
+    const isPole = !!(qualyGrid && qualyGrid[0]?.isPlayer);
+
+    return {
+      success: true,
+      circuit,
+      circuitName: circuit ? circuit.displayName : "Gran Premio",
+      finishPos,
+      playerPos: finishPos,
+      isWin: finishPos === 1,
+      isPodium: finishPos <= 3,
+      isPole,
+      earnedPoints: gpResult.earnedPoints,
+      pointsEarned: gpResult.earnedPoints,
+      earnedSkillPoints: gpResult.earnedSkillPoints,
+      isSeasonEnd: gpResult.isSeasonEnd
+    };
+  }
+
+  // Simula l'intera stagione rimanente fino al termine del calendario
+  simulateFullSeason(autoGrow = true) {
+    const catData = this.getCurrentCategoryData();
+    const results = [];
+    let isSeasonEnd = this.career.currentRaceIndex >= (catData?.calendar?.length || 1);
+
+    while (!isSeasonEnd) {
+      const res = this.simulateSingleWeekend(null, autoGrow);
+      results.push(res);
+      isSeasonEnd = res.isSeasonEnd;
+    }
+
+    this.saveToStorage();
+    const playerRank = this.career.standings.drivers.findIndex(d => d.isPlayer) + 1;
+    return {
+      success: true,
+      totalRacesSimulated: results.length,
+      racesSimulated: results.length,
+      results,
+      playerStanding: this.career.standings.drivers.find(d => d.isPlayer),
+      playerRank,
+      finalPlayerRank: playerRank,
+      isChampion: this.career.standings.drivers[0]?.isPlayer
     };
   }
 
@@ -947,6 +1244,7 @@ export class CareerEngine {
   saveToStorage() {
     try {
       if (typeof localStorage === 'undefined') return;
+      this.syncAndReconcileStats();
       const data = {
         player: this.player,
         career: this.career
@@ -968,13 +1266,20 @@ export class CareerEngine {
         if (this.player && this.player.unspentSkillPoints === undefined) {
           this.player.unspentSkillPoints = 0;
         }
-        if (this.career && this.career.contract) {
-          if (this.career.contract.durationYears === undefined) {
-            this.career.contract.durationYears = this.career.contract.yearsLeft || 1;
+        if (this.career) {
+          if (!this.career.stats) this.career.stats = {};
+          if (!this.career.stats.byCategory) {
+            this.career.stats.byCategory = {};
           }
-          if (this.career.contract.buyoutClause === undefined) {
-            this.career.contract.buyoutClause = 0;
+          if (this.career.contract) {
+            if (this.career.contract.durationYears === undefined) {
+              this.career.contract.durationYears = this.career.contract.yearsLeft || 1;
+            }
+            if (this.career.contract.buyoutClause === undefined) {
+              this.career.contract.buyoutClause = 0;
+            }
           }
+          this.syncAndReconcileStats();
         }
       }
     } catch (e) {

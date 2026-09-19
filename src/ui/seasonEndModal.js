@@ -222,11 +222,20 @@ export class SeasonEndModal {
 
               ${activeTab === 'promotions' ? `
                 <div class="offers-grid-cards">
+                  ${promoOffers.length === 0 ? `
+                    <div class="no-offers-container" style="text-align:center; padding:36px 20px; background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed rgba(255,255,255,0.15); width:100%; grid-column:1/-1;">
+                      <div style="font-size:36px; margin-bottom:12px;">🔒</div>
+                      <h4 style="margin-bottom:8px; color:var(--text-primary); font-size:16px;">Nessuna Offerta di Promozione per la Prossima Stagione</h4>
+                      <p style="color:var(--text-secondary); max-width:540px; margin:0 auto; font-size:13px; line-height:1.5;">
+                        I team delle categorie superiori offrono contratti ai piloti che brillano nella serie attuale. Per sbloccare la promozione: termina il campionato sul podio (Top 3), vinci il Titolo Mondiale o incrementa la tua valutazione complessiva (67+ OVR).
+                      </p>
+                    </div>
+                  ` : ''}
                   ${promoOffers.map((offer, idx) => {
                     const dur = selectedDurations[`promo_${idx}`] || 1;
                     const salary = dur === 2 ? offer.salaryPerRace2yr : offer.salaryPerRace1yr;
-                    const needsBuyout = isUnderContract && buyoutPenalty > 0;
-                    const canAfford = careerData.money >= buyoutPenalty;
+                    // Le promozioni conquistate a fine stagione non richiedono mai penali di rescissione
+                    const needsBuyout = false;
 
                     return `
                       <div class="mini-offer-card promo-highlight">
@@ -252,15 +261,8 @@ export class SeasonEndModal {
                           <div><span>Clausola Rescissione:</span> <strong>${dur === 2 ? `€${offer.buyoutClause2yr.toLocaleString()}` : '€0'}</strong></div>
                         </div>
 
-                        ${needsBuyout ? `
-                          <div class="buyout-pill-warning ${!canAfford ? 'danger' : ''}">
-                            <span>Penale Rescissione: €${buyoutPenalty.toLocaleString()}</span>
-                            ${!canAfford ? '<small>Fondi insufficienti</small>' : ''}
-                          </div>
-                        ` : ''}
-
-                        <button class="btn-sign-decision-offer ${needsBuyout && !canAfford ? 'disabled' : ''}" data-offer-id="${offer.id}" data-dur="${dur}" ${needsBuyout && !canAfford ? 'disabled' : ''}>
-                          <span>${needsBuyout ? `PAGA PENALE (€${buyoutPenalty.toLocaleString()}) E SALI DI CATEGORIA 🚀` : 'ACCETTA PROMOZIONE 🚀'}</span>
+                        <button class="btn-sign-decision-offer" data-offer-id="${offer.id}" data-dur="${dur}">
+                          <span>ACCETTA PROMOZIONE 🚀</span>
                         </button>
                       </div>
                     `;

@@ -15,6 +15,7 @@ export class DashboardView {
     const catData = career.getCurrentCategoryData();
     const isSeasonEnd = careerData.currentRaceIndex >= catData.calendar.length;
     const seriesName = db.getSeriesName(careerData.currentCategory, player.discipline);
+    const catStats = career.getCategoryStats(careerData.currentCategory);
 
     // Leader della classifica per il mini-widget riassuntivo
     const driverStandings = careerData.standings.drivers || [];
@@ -58,8 +59,16 @@ export class DashboardView {
             ${!isSeasonEnd ? `
               <button id="btn-enter-weekend" class="hero-action-btn pulse-glow">
                 <span class="btn-main-label">PARTECIPA AL GRAN PREMIO ➔</span>
-                <span class="btn-sub-label">Prove Libere • Qualifiche • Gara Ufficiale</span>
+                <span class="btn-sub-label">Modalità Dettagliata • Prove • Qualifiche • Gara</span>
               </button>
+              <div class="hero-sim-actions-row">
+                <button id="btn-sim-weekend" class="hero-sim-btn" title="Simula istantaneamente questo weekend e fai crescere il pilota">
+                  <span>⏩ Simula Weekend</span>
+                </button>
+                <button id="btn-sim-season" class="hero-sim-btn season-sim-btn" title="Simula l'intera stagione e fai crescere il pilota automaticamente">
+                  <span>⚡ ${careerData.currentRaceIndex === 0 ? 'Simula Intera Stagione' : 'Simula Resto Stagione'}</span>
+                </button>
+              </div>
             ` : `
               <button id="btn-conclude-season" class="hero-action-btn gold-glow">
                 <span class="btn-main-label">CONCLUDI LA STAGIONE 🏆</span>
@@ -152,6 +161,18 @@ export class DashboardView {
                     <span>Vittorie Stagionali:</span>
                     <strong>${careerData.standings.drivers.find(d => d.isPlayer)?.wins || 0}</strong>
                   </div>
+                </div>
+              </div>
+
+              <!-- PALMARES DEDICATO IN QUESTA CATEGORIA -->
+              <div class="mini-category-stats-row">
+                <span class="mini-cat-title">Palmarès in ${catData.shortName || seriesName}:</span>
+                <div class="mini-cat-badges">
+                  <span class="cat-pill gold" title="Titoli Mondiali vinti in questa Categoria">🏆 ${catStats.worldTitles} Titoli</span>
+                  <span class="cat-pill" title="Vittorie conquistate">🥇 ${catStats.wins} Vitt.</span>
+                  <span class="cat-pill" title="Podi conquistati">🍾 ${catStats.podiums} Podi</span>
+                  <span class="cat-pill" title="Pole Position">⏱️ ${catStats.poles} Pole</span>
+                  <span class="cat-pill" title="Gran Premi disputati">🏁 ${catStats.racesStarted} GP</span>
                 </div>
               </div>
             </div>
@@ -274,6 +295,60 @@ export class DashboardView {
       enterWeekendBtn.onclick = () => {
         sound.playEngineRev();
         onNavigate('weekend');
+      };
+    }
+
+    const simWeekendBtn = container.querySelector('#btn-sim-weekend');
+    if (simWeekendBtn) {
+      simWeekendBtn.onclick = () => {
+        sound.playRadioBeep();
+        const nextCircuit = career.getNextCircuit();
+        ToastNotification.confirm({
+          title: `Simulare il GP di ${nextCircuit?.displayName || 'questo weekend'}?`,
+          message: `Verranno simulate automaticamente tutte le sessioni del weekend (Prove, Qualifiche e Gara). Il pilota riceverà punti e crescerà automaticamente nelle abilità.`,
+          confirmText: "Simula Weekend ⏩",
+          cancelText: "Annulla",
+          onConfirm: () => {
+            const res = career.simulateSingleWeekend(null, true);
+            if (res.success) {
+              sound.playChequeredFlag();
+              ToastNotification.show(`🏁 GP di ${res.circuitName}: P${res.playerPos} • Punti: +${res.pointsEarned} • OVR Pilota: ${career.player.ovr}`, "success");
+              window.dispatchEvent(new CustomEvent('career-data-updated'));
+              DashboardView.render(container, onNavigate);
+            } else {
+              ToastNotification.show(res.message || "Errore nella simulazione", "warning");
+            }
+          }
+        });
+      };
+    }
+
+    const simSeasonBtn = container.querySelector('#btn-sim-season');
+    if (simSeasonBtn) {
+      simSeasonBtn.onclick = () => {
+        sound.playRadioBeep();
+        const careerData = career.career;
+        const catData = career.getCurrentCategoryData();
+        const remaining = catData.calendar.length - careerData.currentRaceIndex;
+        const isStartOfYear = careerData.currentRaceIndex === 0;
+
+        ToastNotification.confirm({
+          title: isStartOfYear ? "Simulare l'Intera Stagione?" : `Simulare il resto della stagione (${remaining} GP)?`,
+          message: `Verranno simulati tutti i restanti ${remaining} Gran Premi della stagione. Il pilota crescerà progressivamente in modo automatico e verranno calcolate tutte le classifiche mondiali fino al termine dell'anno.`,
+          confirmText: isStartOfYear ? "Simula Tutta la Stagione ⚡" : "Simula Restanti GP ⚡",
+          cancelText: "Annulla",
+          onConfirm: () => {
+            const res = career.simulateFullSeason(true);
+            if (res.success) {
+              sound.playChequeredFlag();
+              ToastNotification.show(`🏆 Stagione completata (${res.racesSimulated} gare)! Posizione Finale Pilota: #${res.finalPlayerRank} • OVR: ${career.player.ovr}`, "success");
+              window.dispatchEvent(new CustomEvent('career-data-updated'));
+              DashboardView.render(container, onNavigate);
+            } else {
+              ToastNotification.show(res.message || "Errore durante la simulazione", "warning");
+            }
+          }
+        });
       };
     }
 
