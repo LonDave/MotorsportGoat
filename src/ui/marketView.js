@@ -363,7 +363,7 @@ export class MarketView {
                           </div>
 
                           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b;">
-                            <span>Svincolato nel ${fa.year || 2026}</span>
+                            <span>Svincolato nel ${fa.year || careerData.currentYear}</span>
                             <span style="color: #22c55e; font-weight: 700;">🟢 DISPONIBILE SUL MERCATO</span>
                           </div>
                         </div>

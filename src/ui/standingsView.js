@@ -133,7 +133,7 @@ export class StandingsView {
               <tr>
                 <th class="text-center col-pos" style="width: 50px;">POS</th>
                 <th class="col-team">COSTRUTTORE / SCUDERIA</th>
-                <th class="col-lineup">LINEUP PILOTI 2026</th>
+                <th class="col-lineup">LINEUP PILOTI ${careerData.currentYear}</th>
                 <th class="text-center col-pace">PASSO MEZZO</th>
                 <th class="text-right col-gap">DISTACCO</th>
                 <th class="text-right col-points">PUNTI</th>

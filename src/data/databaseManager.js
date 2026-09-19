@@ -8,6 +8,8 @@ class DatabaseManager {
     const savedReal = typeof localStorage !== 'undefined' ? localStorage.getItem('il_nuovo_goat_real_names') : null;
     this.isRealNames = savedReal === 'true';
     this.customOverrides = {};
+    // Anno di campionato attivo (aggiornato a ogni passaggio di stagione)
+    this.activeYear = 2026;
     // Attributi dinamici AI aggiornati dalla carriera (crescita/declino stagionale)
     this.aiDriverAttributes = {};
     // Sviluppo dinamico vetture/moto aggiornato da R&D e progressione AI
@@ -70,15 +72,28 @@ class DatabaseManager {
     this.notifyChange();
   }
 
-  // Risolve il nome della serie / campionato
-  getSeriesName(categoryId, discipline = 'auto') {
+  // Imposta l'anno di campionato corrente per la sincronizzazione dinamica dei nomi
+  setActiveYear(year) {
+    if (year && typeof year === 'number') {
+      this.activeYear = year;
+    }
+  }
+
+  // Risolve il nome della serie / campionato garantendo l'aggiornamento dinamico dell'anno
+  getSeriesName(categoryId, discipline = 'auto', year = null) {
     const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     const cat = categories[categoryId];
     if (!cat) return categoryId;
-    if (this.isRealNames) {
-      return cat.realSeriesName || cat.name;
+    let name = this.isRealNames ? (cat.realSeriesName || cat.name) : cat.name;
+    const targetYear = year || this.activeYear || 2026;
+    if (name) {
+      if (/\b20\d{2}\b/.test(name)) {
+        name = name.replace(/\b20\d{2}\b/g, targetYear);
+      } else {
+        name = `${name} ${targetYear}`;
+      }
     }
-    return cat.name;
+    return name;
   }
 
   // Risolve il nome di una scuderia

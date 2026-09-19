@@ -570,10 +570,11 @@ export class CareerEngine {
         driverId: benched.id,
         originalTeamId: initialTeam.id,
         category: startingCategory,
-        year: 2026
+        year: this.career.currentYear || 2026
       });
     }
 
+    db.setActiveYear(this.career.currentYear);
     this.initSeasonStandings();
     this.saveToStorage();
     return true;
@@ -1808,7 +1809,7 @@ export class CareerEngine {
       year: this.career.currentYear,
       season: this.career.seasonNumber,
       category: this.career.currentCategory,
-      categoryName: db.getSeriesName(this.career.currentCategory, this.player.discipline),
+      categoryName: db.getSeriesName(this.career.currentCategory, this.player.discipline, this.career.currentYear),
       team: db.getTeamName(this.career.currentTeamId, this.player.discipline),
       playerPos: this.career.standings.drivers.findIndex(d => d.isPlayer) + 1,
       playerPoints: playerStanding ? playerStanding.points : 0,
@@ -1823,6 +1824,7 @@ export class CareerEngine {
     this.career.currentYear++;
     this.career.seasonNumber++;
     this.career.stats.currentYear = this.career.currentYear;
+    db.setActiveYear(this.career.currentYear);
 
     // Report di sviluppo / declino stagionale
     const devReport = this.applyAnnualCareerEvolution(prevAge, newAge);
@@ -2033,6 +2035,7 @@ export class CareerEngine {
     }
 
     // Reset rigoroso del calendario per la nuova stagione e azzeramento classifiche
+    db.setActiveYear(this.career.currentYear);
     this.career.currentRaceIndex = 0;
     this.career.contractOffers = null;
     this.initSeasonStandings();
@@ -2780,6 +2783,9 @@ export class CareerEngine {
               isRegulationYearAnnounced: false,
               playerNextGenInvestment: 0
             };
+          }
+          if (this.career.currentYear) {
+            db.setActiveYear(this.career.currentYear);
           }
           this.syncAndReconcileStats();
           this.initRdSystem();
