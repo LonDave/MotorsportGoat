@@ -124,6 +124,9 @@ export class SeasonEndModal {
                   <span>🚀 Salto di Categoria (${promoOffers.length})</span>
                 </button>
               ` : ''}
+              <button class="season-tab-btn ${activeTab === 'market_news' ? 'active' : ''}" data-tab="market_news">
+                <span>📰 Mercato, Ritiri & Regens</span>
+              </button>
             </div>
 
             <!-- CONTENUTO DELLE SCELTE -->
@@ -270,6 +273,83 @@ export class SeasonEndModal {
                       </div>
                     `;
                   }).join('')}
+                </div>
+              ` : ''}
+
+              <!-- TAB 4: MERCATO, RITIRI & REGENS -->
+              ${activeTab === 'market_news' ? `
+                <div style="display: flex; flex-direction: column; gap: 16px; padding: 4px 0;">
+                  <!-- PILOTI RITIRATI -->
+                  <div>
+                    <h4 style="color: #f87171; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                      <span>🏁 Ritiri Ufficiali di Fine Stagione</span>
+                      <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">(${(seasonResult.retirementReport?.retired?.length) || 0})</span>
+                    </h4>
+                    ${(!seasonResult.retirementReport?.retired || seasonResult.retirementReport.retired.length === 0) ? `
+                      <div style="padding: 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; color: #94a3b8; font-size: 12px;">
+                        Nessun veterano ha annunciato il ritiro al termine di questo campionato.
+                      </div>
+                    ` : `
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 10px;">
+                        ${seasonResult.retirementReport.retired.map(rd => `
+                          <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                              <strong style="color: #fca5a5; font-size: 14px;">${rd.name}</strong>
+                              <span style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">RITIRATO</span>
+                            </div>
+                            <div style="font-size: 11px; color: #cbd5e1;">Ultimo Team: <strong>${rd.finalTeamName || 'Ufficiale'}</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; margin-top: 2px;">
+                              <span>Età: <strong>${rd.age} anni</strong></span>
+                              <span>OVR finale: <strong>${rd.ovr}</strong></span>
+                            </div>
+                          </div>
+                        `).join('')}
+                      </div>
+                    `}
+                  </div>
+
+                  <!-- NUOVI REGEN & PROMOZIONI -->
+                  <div>
+                    <h4 style="color: #38bdf8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                      <span>⭐ Nuovi Regens Promossi dalle Scuderie</span>
+                      <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">(${(seasonResult.regenReport?.createdRegens?.length) || 0})</span>
+                    </h4>
+                    ${(!seasonResult.regenReport?.createdRegens || seasonResult.regenReport.createdRegens.length === 0) ? `
+                      <div style="padding: 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; color: #94a3b8; font-size: 12px;">
+                        Tutte le scuderie hanno rispettato i regolamenti senza necessità di generare nuovi regens in questo passaggio di stagione.
+                      </div>
+                    ` : `
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 10px;">
+                        ${seasonResult.regenReport.createdRegens.map(reg => {
+                          const tName = db.getTeamName(reg.teamId, player.discipline, reg.category);
+                          return `
+                            <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.3); border-left: 3px solid #38bdf8; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;">
+                              <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="color: #fff; font-size: 14px;">${db.getDriverName(reg.id, player.discipline)}</strong>
+                                <span style="background: #38bdf8; color: #000; font-weight: 900; font-size: 11px; padding: 1px 6px; border-radius: 4px;">${reg.ovr} OVR</span>
+                              </div>
+                              <div style="font-size: 11px; color: #38bdf8;">Ispirato a: <strong>${reg.legendSource || 'Leggenda'}</strong></div>
+                              <div style="font-size: 11px; color: #cbd5e1;">Ingaggiato da: <strong>${tName}</strong> (${reg.age} anni)</div>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                    `}
+                  </div>
+
+                  <!-- CRONACA DEL MERCATO PILOTI -->
+                  <div>
+                    <h4 style="color: #eab308; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                      📢 Notizie & Movimenti Ufficiali
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; padding-right: 4px;">
+                      ${(careerData.aiTransferNews || []).slice(0, 8).map(news => `
+                        <div style="background: rgba(255, 255, 255, 0.02); border-left: 3px solid #eab308; padding: 8px 10px; border-radius: 0 4px 4px 0; font-size: 11px; color: #e2e8f0; line-height: 1.4;">
+                          ${news}
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
                 </div>
               ` : ''}
             </div>

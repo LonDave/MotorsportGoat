@@ -51,6 +51,9 @@ export class MarketView {
             <button class="tab-btn ${this.currentTab === 'free_agents' ? 'active' : ''}" data-tab="free_agents">
               🆓 Piloti Svincolati (${freeAgents.length})
             </button>
+            <button class="tab-btn ${this.currentTab === 'retired_regens' ? 'active' : ''}" data-tab="retired_regens">
+              🏁 Ritiri & Nuovi Regen (${(careerData.retiredDrivers?.length || 0) + Object.keys(careerData.regens || {}).length})
+            </button>
           </div>
 
           <div class="market-grid-layout">
@@ -371,6 +374,120 @@ export class MarketView {
                     }).join('')}
                   </div>
                 `}
+              </div>
+            ` : ''}
+
+            <!-- TAB 4: RITIRI & NUOVI REGEN -->
+            ${this.currentTab === 'retired_regens' ? `
+              <div class="dash-card offers-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                  <div>
+                    <h3 class="card-title">🏁 Albo Ritiri & Nuove Promesse Regen</h3>
+                    <p class="section-subtext">Monitora i piloti che hanno appeso il casco al chiodo e le nuove promesse nate dalle leggende del motorsport.</p>
+                  </div>
+                  <span style="background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.3); color: #eab308; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px;">
+                    ${careerData.retiredDrivers?.length || 0} Ritirati • ${Object.keys(careerData.regens || {}).length} Regen Attivi
+                  </span>
+                </div>
+
+                <!-- SEZIONE PILOTI RITIRATI -->
+                <div style="margin-top: 10px; margin-bottom: 24px;">
+                  <h4 style="color: #f87171; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <span>🏁 Piloti Ritirati dal Motorsport</span>
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">(${careerData.retiredDrivers?.length || 0})</span>
+                  </h4>
+                  ${(!careerData.retiredDrivers || careerData.retiredDrivers.length === 0) ? `
+                    <div style="text-align: center; padding: 25px; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 8px; color: #94a3b8; font-size: 13px;">
+                      Nessun pilota si è ancora ritirato in questa carriera. I veterani sopra i 35 anni decideranno il proprio futuro a fine stagione!
+                    </div>
+                  ` : `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px;">
+                      ${careerData.retiredDrivers.map(rd => `
+                        <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+                          <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fca5a5; font-size: 15px;">${rd.name}</strong>
+                            <span style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-weight: 800; font-size: 11px; padding: 2px 6px; border-radius: 4px;">RITIRATO</span>
+                          </div>
+                          <div style="font-size: 12px; color: #cbd5e1;">
+                            Ultimo Team: <strong>${rd.finalTeamName || 'Ufficiale'}</strong>
+                          </div>
+                          <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05);">
+                            <span>Ritiro nel: <strong>${rd.retiredYear || 2026}</strong></span>
+                            <span>Età finale: <strong>${rd.age} anni</strong></span>
+                            <span>OVR finale: <strong>${rd.ovr}</strong></span>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  `}
+                </div>
+
+                <!-- SEZIONE NUOVI TALENTI & REGENS -->
+                <div style="margin-bottom: 24px;">
+                  <h4 style="color: #38bdf8; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <span>⭐ Nuovi Talenti & Regens nel Circus</span>
+                    <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">(${Object.keys(careerData.regens || {}).length})</span>
+                  </h4>
+                  ${(!careerData.regens || Object.keys(careerData.regens).length === 0) ? `
+                    <div style="text-align: center; padding: 25px; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 8px; color: #94a3b8; font-size: 13px;">
+                      Nessun regen generato finora. Quando le scuderie necessiteranno di piloti per soddisfare i regolamenti, promuoveranno prodigi ispirati alle grandi leggende!
+                    </div>
+                  ` : `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px;">
+                      ${Object.values(careerData.regens).map(reg => {
+                        const teamName = db.getTeamName(reg.teamId, player.discipline, reg.category);
+                        const seriesName = db.getSeriesName(reg.category, player.discipline);
+                        const curAttrs = careerData.aiDriverAttributes?.[reg.id] || reg;
+                        const ovr = curAttrs.ovr || reg.ovr || 75;
+
+                        return `
+                          <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.25); border-left: 4px solid #38bdf8; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                              <div>
+                                <strong style="color: #fff; font-size: 15px;">${db.getDriverName(reg.id, player.discipline)}</strong>
+                                <div style="font-size: 11px; color: #38bdf8;">Ispirato a: <strong>${reg.legendSource || 'Leggenda'}</strong></div>
+                              </div>
+                              <span style="background: #38bdf8; color: #000; font-weight: 900; font-size: 12px; padding: 2px 7px; border-radius: 4px;">
+                                ${ovr} OVR
+                              </span>
+                            </div>
+                            <div style="font-size: 12px; color: #cbd5e1;">
+                              Scuderia: <strong>${teamName}</strong> • ${seriesName}
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 10px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px; text-align: center;">
+                              <div>Vel: <strong style="color:#38bdf8;">${curAttrs.pace || 75}</strong></div>
+                              <div>Gara: <strong style="color:#f59e0b;">${curAttrs.racecraft || 75}</strong></div>
+                              <div>Gomme: <strong style="color:#4ade80;">${curAttrs.tyreMgmt || 75}</strong></div>
+                              <div>Cost: <strong style="color:#a855f7;">${curAttrs.consistency || 75}</strong></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">
+                              <span>Età: <strong>${curAttrs.age || reg.age || 18} anni</strong></span>
+                              <span style="color: #22c55e; font-weight: 700;">🟢 PRODIGO IN CRESCITA</span>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  `}
+                </div>
+
+                <!-- CRONISTORIA NOTIZIE MERCATO & RITIRI -->
+                <div>
+                  <h4 style="color: #eab308; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+                    📢 Ultime Notizie Mercato, Ritiri & Annunci Ufficiali
+                  </h4>
+                  ${(!careerData.aiTransferNews || careerData.aiTransferNews.length === 0) ? `
+                    <div style="font-size: 12px; color: #94a3b8; padding: 10px;">Nessuna notizia registrata finora.</div>
+                  ` : `
+                    <div style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 6px;">
+                      ${careerData.aiTransferNews.slice(0, 15).map(news => `
+                        <div style="background: rgba(255, 255, 255, 0.02); border-left: 3px solid #eab308; padding: 10px 12px; border-radius: 0 6px 6px 0; font-size: 12px; color: #e2e8f0; line-height: 1.4;">
+                          ${news}
+                        </div>
+                      `).join('')}
+                    </div>
+                  `}
+                </div>
               </div>
             ` : ''}
           </div>

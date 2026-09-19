@@ -439,6 +439,103 @@ export const TRAINING_CAMPS_CONFIG = [
   }
 ];
 
+// Database delle età di partenza reali dei piloti al 2026 per la curva anagrafica di crescita e declino
+export const INITIAL_DRIVER_AGES = {
+  // Formula 1 2026
+  drv_alonso: 45,
+  drv_hamilton: 41,
+  drv_hulkenberg: 39,
+  drv_bottas: 37,
+  drv_perez: 36,
+  drv_sainz: 32,
+  drv_stroll: 28,
+  drv_gasly: 30,
+  drv_ocon: 30,
+  drv_albon: 30,
+  drv_verstappen: 29,
+  drv_leclerc: 29,
+  drv_russell: 28,
+  drv_norris: 27,
+  drv_hadjar: 22,
+  drv_lawson: 24,
+  drv_piastri: 25,
+  drv_bortoleto: 22,
+  drv_colapinto: 23,
+  drv_bearman: 21,
+  drv_antonelli: 20,
+  drv_lindblad: 19,
+  // MotoGP 2026
+  drv_marquez: 33,
+  drv_zarco: 36,
+  drv_espargaro: 37,
+  drv_bagnaia: 29,
+  drv_martin: 28,
+  drv_bastiani: 28,
+  drv_binder: 28,
+  drv_quartararo: 27,
+  drv_morbidelli: 31,
+  drv_marini: 29,
+  drv_bezzecchi: 27,
+  drv_miller: 31,
+  drv_vinales: 31,
+  drv_rins: 30,
+  drv_oliveira: 31,
+  drv_alex_marquez: 30,
+  drv_fernandez: 26,
+  drv_acosta: 22,
+  drv_aldeguer: 21,
+  drv_ogura: 25,
+  drv_somkiat: 27,
+  // WorldSBK
+  drv_bautista: 41,
+  drv_rea: 39,
+  drv_toprak: 29,
+  drv_bulega: 26,
+  drv_locatelli: 29,
+  drv_bassani: 26,
+  drv_iannone: 37,
+  drv_petrucci: 35,
+  drv_gerloff: 30,
+  drv_lowes: 35,
+  drv_van_der_mark: 33,
+  drv_gardner: 28
+};
+
+// Pool di Mostri Sacri e Leggende storiche per la generazione dinamica dei Regens (Automobilismo)
+export const AUTO_LEGENDS_REGEN_POOL = [
+  { id: "senna", realName: "Ayrton Senna", fictionalName: "Il Mago Senna", nationality: "BRA", number: 12 },
+  { id: "schumacher", realName: "Michael Schumacher", fictionalName: "Michele Il Barone Rosso", nationality: "DEU", number: 1 },
+  { id: "lauda", realName: "Niki Lauda", fictionalName: "Niki Il Computer Viennese", nationality: "AUT", number: 11 },
+  { id: "prost", realName: "Alain Prost", fictionalName: "Alain Il Professore", nationality: "FRA", number: 2 },
+  { id: "fangio", realName: "Juan Manuel Fangio", fictionalName: "El Chueco Maestro", nationality: "ARG", number: 1 },
+  { id: "vettel", realName: "Sebastian Vettel", fictionalName: "Seb Il Dito Imperiale", nationality: "DEU", number: 5 },
+  { id: "hunt", realName: "James Hunt", fictionalName: "James Il Ribelle", nationality: "GBR", number: 11 },
+  { id: "clark", realName: "Jim Clark", fictionalName: "Jim Lo Scozzese Volante", nationality: "GBR", number: 1 },
+  { id: "villeneuve", realName: "Gilles Villeneuve", fictionalName: "Gilles L'Aviatore", nationality: "CAN", number: 27 },
+  { id: "mansell", realName: "Nigel Mansell", fictionalName: "Nigel Il Leone", nationality: "GBR", number: 5 },
+  { id: "raikkonen", realName: "Kimi Räikkönen", fictionalName: "Kimi L'Uomo di Ghiaccio", nationality: "FIN", number: 7 },
+  { id: "hakkinen", realName: "Mika Häkkinen", fictionalName: "Mika Il Finlandese Volante", nationality: "FIN", number: 1 },
+  { id: "surtees", realName: "John Surtees", fictionalName: "John Il Titano Bivalente", nationality: "GBR", number: 7 },
+  { id: "piquet", realName: "Nelson Piquet", fictionalName: "Nelson Il Tattico Carioca", nationality: "BRA", number: 3 },
+  { id: "stewart", realName: "Jackie Stewart", fictionalName: "Sir Jackie La Leggenda", nationality: "GBR", number: 1 },
+  { id: "rindt", realName: "Jochen Rindt", fictionalName: "Jochen L'Intrepido", nationality: "AUT", number: 2 }
+];
+
+// Pool di Leggende per i Regens Motociclismo
+export const MOTO_LEGENDS_REGEN_POOL = [
+  { id: "rossi", realName: "Valentino Rossi", fictionalName: "Valentin Il Dottore 46", nationality: "ITA", number: 46 },
+  { id: "agostini", realName: "Giacomo Agostini", fictionalName: "Giacomo Ago Nazionale", nationality: "ITA", number: 1 },
+  { id: "stoner", realName: "Casey Stoner", fictionalName: "Casey Il Canguro Mannaro", nationality: "AUS", number: 27 },
+  { id: "doohan", realName: "Mick Doohan", fictionalName: "Mick Il Cannibale", nationality: "AUS", number: 1 },
+  { id: "lorenzo", realName: "Jorge Lorenzo", fictionalName: "Jorge Martillo Y Mantequilla", nationality: "ESP", number: 99 },
+  { id: "pedrosa", realName: "Dani Pedrosa", fictionalName: "Dani Il Piccolo Samurai", nationality: "ESP", number: 26 },
+  { id: "hayden", realName: "Nicky Hayden", fictionalName: "Kentucky Kid Leggendario", nationality: "USA", number: 69 },
+  { id: "rainey", realName: "Wayne Rainey", fictionalName: "Wayne Stella Californiana", nationality: "USA", number: 1 },
+  { id: "schwantz", realName: "Kevin Schwantz", fictionalName: "Kevin Il Matador 34", nationality: "USA", number: 34 },
+  { id: "sheene", realName: "Barry Sheene", fictionalName: "Barry Il Glamour British", nationality: "GBR", number: 7 },
+  { id: "criville", realName: "Alex Crivillé", fictionalName: "Alex Il Pioniere Iberico", nationality: "ESP", number: 1 }
+];
+
 export class CareerEngine {
   constructor() {
     this.player = null;
@@ -561,6 +658,8 @@ export class CareerEngine {
         aiTeamInvestments: {}
       },
       driverCareerStats: JSON.parse(JSON.stringify(DRIVER_BASELINES)),
+      retiredDrivers: [],
+      regens: {},
       isRetired: false
     };
 
@@ -704,7 +803,7 @@ export class CareerEngine {
     stats.racesStarted = finalRaces;
   }
 
-  // Ottiene il roster attivo dei piloti AI per una specifica categoria, escludendo svincolati e il pilota sostituito dal giocatore
+  // Ottiene il roster attivo dei piloti AI per una specifica categoria, escludendo svincolati, ritirati e il pilota sostituito dal giocatore
   getActiveRoster(catKey = null) {
     const key = catKey || this.career?.currentCategory;
     const categories = this.player?.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
@@ -718,7 +817,7 @@ export class CareerEngine {
     if (!isCurrentPlayerCat) {
       return cat.roster.filter(d => {
         const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
-        return effTeam !== 'free_agent';
+        return effTeam !== 'free_agent' && effTeam !== 'retired';
       }).map(d => {
         const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
         return effTeam !== d.teamId ? { ...d, teamId: effTeam } : d;
@@ -728,7 +827,7 @@ export class CareerEngine {
     // Assicura che teamBenchedDriverId appartenga effettivamente al team del giocatore
     const playerTeamDrivers = cat.roster.filter(d => {
       const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
-      return effTeam === playerTeamId;
+      return effTeam === playerTeamId && effTeam !== 'retired';
     });
 
     let benchedId = this.career?.teamBenchedDriverId;
@@ -762,7 +861,7 @@ export class CareerEngine {
     // Costruisci il roster attivo garantendo per ogni scuderia la capienza esatta:
     // 1. Team del giocatore: maxDrivers - 1 piloti AI
     // 2. Tutti gli altri team: maxDrivers piloti AI
-    // 3. Esclusione totale dei piloti svincolati (free_agent o presenti in freeAgents)
+    // 3. Esclusione totale dei piloti svincolati (free_agent o presenti in freeAgents) e RITIRATI (retired)
     const activeRoster = [];
     const freeAgentIds = new Set((this.career?.freeAgents || []).map(f => f.driverId));
 
@@ -773,7 +872,7 @@ export class CareerEngine {
       let candidates = cat.roster.filter(d => {
         const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
         if (effTeam !== team.id) return false;
-        if (effTeam === 'free_agent') return false;
+        if (effTeam === 'free_agent' || effTeam === 'retired') return false;
         if (isPlayerTeam && (d.id === benchedId || (Array.isArray(benchedId) && benchedId.includes(d.id)))) return false;
         if (freeAgentIds.has(d.id)) return false;
         return true;
@@ -782,6 +881,16 @@ export class CareerEngine {
       // Se il team del giocatore ha chosenTeammateId, ordinalo per primo
       if (isPlayerTeam && this.career?.chosenTeammateId) {
         candidates.sort((a, b) => (a.id === this.career.chosenTeammateId ? -1 : 1));
+      }
+
+      // Se ci sono meno piloti del necessario per rispettare il regolamento, genera regens di sicurezza
+      while (candidates.length < capacity) {
+        const regen = this.createRegenDriver(team.id, key, this.player?.discipline || 'auto');
+        if (regen) {
+          candidates.push(regen);
+        } else {
+          break;
+        }
       }
 
       // Prendi esattamente fino a capacity piloti
@@ -1047,72 +1156,441 @@ export class CareerEngine {
     }
   }
 
-  // Crescita organica degli attributi dei piloti AI a fine stagione
+  // Crescita e declino organico degli attributi di TUTTI i piloti AI attraverso tutte le categorie del motorsport
   growAiDriverAttributes() {
-    if (!this.career || !this.career.aiDriverAttributes) {
-      this.career.aiDriverAttributes = {};
-    }
+    if (!this.career) return null;
+    if (!this.career.aiDriverAttributes) this.career.aiDriverAttributes = {};
 
     const discipline = this.player?.discipline || 'auto';
     const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
-    const catKey = this.career.currentCategory;
-    const cat = categories[catKey];
-    if (!cat || !cat.roster) return;
 
-    cat.roster.forEach(driver => {
-      const dId = driver.id;
-      // Inizializza il profilo AI se non esiste (clona gli attributi base)
-      if (!this.career.aiDriverAttributes[dId]) {
-        this.career.aiDriverAttributes[dId] = {
-          ovr: driver.ovr || 75,
-          pace: driver.pace || 75,
-          racecraft: driver.racecraft || 75,
-          tyreMgmt: driver.tyreMgmt || 75,
-          consistency: driver.consistency || 75,
-          wetSkill: driver.wetSkill || 75,
-          age: driver.age || 24
-        };
-      }
+    const evolvedDrivers = [];
+    const processedDriverIds = new Set();
 
-      const attrs = this.career.aiDriverAttributes[dId];
-      attrs.age = (attrs.age || 24) + 1;
-      const age = attrs.age;
+    // Raccoglie tutti i piloti da tutte le categorie
+    for (const catKey in categories) {
+      const cat = categories[catKey];
+      if (!cat || !cat.roster) continue;
 
-      // Crescita dipende dall'età: i giovani crescono, i veterani declinano
-      if (attrs.ovr < 99) {
-        if (age <= 22) {
-          // Giovani talenti: crescita rapida
-          const gain = 0.6 + Math.random() * 0.6;
-          attrs.pace = Math.min(99, (attrs.pace || 75) + gain);
-          attrs.racecraft = Math.min(99, (attrs.racecraft || 75) + gain * 0.7);
-          attrs.consistency = Math.min(99, (attrs.consistency || 75) + gain * 0.5);
-        } else if (age <= 27) {
-          // Prime: piccola crescita, affinamento
-          const gain = 0.2 + Math.random() * 0.3;
-          attrs.racecraft = Math.min(99, (attrs.racecraft || 75) + gain);
-          attrs.tyreMgmt = Math.min(99, (attrs.tyreMgmt || 75) + gain * 0.6);
-        } else if (age <= 32) {
-          // Plateau/lieve declino: costanza aumenta, velocità resta
-          const gain = 0.1 + Math.random() * 0.1;
-          attrs.consistency = Math.min(99, (attrs.consistency || 75) + gain);
-        } else {
-          // Declino naturale post-32
-          const loss = 0.2 + Math.random() * 0.3;
-          attrs.pace = Math.max(60, (attrs.pace || 75) - loss);
-          if (age > 36) {
-            attrs.racecraft = Math.max(60, (attrs.racecraft || 75) - loss * 0.5);
-          }
+      cat.roster.forEach(driver => {
+        const dId = driver.id;
+        if (processedDriverIds.has(dId)) return;
+        processedDriverIds.add(dId);
+
+        // Se è già ritirato, non cresce più
+        const effTeam = this.career.teamDriverOverrides?.[dId];
+        if (effTeam === 'retired') return;
+
+        // Inizializza il profilo se non presente
+        if (!this.career.aiDriverAttributes[dId]) {
+          const initAge = INITIAL_DRIVER_AGES[dId] || driver.age || (dId.startsWith('regen_') ? 18 : 24);
+          this.career.aiDriverAttributes[dId] = {
+            ovr: driver.ovr || 75,
+            pace: driver.pace || 75,
+            racecraft: driver.racecraft || 75,
+            tyreMgmt: driver.tyreMgmt || 75,
+            consistency: driver.consistency || 75,
+            wetSkill: driver.wetSkill || 75,
+            age: initAge
+          };
         }
 
-        // Ricalcola OVR come media pesata degli attributi
-        const sum = (attrs.pace || 75) * 0.3 + (attrs.racecraft || 75) * 0.25 +
-                    (attrs.tyreMgmt || 75) * 0.2 + (attrs.consistency || 75) * 0.15 + (attrs.wetSkill || 75) * 0.1;
-        attrs.ovr = Math.min(99, Math.round(sum));
+        const attrs = this.career.aiDriverAttributes[dId];
+        attrs.age = (attrs.age || 24) + 1;
+        const age = attrs.age;
+        const oldOvr = attrs.ovr || 75;
+
+        // Curve anagrafiche di sviluppo e declino
+        if (age <= 22) {
+          // GIOVANI PROMESSE & REGENS: Crescita esplosiva
+          const gainPace = 1.0 + Math.random() * 1.5;
+          const gainRacecraft = 0.8 + Math.random() * 1.2;
+          const gainConsistency = 0.6 + Math.random() * 1.0;
+          attrs.pace = Math.min(99, (attrs.pace || 75) + gainPace);
+          attrs.racecraft = Math.min(99, (attrs.racecraft || 75) + gainRacecraft);
+          attrs.consistency = Math.min(99, (attrs.consistency || 75) + gainConsistency);
+          attrs.tyreMgmt = Math.min(99, (attrs.tyreMgmt || 75) + 0.5);
+        } else if (age <= 28) {
+          // PRIME YEARS: Affinamento e picco di maturità
+          const gainPace = 0.3 + Math.random() * 0.7;
+          const gainRace = 0.4 + Math.random() * 0.6;
+          const gainTyre = 0.5 + Math.random() * 0.8;
+          attrs.pace = Math.min(99, (attrs.pace || 75) + gainPace);
+          attrs.racecraft = Math.min(99, (attrs.racecraft || 75) + gainRace);
+          attrs.tyreMgmt = Math.min(99, (attrs.tyreMgmt || 75) + gainTyre);
+          attrs.consistency = Math.min(99, (attrs.consistency || 75) + 0.4);
+        } else if (age <= 33) {
+          // PICCO ESPERTO: Costanza massima, velocità stabile, nessun declino netto
+          const gainConst = 0.3 + Math.random() * 0.4;
+          attrs.consistency = Math.min(99, (attrs.consistency || 75) + gainConst);
+          attrs.tyreMgmt = Math.min(99, (attrs.tyreMgmt || 75) + 0.2);
+          attrs.pace = Math.min(99, Math.max(60, (attrs.pace || 75) + (Math.random() * 0.4 - 0.2)));
+        } else if (age <= 37) {
+          // VETERANI MATURI: Inizio del declino fisico e nei riflessi sul giro secco
+          const lossPace = 0.8 + Math.random() * 1.2;
+          const lossRacecraft = 0.4 + Math.random() * 0.6;
+          attrs.pace = Math.max(60, (attrs.pace || 75) - lossPace);
+          attrs.racecraft = Math.max(60, (attrs.racecraft || 75) - lossRacecraft);
+        } else {
+          // OLD MASTERS (38+ ANNI): Declino marcato, la velocità pura cala drasticamente
+          const lossPace = 1.5 + Math.random() * 1.8;
+          const lossRacecraft = 1.0 + Math.random() * 1.2;
+          const lossWet = 0.5 + Math.random() * 0.8;
+          attrs.pace = Math.max(60, (attrs.pace || 75) - lossPace);
+          attrs.racecraft = Math.max(60, (attrs.racecraft || 75) - lossRacecraft);
+          attrs.wetSkill = Math.max(60, (attrs.wetSkill || 75) - lossWet);
+        }
+
+        // Ricalcola OVR come media pesata
+        const sum = (attrs.pace * 0.30) +
+                    (attrs.racecraft * 0.25) +
+                    (attrs.tyreMgmt * 0.20) +
+                    (attrs.consistency * 0.15) +
+                    (attrs.wetSkill * 0.10);
+        attrs.ovr = Math.min(99, Math.max(60, Math.round(sum)));
+
+        const delta = attrs.ovr - oldOvr;
+        evolvedDrivers.push({
+          id: dId,
+          name: db.getDriverName(dId, discipline),
+          age,
+          oldOvr,
+          newOvr: attrs.ovr,
+          delta
+        });
+      });
+    }
+
+    // Sincronizza subito al database
+    db.setAiDriverAttributes(this.career.aiDriverAttributes);
+
+    // Ordina per evoluzione
+    const improvers = evolvedDrivers.filter(d => d.delta > 0).sort((a, b) => b.delta - a.delta);
+    const decliners = evolvedDrivers.filter(d => d.delta < 0).sort((a, b) => a.delta - b.delta);
+
+    return { evolvedDrivers, improvers, decliners };
+  }
+
+  // Processa i ritiri dei piloti AI veterani
+  processAiDriverRetirements() {
+    if (!this.career) return { retired: [] };
+    if (!this.career.retiredDrivers) this.career.retiredDrivers = [];
+    if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
+    if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+
+    const discipline = this.player?.discipline || 'auto';
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const retiredThisYear = [];
+
+    const allDriversMap = new Map();
+    for (const catKey in categories) {
+      const cat = categories[catKey];
+      if (!cat?.roster) continue;
+      cat.roster.forEach(d => {
+        if (!allDriversMap.has(d.id)) {
+          allDriversMap.set(d.id, { driver: d, category: catKey });
+        }
+      });
+    }
+
+    allDriversMap.forEach(({ driver, category }, dId) => {
+      const effTeam = this.career.teamDriverOverrides[dId] || driver.teamId;
+      if (effTeam === 'retired') return; // Già ritirato
+
+      const attrs = this.career.aiDriverAttributes?.[dId] || { age: INITIAL_DRIVER_AGES[dId] || driver.age || 25, ovr: driver.ovr || 75 };
+      const age = attrs.age || 25;
+      const ovr = attrs.ovr || 75;
+
+      // I piloti possono iniziare a ritirarsi a partire da 35 anni
+      if (age >= 35) {
+        let retireProbability = 0;
+        if (age === 35) retireProbability = 0.12;
+        else if (age === 36) retireProbability = 0.22;
+        else if (age === 37) retireProbability = 0.35;
+        else if (age === 38) retireProbability = 0.50;
+        else if (age === 39) retireProbability = 0.65;
+        else if (age === 40) retireProbability = 0.78;
+        else if (age === 41) retireProbability = 0.88;
+        else retireProbability = 0.96; // 42+ anni
+
+        // Se il rendimento è calato parecchio (OVR basso per la categoria), aumento probabilità
+        if (ovr <= 74) retireProbability = Math.min(0.98, retireProbability + 0.15);
+
+        if (Math.random() < retireProbability) {
+          // Il pilota si ritira!
+          const driverName = db.getDriverName(dId, discipline);
+          const finalTeamName = effTeam && effTeam !== 'free_agent' ? db.getTeamName(effTeam, discipline, category) : 'Svincolato';
+
+          this.career.teamDriverOverrides[dId] = 'retired';
+          if (this.career.freeAgents) {
+            this.career.freeAgents = this.career.freeAgents.filter(fa => fa.driverId !== dId);
+          }
+
+          const retiredObj = {
+            id: dId,
+            name: driverName,
+            age,
+            ovr,
+            finalTeamId: effTeam,
+            finalTeamName,
+            category,
+            retiredYear: this.career.currentYear,
+            stats: this.career.driverCareerStats?.[dId] || null
+          };
+
+          this.career.retiredDrivers.push(retiredObj);
+          retiredThisYear.push(retiredObj);
+
+          this.career.aiTransferNews.unshift(
+            `🏁 RITIRO UFFICIALE: All'età di ${age} anni, ${driverName} annuncia l'addio definitivo alle corse e il ritiro dal motorsport!`
+          );
+        }
       }
     });
 
-    // Sincronizza i nuovi attributi cresciuti al database per i calcoli di gara
-    db.setAiDriverAttributes(this.career.aiDriverAttributes);
+    return { retired: retiredThisYear };
+  }
+
+  // Genera un giovane talento Rookie (Regen) ispirato a un pilota ritirato o a una leggenda storica
+  createRegenDriver(assignedTeamId, categoryKey, discipline = 'auto', source = null) {
+    if (!this.career) return null;
+    if (!this.career.regens) this.career.regens = {};
+    if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
+    if (!this.career.aiDriverAttributes) this.career.aiDriverAttributes = {};
+    if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const cat = categories[categoryKey];
+    if (!cat) return null;
+
+    const legendPool = discipline === 'auto' ? AUTO_LEGENDS_REGEN_POOL : MOTO_LEGENDS_REGEN_POOL;
+    
+    // Trova una leggenda o usa il pilota ritirato sorgente
+    let inspiration = null;
+    if (source && source.name) {
+      inspiration = {
+        realName: source.name,
+        fictionalName: source.name,
+        nationality: source.nationality || 'ITA',
+        number: Math.floor(Math.random() * 80 + 10)
+      };
+    } else {
+      // Cerca nel pool di leggende una non ancora usata nei regens
+      const usedLegendIds = new Set(Object.values(this.career.regens).map(r => r.legendId));
+      const unusedLegends = legendPool.filter(l => !usedLegendIds.has(l.id));
+      if (unusedLegends.length > 0) {
+        inspiration = unusedLegends[Math.floor(Math.random() * unusedLegends.length)];
+      } else {
+        inspiration = legendPool[Math.floor(Math.random() * legendPool.length)];
+      }
+    }
+
+    const uniqueSuffix = Math.random().toString(36).substring(2, 6);
+    const regenId = `regen_${inspiration.id || 'rookie'}_${this.career.currentYear || 2026}_${uniqueSuffix}`;
+
+    const age = 17 + Math.floor(Math.random() * 3); // 17, 18, o 19 anni (giovanissimo talento)
+
+    // OVR tarato sulla categoria:
+    // F1 / MotoGP: 77 - 82 (fenomeno generazionale)
+    // F2 / Moto2 / WEC / Indy: 73 - 77
+    // F3 / F4 / Moto3: 69 - 74
+    let baseOvr = 72;
+    if (categoryKey === 'auto_f1' || categoryKey === 'moto_gp') baseOvr = 77 + Math.floor(Math.random() * 6);
+    else if (categoryKey === 'auto_f2' || categoryKey === 'moto_2' || categoryKey === 'auto_wec' || categoryKey === 'auto_indy' || categoryKey === 'moto_sbk') baseOvr = 73 + Math.floor(Math.random() * 5);
+    else baseOvr = 69 + Math.floor(Math.random() * 5);
+
+    const pace = Math.min(99, Math.max(60, baseOvr + Math.floor(Math.random() * 5 - 2)));
+    const racecraft = Math.min(99, Math.max(60, baseOvr + Math.floor(Math.random() * 5 - 2)));
+    const tyreMgmt = Math.min(99, Math.max(60, baseOvr - Math.floor(Math.random() * 4)));
+    const consistency = Math.min(99, Math.max(60, baseOvr - Math.floor(Math.random() * 3)));
+    const wetSkill = Math.min(99, Math.max(60, baseOvr + Math.floor(Math.random() * 6 - 3)));
+
+    const realName = `${inspiration.realName} (Regen)`;
+    const fictionalName = `${inspiration.fictionalName || inspiration.realName} Jr.`;
+
+    const regenData = {
+      id: regenId,
+      name: realName,
+      realName,
+      fictionalName,
+      displayName: realName,
+      nationality: inspiration.nationality || 'ITA',
+      number: inspiration.number || Math.floor(Math.random() * 88 + 11),
+      age,
+      ovr: baseOvr,
+      pace,
+      racecraft,
+      tyreMgmt,
+      consistency,
+      wetSkill,
+      teamId: assignedTeamId,
+      category: categoryKey,
+      discipline,
+      isRegen: true,
+      legendId: inspiration.id || null,
+      legendSource: inspiration.realName
+    };
+
+    // Registra nel DatabaseManager e nell'engine
+    this.career.regens[regenId] = regenData;
+    db.registerCustomDriver(regenData);
+
+    this.career.aiDriverAttributes[regenId] = {
+      ovr: baseOvr,
+      pace,
+      racecraft,
+      tyreMgmt,
+      consistency,
+      wetSkill,
+      age
+    };
+
+    // Assegna al team
+    this.career.teamDriverOverrides[regenId] = assignedTeamId;
+
+    // Aggiungi al roster della categoria se non già presente
+    if (!cat.roster.some(d => d.id === regenId)) {
+      cat.roster.push(regenData);
+    }
+
+    const assignedTeamName = db.getTeamName(assignedTeamId, discipline, categoryKey);
+    this.career.aiTransferNews.unshift(
+      `⭐ DEBUTTO REGEN: ${assignedTeamName} ingaggia la giovanissima promessa ${realName} (${age} anni, OVR ${baseOvr}), regen di ${inspiration.realName}!`
+    );
+
+    return regenData;
+  }
+
+  // Risolve e garantisce che ogni scuderia di ogni categoria soddisfi esattamente i requisiti regolamentari di piloti
+  resolveRegulationRostersAndRegens() {
+    if (!this.career) return { promotions: [], createdRegens: [] };
+    const discipline = this.player?.discipline || 'auto';
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const playerTeamId = this.career.currentTeamId;
+    const playerCatKey = this.career.currentCategory;
+
+    // Gerarchia per promozioni dalle serie minori
+    const feederHierarchy = discipline === 'auto'
+      ? [
+          { target: 'auto_f1', feeders: ['auto_f2', 'auto_f3'] },
+          { target: 'auto_f2', feeders: ['auto_f3', 'auto_f4'] },
+          { target: 'auto_f3', feeders: ['auto_f4'] },
+          { target: 'auto_wec', feeders: ['auto_f2', 'auto_f3'] },
+          { target: 'auto_indy', feeders: ['auto_f2', 'auto_f3'] },
+          { target: 'auto_f4', feeders: [] }
+        ]
+      : [
+          { target: 'moto_gp', feeders: ['moto_2', 'moto_3'] },
+          { target: 'moto_sbk', feeders: ['moto_2', 'moto_3'] },
+          { target: 'moto_2', feeders: ['moto_3'] },
+          { target: 'moto_3', feeders: [] }
+        ];
+
+    const promotions = [];
+    const createdRegens = [];
+
+    for (const step of feederHierarchy) {
+      const catKey = step.target;
+      const cat = categories[catKey];
+      if (!cat || !cat.teams || !cat.roster) continue;
+
+      const maxDrivers = cat.maxDriversPerTeam || 2;
+      const isPlayerCat = (catKey === playerCatKey);
+
+      for (const team of cat.teams) {
+        const isPlayerTeam = isPlayerCat && (team.id === playerTeamId);
+        const capacity = isPlayerTeam ? Math.max(1, maxDrivers - 1) : maxDrivers;
+
+        // Trova piloti attivi validi (non ritirati, non free agent)
+        let activeDrivers = cat.roster.filter(d => {
+          const effTeam = this.career.teamDriverOverrides?.[d.id] || d.teamId;
+          if (effTeam !== team.id) return false;
+          if (effTeam === 'retired' || effTeam === 'free_agent') return false;
+          if (isPlayerTeam && d.id === this.career.teamBenchedDriverId) return false;
+          return true;
+        });
+
+        // Se mancano piloti per la capienza regolamentare
+        while (activeDrivers.length < capacity) {
+          let filled = false;
+
+          // 1. Tenta la promozione da una serie giovanile
+          for (const feederCatKey of step.feeders) {
+            const feederCat = categories[feederCatKey];
+            if (!feederCat || !feederCat.roster) continue;
+
+            // Trova i migliori talenti della serie inferiore non ancora promossi o ritirati
+            const feederCandidates = feederCat.roster.filter(fd => {
+              const eff = this.career.teamDriverOverrides?.[fd.id] || fd.teamId;
+              return eff !== 'retired' && eff !== 'promoted';
+            }).sort((a, b) => {
+              const ovrA = this.career.aiDriverAttributes?.[a.id]?.ovr || a.ovr || 70;
+              const ovrB = this.career.aiDriverAttributes?.[b.id]?.ovr || b.ovr || 70;
+              return ovrB - ovrA;
+            });
+
+            if (feederCandidates.length > 0) {
+              const promotedDriver = feederCandidates[0];
+              // Rimuovi dalla serie precedente assegnando al nuovo team e nuova categoria
+              this.career.teamDriverOverrides[promotedDriver.id] = team.id;
+              // Rimuovi dal vecchio roster per evitare duplicati
+              feederCat.roster = feederCat.roster.filter(d => d.id !== promotedDriver.id);
+              // Aggiungi al roster della categoria superiore
+              cat.roster.push(promotedDriver);
+              activeDrivers.push(promotedDriver);
+
+              const pName = db.getDriverName(promotedDriver.id, discipline);
+              const tName = db.getTeamName(team.id, discipline, catKey);
+              const targetSeries = db.getSeriesName(catKey, discipline);
+
+              this.career.aiTransferNews.unshift(
+                `🚀 PROMOZIONE DI MERCATO: ${pName} viene promosso in ${targetSeries} e correrà per ${tName}!`
+              );
+              promotions.push({ driverId: promotedDriver.id, name: pName, targetTeam: team.id, targetCategory: catKey });
+              filled = true;
+              break;
+            }
+          }
+
+          // 2. Se nessuna promozione possibile, cerca un Free Agent valido
+          if (!filled && this.career.freeAgents && this.career.freeAgents.length > 0) {
+            const validFAIdx = this.career.freeAgents.findIndex(fa => {
+              const eff = this.career.teamDriverOverrides?.[fa.driverId];
+              return eff !== 'retired';
+            });
+            if (validFAIdx >= 0) {
+              const faObj = this.career.freeAgents.splice(validFAIdx, 1)[0];
+              this.career.teamDriverOverrides[faObj.driverId] = team.id;
+              const faDriver = db.getDriver(faObj.driverId, discipline);
+              if (faDriver && !cat.roster.some(d => d.id === faObj.driverId)) {
+                cat.roster.push(faDriver);
+              }
+              activeDrivers.push(faDriver || { id: faObj.driverId });
+              const faName = db.getDriverName(faObj.driverId, discipline);
+              const tName = db.getTeamName(team.id, discipline, catKey);
+              this.career.aiTransferNews.unshift(
+                `✍️ ACCORDO DI MERCATO: ${tName} ingaggia lo svincolato ${faName} per completare la line-up!`
+              );
+              filled = true;
+            }
+          }
+
+          // 3. Se ancora vuoto: CREA UN REGEN di una leggenda o pilota ritirato!
+          if (!filled) {
+            const regen = this.createRegenDriver(team.id, catKey, discipline);
+            if (regen) {
+              activeDrivers.push(regen);
+              createdRegens.push(regen);
+              filled = true;
+            } else {
+              break; // Safety break
+            }
+          }
+        }
+      }
+    }
+
+    return { promotions, createdRegens };
   }
 
   // Inizializza la classifica piloti e team all'inizio di ogni stagione
@@ -2107,11 +2585,17 @@ export class CareerEngine {
     // Gli upgrade R&D sui sottocomponenti vengono mantenuti di stagione in stagione (si riducono parzialmente solo ai cambi regolamentari FIA triennali)
     this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
 
+    // Esegui la crescita e il declino organico degli attributi di tutti i piloti AI
+    const aiEvolutionReport = this.growAiDriverAttributes();
+
+    // Processa i ritiri dei piloti AI veterani
+    const retirementReport = this.processAiDriverRetirements();
+
     // Esegui trasferimenti piloti AI e movimenti di mercato Free Agent
     this.aiDriverTransfers();
 
-    // Crescita annuale degli attributi AI (giovani migliorano, veterani declinano)
-    this.growAiDriverAttributes();
+    // Risolvi tutti i sedili vacanti per rispettare i regolamenti di gara (promozioni serie minori e generazione REGEN)
+    const regenReport = this.resolveRegulationRostersAndRegens();
 
     // Verifica milestone e cicli regolamentari FIA (ogni 3 anni)
     this.checkRegulationMilestones();
@@ -2124,6 +2608,9 @@ export class CareerEngine {
       championName: isPlayerChampion ? `${this.player.firstName} ${this.player.lastName}` : db.getDriverName(champion?.driverId, this.player.discipline),
       offers,
       devReport,
+      aiEvolutionReport,
+      retirementReport,
+      regenReport,
       isUnderContract,
       yearsLeft: currentContract.yearsLeft,
       buyoutClause: currentContract.buyoutClause || 0
@@ -3194,6 +3681,21 @@ export class CareerEngine {
           if (!this.career.freeAgents) this.career.freeAgents = [];
           if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
           if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
+          if (!this.career.retiredDrivers) this.career.retiredDrivers = [];
+          if (!this.career.regens) this.career.regens = {};
+
+          // Ripristina e registra tutti i regens generati nel DatabaseManager e nelle roster delle categorie
+          if (this.career.regens) {
+            for (const [rId, rData] of Object.entries(this.career.regens)) {
+              db.registerCustomDriver(rData);
+              const categories = rData.discipline === 'moto' ? MOTO_CATEGORIES : AUTO_CATEGORIES;
+              const cat = categories[rData.category];
+              if (cat && cat.roster && !cat.roster.some(d => d.id === rId)) {
+                cat.roster.push(rData);
+              }
+            }
+          }
+
           if (this.career.chosenTeammateId === undefined) this.career.chosenTeammateId = null;
           if (this.career.teamBenchedDriverId === undefined) this.career.teamBenchedDriverId = null;
 

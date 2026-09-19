@@ -8,6 +8,8 @@ class DatabaseManager {
     const savedReal = typeof localStorage !== 'undefined' ? localStorage.getItem('il_nuovo_goat_real_names') : null;
     this.isRealNames = savedReal === 'true';
     this.customOverrides = {};
+    // Database piloti personalizzati e Regen generati durante la carriera
+    this.customDrivers = {};
     // Anno di campionato attivo (aggiornato a ogni passaggio di stagione)
     this.activeYear = 2026;
     // Attributi dinamici AI aggiornati dalla carriera (crescita/declino stagionale)
@@ -164,8 +166,21 @@ class DatabaseManager {
     return { id: teamId, displayName: teamId || 'Scuderia', color: "#888888", carPace: 75, bikePace: 75, reliability: 75 };
   }
 
-  // Risolve il nome di un pilota avversario
+  // Registra un pilota custom o un Regen nel database
+  registerCustomDriver(driver) {
+    if (!driver || !driver.id) return;
+    this.customDrivers[driver.id] = driver;
+  }
+
+  // Risolve il nome di un pilota avversario o regen
   getDriverName(driverId, discipline = 'auto') {
+    if (this.customDrivers[driverId]) {
+      const cd = this.customDrivers[driverId];
+      return this.isRealNames
+        ? (cd.realName || cd.name || cd.displayName)
+        : (cd.fictionalName || cd.name || cd.displayName);
+    }
+
     const override = this.customOverrides[discipline]?.drivers?.[driverId];
     if (override && this.isRealNames) return override.name;
 
@@ -185,8 +200,18 @@ class DatabaseManager {
     this.aiDriverAttributes = attrs || {};
   }
 
-  // Risolve l'oggetto completo del pilota
+  // Risolve l'oggetto completo del pilota (inclusi Regens)
   getDriver(driverId, discipline = 'auto') {
+    if (this.customDrivers[driverId]) {
+      const cd = this.customDrivers[driverId];
+      const grown = this.aiDriverAttributes[driverId];
+      return {
+        ...cd,
+        ...(grown || {}),
+        displayName: this.getDriverName(driverId, discipline)
+      };
+    }
+
     const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     for (const catKey in categories) {
       const cat = categories[catKey];
