@@ -3674,8 +3674,18 @@ export class CareerEngine {
         const data = JSON.parse(raw);
         this.player = data.player;
         this.career = data.career;
-        if (this.player && this.player.unspentSkillPoints === undefined) {
-          this.player.unspentSkillPoints = 0;
+        if (this.player) {
+          if (!this.player.name) {
+            this.player.name = (this.player.firstName && this.player.lastName)
+              ? `${this.player.firstName} ${this.player.lastName}`
+              : (this.player.displayName || 'Pilota');
+          }
+          if (!this.player.displayName) {
+            this.player.displayName = this.player.name;
+          }
+          if (this.player.unspentSkillPoints === undefined) {
+            this.player.unspentSkillPoints = 0;
+          }
         }
         if (this.career) {
           if (!this.career.stats) this.career.stats = {};
