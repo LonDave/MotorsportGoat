@@ -550,7 +550,10 @@ export class CareerEngine {
         cycleLengthYears: 3,
         nextRegulationChangeYear: 2029,
         isRegulationYearAnnounced: false,
-        playerNextGenInvestment: 0
+        playerNextGenInvestment: 0,
+        teammateNextGenInvestment: 0,
+        teammateContribution: { money: 0, points: 0, log: [] },
+        aiTeamInvestments: {}
       },
       isRetired: false
     };
@@ -1269,6 +1272,28 @@ export class CareerEngine {
         lastBreakthrough: null
       };
     }
+    if (!this.career.regulations) {
+      this.career.regulations = {
+        currentCycle: 1,
+        cycleLengthYears: 3,
+        nextRegulationChangeYear: 2029,
+        isRegulationYearAnnounced: false,
+        playerNextGenInvestment: 0,
+        teammateNextGenInvestment: 0,
+        teammateContribution: { money: 0, points: 0, log: [] },
+        aiTeamInvestments: {}
+      };
+    } else {
+      if (this.career.regulations.teammateNextGenInvestment === undefined) {
+        this.career.regulations.teammateNextGenInvestment = 0;
+      }
+      if (!this.career.regulations.teammateContribution) {
+        this.career.regulations.teammateContribution = { money: 0, points: 0, log: [] };
+      }
+      if (!this.career.regulations.aiTeamInvestments) {
+        this.career.regulations.aiTeamInvestments = {};
+      }
+    }
   }
 
   // Calcola probabilità di fallimento e successo per un determinato sottocomponente R&D
@@ -1386,6 +1411,43 @@ export class CareerEngine {
         this.career.aiTransferNews.unshift(
           `🤝 COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
         );
+      }
+    }
+
+    // 4. Investimento del Compagno nel Progetto Nuovo Regolamento Tecnico (se annunciato dalla FIA)
+    if (this.career.regulations && this.career.regulations.isRegulationYearAnnounced) {
+      const reg = this.career.regulations;
+      if (reg.teammateNextGenInvestment === undefined) reg.teammateNextGenInvestment = 0;
+      if (!reg.teammateContribution) {
+        reg.teammateContribution = { money: 0, points: 0, log: [] };
+      }
+
+      const currentTotalReadiness = (reg.playerNextGenInvestment || 0) + reg.teammateNextGenInvestment;
+      if (currentTotalReadiness < 5 && reg.teammateNextGenInvestment < 3) {
+        // Circa 55% di probabilità a gara: il compagno investe risorse sponsor e sessioni al simulatore
+        if (Math.random() < 0.55) {
+          const tmRegMoney = Math.round(7000 + (tmMarketability * 80));
+          const tmRegPoints = Math.round(5 + (tmFeedback * 0.12));
+          
+          reg.teammateContribution.money = (reg.teammateContribution.money || 0) + tmRegMoney;
+          reg.teammateContribution.points = (reg.teammateContribution.points || 0) + tmRegPoints;
+
+          const neededMoney = 22000 + (reg.teammateNextGenInvestment * 12000);
+          const neededPts = 20 + (reg.teammateNextGenInvestment * 8);
+
+          if (reg.teammateContribution.money >= neededMoney && reg.teammateContribution.points >= neededPts) {
+            reg.teammateContribution.money -= neededMoney;
+            reg.teammateContribution.points -= neededPts;
+            reg.teammateNextGenInvestment += 1;
+
+            const newTotal = Math.min(5, (reg.playerNextGenInvestment || 0) + reg.teammateNextGenInvestment);
+            const tmMsg = `Il compagno ${tmName} ha finanziato un pacchetto di sviluppo (€${neededMoney.toLocaleString()} e ${neededPts} PT), portando la preparazione della scuderia per il ${reg.nextRegulationChangeYear} al Livello ${newTotal}/5!`;
+            reg.teammateContribution.log.unshift(tmMsg);
+
+            if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+            this.career.aiTransferNews.unshift(`🤝 COLLABORAZIONE REGOLAMENTI: ${tmMsg}`);
+          }
+        }
       }
     }
 
@@ -1906,33 +1968,8 @@ export class CareerEngine {
     currentContract.yearsLeft = Math.max(0, prevYearsLeft - 1);
     const isUnderContract = currentContract.yearsLeft > 0;
 
-    // Fonde una quota calibrata degli upgrade R&D stagionali (subcomponenti e legacy) nel passo base della nuova vettura invernale
-    if (this.career.teamDevelopment && this.career.teamDevelopment[this.career.currentTeamId]) {
-      const up = this.career.carUpgrades || {};
-      const subComps = this.career.rdSubComponents || {};
-      let subPaceTotal = 0;
-      for (const [key, lvl] of Object.entries(subComps)) {
-        const cfg = RD_SUBCOMPONENTS_CONFIG[key];
-        if (cfg && lvl > 0) {
-          subPaceTotal += (cfg.paceGain || 0) * lvl;
-        }
-      }
-      const legacyGain = (up.aero * 0.4) + (up.engine * 0.4) + (up.chassis * 0.3);
-      // Fonde circa il 35% del know-how sviluppato nel telaio della stagione successiva (max +4 pace permanente)
-      const permanentPaceGain = Math.min(4, Math.round((subPaceTotal * 0.35) + legacyGain));
-      if (permanentPaceGain > 0) {
-        this.career.teamDevelopment[this.career.currentTeamId].carPace = Math.min(
-          98,
-          (this.career.teamDevelopment[this.career.currentTeamId].carPace || 75) + permanentPaceGain
-        );
-      }
-    }
+    // Gli upgrade R&D sui sottocomponenti vengono mantenuti di stagione in stagione (si riducono parzialmente solo ai cambi regolamentari FIA triennali)
     this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
-    if (this.career.rdSubComponents) {
-      for (const k in this.career.rdSubComponents) {
-        this.career.rdSubComponents[k] = 0;
-      }
-    }
 
     // Esegui trasferimenti piloti AI e movimenti di mercato Free Agent
     this.aiDriverTransfers();
@@ -2739,6 +2776,10 @@ export class CareerEngine {
       const sponsorBonus = (avgMarket - 65) * 0.002;
       const totalGain = Math.max(0.08, baseGain + randBonus + technicalBonus + sponsorBonus);
 
+      const teamName = db.getTeamName(team.id, discipline, currentCatKey);
+      const leadDriver = teamDrivers[0];
+      const dName = leadDriver ? db.getDriverName(leadDriver.id, discipline) : "collaudatori";
+
       teamDev.devPoints = (teamDev.devPoints || 0) + totalGain;
 
       // Al raggiungimento di 1 punto sviluppo: delibera del pacchetto evolutivo con rischio fallimento
@@ -2752,9 +2793,6 @@ export class CareerEngine {
 
         const roll = Math.random() * 100;
         const failed = roll < aiFailureRisk;
-        const teamName = db.getTeamName(team.id, discipline, currentCatKey);
-        const leadDriver = teamDrivers[0];
-        const dName = leadDriver ? db.getDriverName(leadDriver.id, discipline) : "collaudatori";
 
         if (failed) {
           teamDev.failedUpgrades = (teamDev.failedUpgrades || 0) + 1;
@@ -2786,6 +2824,37 @@ export class CareerEngine {
           }
         }
       }
+
+      // Se il cambio regolamentare è annunciato, la scuderia AI divide gli sforzi e investe sul Progetto Nuovo Regolamento
+      const reg = this.career.regulations;
+      if (reg && reg.isRegulationYearAnnounced) {
+        if (teamDev.nextGenLevel === undefined) teamDev.nextGenLevel = 0;
+        if (teamDev.nextGenPoints === undefined) teamDev.nextGenPoints = 0;
+
+        if (teamDev.nextGenLevel < 5) {
+          const share = 0.35 + ((avgFeedback - 70) * 0.004) + ((avgMarket - 65) * 0.003);
+          const aiRegGain = Math.max(0.04, totalGain * Math.min(0.65, share));
+          teamDev.nextGenPoints += aiRegGain;
+
+          if (teamDev.nextGenPoints >= 1.0 && teamDev.nextGenLevel < 5) {
+            teamDev.nextGenPoints -= 1.0;
+            teamDev.nextGenLevel += 1;
+
+            if (!reg.aiTeamInvestments) reg.aiTeamInvestments = {};
+            reg.aiTeamInvestments[team.id] = {
+              teamName,
+              nextGenLevel: teamDev.nextGenLevel
+            };
+
+            if (Math.random() < 0.18 && leadDriver) {
+              if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+              this.career.aiTransferNews.unshift(
+                `🏛️ R&D PADDOCK: ${teamName} delibera un pacchetto di sviluppo per i Nuovi Regolamenti ${reg.nextRegulationChangeYear} (Avanzamento Progetto: Livello ${teamDev.nextGenLevel}/5)!`
+              );
+            }
+          }
+        }
+      }
     });
 
     db.setTeamDevelopment(this.career.teamDevelopment);
@@ -2800,7 +2869,10 @@ export class CareerEngine {
         cycleLengthYears: 3,
         nextRegulationChangeYear: 2029,
         isRegulationYearAnnounced: false,
-        playerNextGenInvestment: 0
+        playerNextGenInvestment: 0,
+        teammateNextGenInvestment: 0,
+        teammateContribution: { money: 0, points: 0, log: [] },
+        aiTeamInvestments: {}
       };
     }
 
@@ -2812,66 +2884,128 @@ export class CareerEngine {
       reg.isRegulationYearAnnounced = true;
       if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
       this.career.aiTransferNews.unshift(
-        `🚨 REGOLAMENTO TECNICO FIA: Ufficiale! La Federazione ha deliberato il nuovo regolamento per la Stagione ${reg.nextRegulationChangeYear}. I team devono allocare risorse sul Progetto Vettura Nuovo Regolamento per evitare penalizzazioni di passo.`
+        `🚨 REGOLAMENTO TECNICO FIA: Ufficiale! La Federazione ha deliberato il nuovo regolamento per la Stagione ${reg.nextRegulationChangeYear}. Tutte le scuderie devono allocare budget e punti telemetrici sul Progetto Vettura Nuovo Regolamento per limitare il declassamento dei componenti e la perdita di passo!`
       );
     }
 
     // 2. Entrata in vigore del Nuovo Regolamento Tecnico (anno del cambio, es. 2029)
     if (currentYear >= reg.nextRegulationChangeYear) {
-      const playerBonus = (reg.playerNextGenInvestment || 0) * 1.5;
+      const playerLevel = reg.playerNextGenInvestment || 0;
+      const tmLevel = reg.teammateNextGenInvestment || 0;
+      const totalTeamReadiness = Math.min(5, playerLevel + tmLevel);
+
+      // Decremento controllato dei sottocomponenti R&D per creare un loop gradevole:
+      // A preparazione massima (5/5), ogni componente scende di solo 1 livello (-1 anziché reset a 0)
+      // A preparazione intermedia (3-4/5), scende di 1 o 2 livelli
+      // A preparazione bassa (1-2/5), scende di 2 livelli
+      // Senza preparazione (0/5), scende di 2 o 3 livelli
+      let totalLevelsLost = 0;
+      if (this.career.rdSubComponents) {
+        for (const [k, lvl] of Object.entries(this.career.rdSubComponents)) {
+          if (lvl > 0) {
+            let dropAmount = 1;
+            if (totalTeamReadiness >= 5) {
+              dropAmount = 1;
+            } else if (totalTeamReadiness >= 3) {
+              dropAmount = Math.random() < 0.6 ? 1 : 2;
+            } else if (totalTeamReadiness >= 1) {
+              dropAmount = 2;
+            } else {
+              dropAmount = Math.random() < 0.5 ? 2 : 3;
+            }
+            const actualDrop = Math.min(lvl, dropAmount);
+            this.career.rdSubComponents[k] = Math.max(0, lvl - actualDrop);
+            totalLevelsLost += actualDrop;
+          }
+        }
+      }
+
       this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
 
+      // Rimescolamento gerarchia scuderie in base agli investimenti Next-Gen
       if (this.career.teamDevelopment) {
         Object.values(this.career.teamDevelopment).forEach(td => {
           const isPlayerTeam = td.teamId === this.career.currentTeamId;
           const regDrop = 6;
           let recovery = 0;
+
           if (isPlayerTeam) {
-            recovery = playerBonus;
+            // Recupero passo del team giocatore basato sulla preparazione complessiva (giocatore + compagno)
+            recovery = totalTeamReadiness * 1.2;
           } else {
-            const baseInvest = td.carPace >= 85 ? 4.5 : (td.carPace >= 78 ? 3.0 : 2.0);
-            const surprise = (Math.random() * 4.0) - 1.5;
-            recovery = Math.max(1, baseInvest + surprise);
+            // Squadre AI: usano il livello Next-Gen sviluppato durante la stagione precedente
+            const aiLvl = td.nextGenLevel !== undefined 
+              ? td.nextGenLevel 
+              : (td.carPace >= 85 ? 4 : (td.carPace >= 78 ? 2 : 1));
+            const variance = (Math.random() * 1.2) - 0.6;
+            recovery = Math.max(0.5, (aiLvl * 1.2) + variance);
           }
 
           td.carPace = Math.min(98, Math.max(65, Math.round(td.carPace - regDrop + recovery)));
           td.seasonPaceGain = 0;
           td.devPoints = 0;
+          td.nextGenLevel = 0;
+          td.nextGenPoints = 0;
         });
         db.setTeamDevelopment(this.career.teamDevelopment);
       }
 
+      const protectionSummary = totalTeamReadiness >= 4
+        ? `La tua scuderia ha gestito magistralmente la transizione tecnica (Preparazione ${totalTeamReadiness}/5)! I reparti hanno perso solo ${totalLevelsLost > 0 ? totalLevelsLost + ' livelli complessivi (-1 per componente)' : '0 livelli'}, conservando la maggior parte del lavoro pregresso!`
+        : (totalTeamReadiness >= 2
+          ? `Preparazione discreta (${totalTeamReadiness}/5): la vettura ha limitato i danni (-1/-2 livelli su alcuni componenti) rispetto al nuovo regolamento.`
+          : `Preparazione carente (${totalTeamReadiness}/5): forte impatto regolamentare con calo di 2-3 livelli su diversi componenti tecnici!`);
+
       if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
       this.career.aiTransferNews.unshift(
-        `🏁 RIVOLUZIONE TECNICA ${currentYear}: Entrano ufficialmente in vigore i Nuovi Regolamenti! Le gerarchie della griglia sono state rimescolate. ${playerBonus >= 4.5 ? 'Il tuo team ha centrato alla perfezione il progetto vettura!' : 'Inizia la sfida per sviluppare la monoposto della nuova era!'}`
+        `🏁 RIVOLUZIONE TECNICA FIA ${currentYear}: Entrano in vigore i Nuovi Regolamenti! Le gerarchie della griglia sono state rimescolate. ${protectionSummary}`
       );
 
+      // Reset ciclo regolamentare per i successivi 3 anni
       reg.currentCycle += 1;
       reg.nextRegulationChangeYear = currentYear + reg.cycleLengthYears;
       reg.isRegulationYearAnnounced = false;
       reg.playerNextGenInvestment = 0;
+      reg.teammateNextGenInvestment = 0;
+      reg.teammateContribution = { money: 0, points: 0, log: [] };
+      reg.aiTeamInvestments = {};
     }
   }
 
-  // Investimento R&D sul Progetto Nuovo Regolamento
+  // Investimento R&D sul Progetto Nuovo Regolamento (Giocatore)
   buyNextGenRegulationUpgrade() {
     if (!this.career?.regulations?.isRegulationYearAnnounced) {
       return { success: false, message: "Nessun cambio regolamentare annunciato per la prossima stagione." };
     }
-    const currentLevel = this.career.regulations.playerNextGenInvestment || 0;
-    if (currentLevel >= 5) {
+    const reg = this.career.regulations;
+    const playerLevel = reg.playerNextGenInvestment || 0;
+    const tmLevel = reg.teammateNextGenInvestment || 0;
+    const totalLevel = Math.min(5, playerLevel + tmLevel);
+
+    if (totalLevel >= 5) {
       return { success: false, message: "Progetto Nuovo Regolamento già al massimo livello consentito (5/5)!" };
     }
-    const cost = 40000 * (currentLevel + 1);
+
+    const cost = 35000 * (playerLevel + 1);
+    const ptsCost = 25 + (playerLevel * 15);
+
     if (this.career.money < cost) {
-      return { success: false, message: `Fondi insufficienti per questo step R&D. Richiesti €${cost.toLocaleString()}.` };
+      return { success: false, message: `Fondi insufficienti per questo step R&D. Richiesti €${cost.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.` };
     }
+    if ((this.career.rdTelemetryPoints || 0) < ptsCost) {
+      return { success: false, message: `Dati telemetrici insufficienti. Richiesti ${ptsCost} PT, disponibili ${this.career.rdTelemetryPoints || 0} PT.` };
+    }
+
     this.career.money -= cost;
-    this.career.regulations.playerNextGenInvestment = currentLevel + 1;
+    this.career.rdTelemetryPoints -= ptsCost;
+    reg.playerNextGenInvestment = playerLevel + 1;
+
+    const newTotal = Math.min(5, (reg.playerNextGenInvestment || 0) + (reg.teammateNextGenInvestment || 0));
     this.saveToStorage();
+
     return {
       success: true,
-      message: `Progetto Vettura Nuovo Regolamento avanzato al Livello ${currentLevel + 1}/5! (+${((currentLevel + 1) * 1.5).toFixed(1)} Passo Garantito nella nuova era)`
+      message: `Progetto Vettura Nuovo Regolamento avanzato al Livello ${newTotal}/5 (Tuo step: ${reg.playerNextGenInvestment}/5)! Protezione upgrade attiva.`
     };
   }
 

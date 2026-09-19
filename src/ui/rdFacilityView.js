@@ -129,42 +129,83 @@ export class RdFacilityView {
           </div>
 
           <!-- SEZIONE NUOVO REGOLAMENTO TECNICO (SE ANNUNCIATO) -->
-          ${reg.isRegulationYearAnnounced ? `
-            <div class="regulation-alert-card">
-              <div class="reg-alert-flex">
-                <div class="reg-alert-text">
-                  <span class="reg-alert-subtag">
-                    🚨 RIVOLUZIONE REGOLAMENTARE FIA IN ARRIVO (${reg.nextRegulationChangeYear})
-                  </span>
-                  <h3 class="reg-alert-title">
-                    Progetto Vettura Nuovo Regolamento Tecnico
-                  </h3>
-                  <p class="reg-alert-desc">
-                    Alla fine di questa stagione scatterà il cambio regolamentare FIA: le monoposto perderanno circa 6 punti di passo.
-                    Investi fondi per progettare in anticipo la nuova vettura e conservare un vantaggio competitivo al debutto!
-                  </p>
-                </div>
+          ${reg.isRegulationYearAnnounced ? (() => {
+            const playerNextGen = reg.playerNextGenInvestment || 0;
+            const tmNextGen = reg.teammateNextGenInvestment || 0;
+            const totalReadiness = Math.min(5, playerNextGen + tmNextGen);
+            const nextGenCost = 35000 * (playerNextGen + 1);
+            const nextGenPts = 25 + (playerNextGen * 15);
 
-                <div class="reg-alert-action">
-                  <div class="reg-status-info">
-                    <span class="reg-status-lbl">PREPARAZIONE PROGETTO:</span>
-                    <strong class="reg-status-val">Livello ${reg.playerNextGenInvestment || 0} / 5</strong>
-                    <small class="reg-status-gain">+${(((reg.playerNextGenInvestment || 0)) * 1.5).toFixed(1)} Passo Garantito</small>
+            const aiInvestments = reg.aiTeamInvestments || {};
+            const aiRivalsList = Object.values(aiInvestments);
+            const aiRivalsCount = aiRivalsList.length;
+            const aiRivalsSummary = aiRivalsList.slice(0, 3).map(ai => `${ai.teamName} (Liv. ${ai.nextGenLevel}/5)`).join(', ');
+
+            return `
+              <div class="regulation-alert-card">
+                <div class="reg-alert-flex">
+                  <div class="reg-alert-text">
+                    <span class="reg-alert-subtag">
+                      🚨 RIVOLUZIONE REGOLAMENTARE FIA IN ARRIVO (${reg.nextRegulationChangeYear})
+                    </span>
+                    <h3 class="reg-alert-title">
+                      Progetto Monoposto Nuovi Regolamenti Tecnici
+                    </h3>
+                    <p class="reg-alert-desc">
+                      Alla conclusione della stagione scatteranno le nuove normative FIA. I componenti R&D subiranno un declassamento controllato in base alla preparazione della scuderia: investendo budget e dati telemetrici insieme al tuo compagno limiterai la perdita a solo 1 livello anziché subire pesanti declassamenti (-2/-3 livelli) e perdita di competitività!
+                    </p>
+                    
+                    <!-- DETTAGLIO CONTRIBUZIONI SQUADRA -->
+                    <div class="reg-contributors-grid" style="display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap;">
+                      <div class="reg-contrib-card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 14px; min-width: 140px;">
+                        <span style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Tuo Investimento</span>
+                        <strong style="color: #38bdf8; font-size: 15px;">Livello ${playerNextGen} / 5</strong>
+                      </div>
+
+                      <div class="reg-contrib-card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 14px; min-width: 170px;">
+                        <span style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Compagno (${tmName})</span>
+                        <strong style="color: #a78bfa; font-size: 15px;">+${tmNextGen} Livelli</strong>
+                        <small style="display: block; font-size: 10px; color: #cbd5e1;">(€${((reg.teammateContribution?.money || 0)).toLocaleString()} • ${reg.teammateContribution?.points || 0} PT devoluti)</small>
+                      </div>
+
+                      <div class="reg-contrib-card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 14px; min-width: 160px;">
+                        <span style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Protezione Upgrade</span>
+                        <strong style="color: ${totalReadiness >= 5 ? '#10b981' : (totalReadiness >= 3 ? '#f59e0b' : '#ef4444')}; font-size: 13px;">
+                          ${totalReadiness >= 5 ? '🛡️ Solo -1 Lvl (Minima)' : (totalReadiness >= 3 ? '🛡️ -1/-2 Lvl (Moderata)' : '⚠️ -2/-3 Lvl (Severa)')}
+                        </strong>
+                      </div>
+                    </div>
+
+                    ${aiRivalsCount > 0 ? `
+                      <div style="margin-top: 10px; font-size: 11px; color: #94a3b8;">
+                        🏁 <em>Rivali AI al lavoro sui regolamenti: ${aiRivalsSummary}</em>
+                      </div>
+                    ` : ''}
                   </div>
 
-                  ${(reg.playerNextGenInvestment || 0) < 5 ? `
-                    <button id="btn-buy-next-gen-reg" class="modal-btn btn-gold pulse-glow reg-action-btn">
-                      <span>Investi €${(40000 * ((reg.playerNextGenInvestment || 0) + 1)).toLocaleString()} ➔</span>
-                    </button>
-                  ` : `
-                    <button class="modal-btn reg-action-btn" disabled style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #10b981;">
-                      <span>✓ Progetto al 100%</span>
-                    </button>
-                  `}
+                  <div class="reg-alert-action">
+                    <div class="reg-status-info">
+                      <span class="reg-status-lbl">PREPARAZIONE COMPLESSIVA:</span>
+                      <strong class="reg-status-val" style="font-size: 20px; color: ${totalReadiness >= 5 ? '#10b981' : '#00f0ff'};">
+                        Livello ${totalReadiness} / 5
+                      </strong>
+                      <small class="reg-status-gain">+${(totalReadiness * 1.2).toFixed(1)} Passo Recuperato</small>
+                    </div>
+
+                    ${totalReadiness < 5 ? `
+                      <button id="btn-buy-next-gen-reg" class="modal-btn btn-gold pulse-glow reg-action-btn" style="white-space: nowrap;">
+                        <span>Investi €${nextGenCost.toLocaleString()} + ${nextGenPts} PT ➔</span>
+                      </button>
+                    ` : `
+                      <button class="modal-btn reg-action-btn" disabled style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #10b981; white-space: nowrap;">
+                        <span>✓ Monoposto 100% Pronta</span>
+                      </button>
+                    `}
+                  </div>
                 </div>
               </div>
-            </div>
-          ` : ''}
+            `;
+          })() : ''}
 
           <!-- TAB SELETTORE DIPARTIMENTI R&D -->
           <div class="standings-tab-bar rd-tabs-bar" style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
