@@ -528,5 +528,303 @@ export const DRIVER_BASELINES = {
     byCategory: {
       moto_sbk: { worldTitles: 2, wins: 54, poles: 17, podiums: 138, racesStarted: 222 }
     }
+  },
+
+  // === INDYCAR SERIES ===
+  drv_dixon: {
+    id: "drv_dixon",
+    realName: "Scott Dixon",
+    fictionalName: "Scott L'Immortale",
+    discipline: "auto",
+    isLegend: false,
+    era: "2001-Attivo",
+    notableNote: "6 Titoli IndyCar, 58 vittorie, 142 podi e vincitore della 500 Miglia di Indianapolis",
+    byCategory: {
+      auto_indy: { worldTitles: 6, wins: 58, poles: 33, podiums: 142, racesStarted: 400 }
+    }
+  },
+
+  drv_palou: {
+    id: "drv_palou",
+    realName: "Alex Palou",
+    fictionalName: "Alex Matematico",
+    discipline: "auto",
+    isLegend: false,
+    era: "2020-Attivo",
+    notableNote: "3 Titoli IndyCar (2021, 2023, 2024), 12 vittorie e dominatore moderno della serie",
+    byCategory: {
+      auto_indy: { worldTitles: 3, wins: 12, poles: 6, podiums: 31, racesStarted: 81 }
+    }
+  },
+
+  drv_newgarden: {
+    id: "drv_newgarden",
+    realName: "Josef Newgarden",
+    fictionalName: "Joe Newgarden",
+    discipline: "auto",
+    isLegend: false,
+    era: "2012-Attivo",
+    notableNote: "2 Titoli IndyCar e 2 volte vincitore consecutivo della leggendaria Indy 500 (2023, 2024)",
+    byCategory: {
+      auto_indy: { worldTitles: 2, wins: 31, poles: 18, podiums: 56, racesStarted: 200 }
+    }
+  },
+
+  drv_power: {
+    id: "drv_power",
+    realName: "Will Power",
+    fictionalName: "Will Power Il Fulmine",
+    discipline: "auto",
+    isLegend: false,
+    era: "2008-Attivo",
+    notableNote: "2 Titoli IndyCar, vincitore Indy 500 e recordman assoluto con 70 pole position",
+    byCategory: {
+      auto_indy: { worldTitles: 2, wins: 44, poles: 70, podiums: 100, racesStarted: 290 }
+    }
+  },
+
+  drv_herta: {
+    id: "drv_herta",
+    realName: "Colton Herta",
+    fictionalName: "Colton Rock Star",
+    discipline: "auto",
+    isLegend: false,
+    era: "2019-Attivo",
+    notableNote: "Il più giovane vincitore di sempre in IndyCar (18 anni), 9 vittorie e 14 pole",
+    byCategory: {
+      auto_indy: { worldTitles: 0, wins: 9, poles: 14, podiums: 19, racesStarted: 90 }
+    }
+  },
+
+  drv_oward: {
+    id: "drv_oward",
+    realName: "Pato O'Ward",
+    fictionalName: "Pato Pato",
+    discipline: "auto",
+    isLegend: false,
+    era: "2019-Attivo",
+    notableNote: "Stella messicana McLaren IndyCar, 7 vittorie e 26 podi",
+    byCategory: {
+      auto_indy: { worldTitles: 0, wins: 7, poles: 5, podiums: 26, racesStarted: 90 }
+    }
+  },
+
+  drv_rahal: {
+    id: "drv_rahal",
+    realName: "Graham Rahal",
+    fictionalName: "Graham Il Veterano",
+    discipline: "auto",
+    isLegend: false,
+    era: "2007-Attivo",
+    notableNote: "Veterano storico IndyCar con 6 vittorie e 33 podi in carriera",
+    byCategory: {
+      auto_indy: { worldTitles: 0, wins: 6, poles: 5, podiums: 33, racesStarted: 270 }
+    }
+  },
+
+  drv_kirkwood: {
+    id: "drv_kirkwood",
+    realName: "Kyle Kirkwood",
+    fictionalName: "Kyle Florida Boy",
+    discipline: "auto",
+    isLegend: false,
+    era: "2022-Attivo",
+    notableNote: "Vincitore a Long Beach e Nashville IndyCar con Andretti Global",
+    byCategory: {
+      auto_indy: { worldTitles: 0, wins: 2, poles: 2, podiums: 3, racesStarted: 45 }
+    }
+  },
+
+  drv_lundgaard: {
+    id: "drv_lundgaard",
+    realName: "Christian Lundgaard",
+    fictionalName: "Christian Vichingo",
+    discipline: "auto",
+    isLegend: false,
+    era: "2022-Attivo",
+    notableNote: "Vincitore a Toronto in IndyCar ed ex vincitore di manche in Formula 2",
+    byCategory: {
+      auto_indy: { worldTitles: 0, wins: 1, poles: 2, podiums: 3, racesStarted: 50 },
+      auto_f2: { worldTitles: 0, wins: 2, poles: 1, podiums: 9, racesStarted: 41 }
+    }
+  },
+
+  drv_fittipaldi_p: {
+    id: "drv_fittipaldi_p",
+    realName: "Pietro Fittipaldi",
+    fictionalName: "Pietro Il Nipote",
+    discipline: "auto",
+    isLegend: false,
+    era: "2018-Attivo",
+    notableNote: "Campione Formula V8 3.5 e pilota ufficiale Rahal Letterman Lanigan IndyCar",
+    byCategory: {
+      auto_indy: { worldTitles: 0, wins: 0, poles: 0, podiums: 0, racesStarted: 30 }
+    }
+  },
+
+  // === FIA WEC HYPERCAR ===
+  drv_buemi: {
+    id: "drv_buemi",
+    realName: "Sébastien Buemi",
+    fictionalName: "Sébastien Svizzero",
+    discipline: "auto",
+    isLegend: false,
+    era: "2012-Attivo",
+    notableNote: "4 Titoli Mondiali WEC Hypercar e 4 volte trionfatore alla 24 Ore di Le Mans",
+    byCategory: {
+      auto_wec: { worldTitles: 4, wins: 24, poles: 18, podiums: 45, racesStarted: 80 }
+    }
+  },
+
+  drv_kobayashi: {
+    id: "drv_kobayashi",
+    realName: "Kamui Kobayashi",
+    fictionalName: "Kamui Kamikaze",
+    discipline: "auto",
+    isLegend: false,
+    era: "2013-Attivo",
+    notableNote: "2 Titoli Mondiali WEC, vincitore 24h Le Mans 2021 e podio storico a Suzuka F1",
+    byCategory: {
+      auto_wec: { worldTitles: 2, wins: 16, poles: 19, podiums: 36, racesStarted: 65 },
+      auto_f1: { worldTitles: 0, wins: 0, poles: 0, podiums: 1, racesStarted: 75 }
+    }
+  },
+
+  drv_lotterer: {
+    id: "drv_lotterer",
+    realName: "André Lotterer",
+    fictionalName: "André Il Maestro",
+    discipline: "auto",
+    isLegend: false,
+    era: "2012-Attivo",
+    notableNote: "2 Titoli Mondiali WEC (2012 con Audi, 2024 con Porsche) e 3 volte re di Le Mans",
+    byCategory: {
+      auto_wec: { worldTitles: 2, wins: 15, poles: 14, podiums: 42, racesStarted: 80 }
+    }
+  },
+
+  drv_estre: {
+    id: "drv_estre",
+    realName: "Kévin Estre",
+    fictionalName: "Kévin Sorpassatutto",
+    discipline: "auto",
+    isLegend: false,
+    era: "2015-Attivo",
+    notableNote: "2 Titoli Mondiali WEC (GT e Hypercar 2024 con Porsche 963)",
+    byCategory: {
+      auto_wec: { worldTitles: 2, wins: 11, poles: 12, podiums: 30, racesStarted: 60 }
+    }
+  },
+
+  drv_fuoco: {
+    id: "drv_fuoco",
+    realName: "Antonio Fuoco",
+    fictionalName: "Antonio Fiamma",
+    discipline: "auto",
+    isLegend: false,
+    era: "2023-Attivo",
+    notableNote: "Vincitore storico della 24 Ore di Le Mans 2024 con la Ferrari 499P Hypercar",
+    byCategory: {
+      auto_wec: { worldTitles: 0, wins: 3, poles: 6, podiums: 12, racesStarted: 25 },
+      auto_f2: { worldTitles: 0, wins: 3, poles: 0, podiums: 11, racesStarted: 46 }
+    }
+  },
+
+  drv_giovinazzi: {
+    id: "drv_giovinazzi",
+    realName: "Antonio Giovinazzi",
+    fictionalName: "Antonio Redentore",
+    discipline: "auto",
+    isLegend: false,
+    era: "2023-Attivo",
+    notableNote: "Vincitore del Centenario della 24 Ore di Le Mans 2023 con Ferrari 499P ed ex F1",
+    byCategory: {
+      auto_wec: { worldTitles: 0, wins: 2, poles: 2, podiums: 8, racesStarted: 20 },
+      auto_f1: { worldTitles: 0, wins: 0, poles: 0, podiums: 0, racesStarted: 62 },
+      auto_f2: { worldTitles: 0, wins: 5, poles: 2, podiums: 8, racesStarted: 22 }
+    }
+  },
+
+  drv_bourdais: {
+    id: "drv_bourdais",
+    realName: "Sébastien Bourdais",
+    fictionalName: "Sébastien Professore",
+    discipline: "auto",
+    isLegend: false,
+    era: "2003-Attivo",
+    notableNote: "4 Titoli ChampCar consecutivi, vincitore di classe a Le Mans e podi WEC Hypercar",
+    byCategory: {
+      auto_wec: { worldTitles: 0, wins: 4, poles: 6, podiums: 15, racesStarted: 40 },
+      auto_indy: { worldTitles: 4, wins: 37, poles: 34, podiums: 73, racesStarted: 218 }
+    }
+  },
+
+  // === WORLDSBK SUPERBIKE ===
+  drv_rea: {
+    id: "drv_rea",
+    realName: "Jonathan Rea",
+    fictionalName: "Johnny Cannibale",
+    discipline: "moto",
+    isLegend: false,
+    era: "2008-Attivo",
+    notableNote: "Record assoluto di 6 Mondiali WorldSBK consecutivi, 119 vittorie e 264 podi",
+    byCategory: {
+      moto_sbk: { worldTitles: 6, wins: 119, poles: 44, podiums: 264, racesStarted: 420 }
+    }
+  },
+
+  drv_bulega: {
+    id: "drv_bulega",
+    realName: "Nicolò Bulega",
+    fictionalName: "Nicolò Il Razzo",
+    discipline: "moto",
+    isLegend: false,
+    era: "2023-Attivo",
+    notableNote: "Campione del Mondo WorldSSP 2023 e Vice-Campione WorldSBK 2024 al debutto con Ducati",
+    byCategory: {
+      moto_sbk: { worldTitles: 0, wins: 6, poles: 4, podiums: 24, racesStarted: 36 }
+    }
+  },
+
+  drv_petrucci: {
+    id: "drv_petrucci",
+    realName: "Danilo Petrucci",
+    fictionalName: "Petrux Nazionale",
+    discipline: "moto",
+    isLegend: false,
+    era: "2012-Attivo",
+    notableNote: "2 Vittorie in MotoGP (Mugello e Le Mans), tripletta storica WorldSBK Cremona e tappa Dakar",
+    byCategory: {
+      moto_sbk: { worldTitles: 0, wins: 3, poles: 0, podiums: 14, racesStarted: 70 },
+      moto_gp: { worldTitles: 0, wins: 2, poles: 0, podiums: 10, racesStarted: 169 }
+    }
+  },
+
+  drv_iannone: {
+    id: "drv_iannone",
+    realName: "Andrea Iannone",
+    fictionalName: "The Maniac",
+    discipline: "moto",
+    isLegend: false,
+    era: "2005-Attivo",
+    notableNote: "Vincitore in MotoGP (Austria 2016 Ducati) e vincitore al rientro in WorldSBK ad Aragon 2024",
+    byCategory: {
+      moto_sbk: { worldTitles: 0, wins: 1, poles: 0, podiums: 5, racesStarted: 36 },
+      moto_gp: { worldTitles: 0, wins: 1, poles: 2, podiums: 11, racesStarted: 118 },
+      moto_2: { worldTitles: 0, wins: 8, poles: 5, podiums: 19, racesStarted: 51 }
+    }
+  },
+
+  drv_locatelli: {
+    id: "drv_locatelli",
+    realName: "Andrea Locatelli",
+    fictionalName: "Loka Regolarità",
+    discipline: "moto",
+    isLegend: false,
+    era: "2020-Attivo",
+    notableNote: "Campione del Mondo WorldSSP 2020 con record di vittorie e pilota ufficiale Yamaha WorldSBK",
+    byCategory: {
+      moto_sbk: { worldTitles: 0, wins: 0, poles: 1, podiums: 16, racesStarted: 120 }
+    }
   }
 };

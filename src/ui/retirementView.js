@@ -76,7 +76,7 @@ export class RetirementView {
             </div>
             <div class="score-card-right">
               <span class="meter-label">PUNTEGGIO STORICO FINALE</span>
-              <strong class="retirement-goat-score">${goatScore} <small>/ 1000</small></strong>
+              <strong class="retirement-goat-score">${goatScore} <small>PTS</small></strong>
               <span class="retirement-hof-rank">
                 Posizione nella Hall of Fame: <strong>#${hallOfFame.playerRank}</strong> su ${hallOfFame.totalDrivers} Piloti
               </span>

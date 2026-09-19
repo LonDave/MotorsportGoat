@@ -80,7 +80,7 @@ export class GoatHallOfFameView {
             
             <div class="goat-score-meter-box">
               <span class="meter-label">IL TUO PUNTEGGIO LEGACY GOAT</span>
-              <strong class="meter-score-glow">${goatScore} <small>/ 1000</small></strong>
+              <strong class="meter-score-glow">${goatScore} <small>PTS</small></strong>
               <span class="meter-rank">
                 ${this.currentFilter === 'all' 
                   ? `Posizione Storica Mondiale: #${hallOfFame.playerRank} di ${hallOfFame.totalDrivers}` 

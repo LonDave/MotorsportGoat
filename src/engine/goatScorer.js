@@ -1,5 +1,7 @@
 import { db } from '../data/databaseManager.js';
 import { DRIVER_BASELINES } from '../data/driverBaselines.js';
+import { AUTO_CATEGORIES } from '../data/autoDatabase.js';
+import { MOTO_CATEGORIES } from '../data/motoDatabase.js';
 
 // Pesi e moltiplicatori di prestigio per ciascuna categoria del motorsport
 export const CATEGORY_TIER_CONFIG = {
@@ -122,7 +124,7 @@ export class GoatScorer {
                      dominancePoints + specialWinsPoints + teammatePoints +
                      longevityPoints + peakOvrPoints;
 
-    const total = Math.min(1000, Math.round(rawTotal));
+    const total = Math.max(0, Math.round(rawTotal));
 
     return {
       titlesPoints: Math.round(titlesPoints),
@@ -152,6 +154,13 @@ export class GoatScorer {
 
   // Restituisce titolo e status del pilota in base al punteggio GOAT effettivo
   static getTitleAndTier(goatScore) {
+    if (goatScore >= 1200) {
+      return { 
+        title: "DIVINITÀ DEL MOTORSPORT 🌟👑", 
+        badge: "LEGGENDA SUPREMA", 
+        desc: "Hai infranto ogni limite umano conosciuto. Un'icona eterna del motorsport destinata a risplendere nei secoli." 
+      };
+    }
     if (goatScore >= 980) {
       return { 
         title: "IL GOAT ASSOLUTO DEI MOTORI 👑", 
@@ -212,18 +221,19 @@ export class GoatScorer {
   static getHallOfFameRanking(playerScore, playerDriver, careerStats, categoryFilter = 'all', allDriverStats = null) {
     const statsPool = allDriverStats || DRIVER_BASELINES;
     const ranking = [];
+    const allCategories = { ...AUTO_CATEGORIES, ...MOTO_CATEGORIES };
 
-    // 1. Piloti e leggende dal pool dinamico delle carriere
-    for (const [drvId, data] of Object.entries(statsPool)) {
-      if (drvId === 'player') continue;
-      const byCat = data.byCategory || {};
-      const name = db.isRealNames ? (data.realName || data.name) : (data.fictionalName || data.name || data.realName);
-      const discipline = data.discipline || 'auto';
-      const isLegend = !!data.isLegend;
-      const era = data.era || 'Carriera';
-      const notableNote = data.notableNote || '';
+    if (categoryFilter === 'all') {
+      // 1. Piloti e leggende dal pool dinamico delle carriere
+      for (const [drvId, data] of Object.entries(statsPool)) {
+        if (drvId === 'player') continue;
+        const byCat = data.byCategory || {};
+        const name = db.isRealNames ? (data.realName || data.name) : (data.fictionalName || data.name || data.realName);
+        const discipline = data.discipline || 'auto';
+        const isLegend = !!data.isLegend;
+        const era = data.era || 'Carriera';
+        const notableNote = data.notableNote || '';
 
-      if (categoryFilter === 'all') {
         let totalTitles = 0;
         let totalWins = 0;
         let totalPoles = 0;
@@ -264,7 +274,7 @@ export class GoatScorer {
         else if (winRate >= 0.10) dominancePts = 10;
 
         const longevityPts = Math.min(25, Math.floor(totalRaces * 0.1));
-        const finalScore = Math.min(1000, Math.round(titlesPts + winsPts + polesPts + podiumsPts + dominancePts + longevityPts));
+        const finalScore = Math.round(titlesPts + winsPts + polesPts + podiumsPts + dominancePts + longevityPts);
 
         ranking.push({
           id: drvId,
@@ -281,14 +291,54 @@ export class GoatScorer {
           notableNote,
           isPlayer: false
         });
-      } else {
-        // Categoria specifica (es. auto_f1, auto_f2, auto_f3, moto_gp, etc.)
-        const cs = byCat[categoryFilter];
-        if (!cs || (cs.racesStarted === 0 && cs.worldTitles === 0 && cs.wins === 0 && cs.podiums === 0)) {
-          continue;
-        }
+      }
+    } else {
+      // Categoria specifica (es. auto_indy, auto_f1, auto_wec, auto_f2, auto_f3, auto_f4, moto_gp, etc.)
+      const targetCat = allCategories[categoryFilter];
+      const categoryDriversMap = new Map();
 
-        const cfg = CATEGORY_TIER_CONFIG[categoryFilter] || CATEGORY_TIER_CONFIG.auto_f4;
+      // 1. Includi TUTTI i piloti del roster ufficiale della categoria presenti nel gioco
+      if (targetCat && targetCat.roster) {
+        targetCat.roster.forEach(d => {
+          categoryDriversMap.set(d.id, {
+            id: d.id,
+            name: db.getDriverName(d.id, targetCat.discipline || 'auto'),
+            discipline: targetCat.discipline || 'auto',
+            isLegend: false,
+            era: 'Attivo',
+            notableNote: '',
+            ovr: d.ovr || 75
+          });
+        });
+      }
+
+      // 2. Includi tutti i piloti storici, leggende o altri piloti che hanno dati in questa categoria da statsPool
+      for (const [drvId, data] of Object.entries(statsPool)) {
+        if (drvId === 'player') continue;
+        const byCat = data.byCategory || {};
+        if (byCat[categoryFilter]) {
+          const existing = categoryDriversMap.get(drvId) || {};
+          const name = db.isRealNames ? (data.realName || data.name || existing.name) : (data.fictionalName || data.name || existing.name);
+          categoryDriversMap.set(drvId, {
+            ...existing,
+            id: drvId,
+            name: name || db.getDriverName(drvId, data.discipline || 'auto'),
+            discipline: data.discipline || existing.discipline || 'auto',
+            isLegend: !!data.isLegend,
+            era: data.era || existing.era || 'Carriera',
+            notableNote: data.notableNote || existing.notableNote || '',
+            ovr: existing.ovr || 75
+          });
+        }
+      }
+
+      const cfg = CATEGORY_TIER_CONFIG[categoryFilter] || CATEGORY_TIER_CONFIG.auto_f4;
+
+      categoryDriversMap.forEach((drvInfo, drvId) => {
+        const cs = statsPool[drvId]?.byCategory?.[categoryFilter] || {
+          worldTitles: 0, wins: 0, poles: 0, podiums: 0, racesStarted: 0
+        };
+
         const titles = cs.worldTitles || 0;
         const wins = cs.wins || 0;
         const poles = cs.poles || 0;
@@ -298,20 +348,21 @@ export class GoatScorer {
 
         ranking.push({
           id: drvId,
-          name,
-          discipline,
-          era,
+          name: drvInfo.name,
+          discipline: drvInfo.discipline,
+          era: drvInfo.era,
           titles,
           wins,
           poles,
           podiums,
           races,
           goatScore: catScore,
-          isLegend,
-          notableNote,
+          isLegend: drvInfo.isLegend,
+          notableNote: drvInfo.notableNote,
+          ovr: drvInfo.ovr || 75,
           isPlayer: false
         });
-      }
+      });
     }
 
     // 2. Aggiunta del Giocatore
@@ -359,6 +410,7 @@ export class GoatScorer {
           podiums,
           races,
           goatScore: catScore,
+          ovr: playerDriver.ovr || 75,
           isLegend: false,
           isPlayer: true
         });
@@ -369,7 +421,14 @@ export class GoatScorer {
     if (categoryFilter === 'all') {
       ranking.sort((a, b) => b.goatScore - a.goatScore || b.titles - a.titles || b.wins - a.wins);
     } else {
-      ranking.sort((a, b) => b.titles - a.titles || b.wins - a.wins || b.podiums - a.podiums || b.goatScore - a.goatScore);
+      ranking.sort((a, b) => 
+        b.titles - a.titles || 
+        b.wins - a.wins || 
+        b.podiums - a.podiums || 
+        b.poles - a.poles || 
+        b.goatScore - a.goatScore ||
+        (b.ovr || 0) - (a.ovr || 0)
+      );
     }
 
     const playerRank = ranking.findIndex(d => d.isPlayer) + 1;
