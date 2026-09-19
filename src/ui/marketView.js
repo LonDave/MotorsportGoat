@@ -231,9 +231,12 @@ export class MarketView {
                     // Costruisce la lista piloti attivi rispettando le modifiche di mercato e il giocatore
                     let driversList = [];
                     if (isPlayerTeam) {
+                      const playerFullName = (player.firstName && player.lastName)
+                        ? `${player.firstName} ${player.lastName}`
+                        : (player.name || player.displayName || 'Il Tuo Pilota');
                       driversList.push({
                         id: 'player',
-                        name: `${player.name} ${player.surname || ''}`,
+                        name: playerFullName,
                         ovr: player.ovr || 75,
                         isPlayer: true,
                         role: 'Tu (1° Pilota)',

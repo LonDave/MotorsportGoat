@@ -579,10 +579,14 @@ export class CareerEngine {
     const catData = categories[startingCategory];
     const initialTeam = catData.teams[0];
 
+    const pFirst = customData.firstName || "Alessandro";
+    const pLast = customData.lastName || "Veloci";
     this.player = {
       id: "player_custom",
-      firstName: customData.firstName || "Alessandro",
-      lastName: customData.lastName || "Veloci",
+      firstName: pFirst,
+      lastName: pLast,
+      name: `${pFirst} ${pLast}`,
+      displayName: `${pFirst} ${pLast}`,
       nickname: customData.nickname || "Il Predatore",
       nationality: customData.nationality || "ITA",
       number: customData.number || 77,
