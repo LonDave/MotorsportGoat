@@ -8385,8 +8385,9 @@ body {
   }
 
   .career-subnav-bar {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: stretch !important;
     gap: 4px !important;
     padding: 6px 6px !important;
     background: rgba(8, 12, 20, 0.95) !important;
@@ -8407,6 +8408,7 @@ body {
   }
 
   .subnav-tab {
+    flex: 1 1 calc(25% - 4px) !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -8418,8 +8420,7 @@ body {
     border-radius: 6px !important;
     font-size: 10px !important;
     text-align: center !important;
-    min-width: 0 !important;
-    width: 100% !important;
+    min-width: 60px !important;
     box-sizing: border-box !important;
     white-space: nowrap !important;
     border-bottom: none !important;
@@ -10095,6 +10096,121 @@ body {
   font-size: 11px;
   color: #64748b;
   margin-top: 2px;
+}
+
+.hall-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.hall-table-wrapper table {
+  width: 100%;
+  min-width: 580px;
+}
+
+@media (max-width: 768px) {
+  .goat-view-wrapper {
+    padding: 12px 6px 60px 6px !important;
+    gap: 14px !important;
+  }
+
+  .goat-hero-banner {
+    padding: 18px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .goat-hero-title {
+    font-size: 20px !important;
+    line-height: 1.25 !important;
+  }
+
+  .goat-hero-desc {
+    font-size: 12px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .goat-score-meter-box {
+    padding: 12px 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .meter-score-glow {
+    font-size: 30px !important;
+  }
+
+  .meter-score-glow small {
+    font-size: 13px !important;
+  }
+
+  .meter-rank {
+    font-size: 11px !important;
+    text-align: center !important;
+  }
+
+  .goat-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .goat-breakdown-card,
+  .hall-of-fame-card,
+  .goat-categories-card {
+    padding: 14px 10px !important;
+  }
+
+  .goat-filter-bar {
+    gap: 4px !important;
+    margin: 8px 0 12px 0 !important;
+  }
+
+  .goat-filter-pill {
+    padding: 5px 9px !important;
+    font-size: 10.5px !important;
+    border-radius: 14px !important;
+  }
+
+  .goat-stats-summary-pill {
+    font-size: 10.5px !important;
+    padding: 6px 10px !important;
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .breakdown-item {
+    padding: 8px 10px !important;
+  }
+
+  .breakdown-item-info span {
+    font-size: 12px !important;
+  }
+
+  .breakdown-subtext {
+    font-size: 10px !important;
+  }
+
+  .breakdown-pts {
+    font-size: 12.5px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .goat-hero-title {
+    font-size: 17px !important;
+  }
+
+  .crown-glow-badge {
+    font-size: 9.5px !important;
+    padding: 4px 10px !important;
+  }
+
+  .meter-score-glow {
+    font-size: 26px !important;
+  }
 }
 
 /* ==========================================================================
