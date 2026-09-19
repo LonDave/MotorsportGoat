@@ -231,7 +231,8 @@ export class GoatScorer {
         const name = db.isRealNames ? (data.realName || data.name) : (data.fictionalName || data.name || data.realName);
         const discipline = data.discipline || 'auto';
         const isLegend = !!data.isLegend;
-        const era = data.era || 'Carriera';
+        const isRetired = !!data.isRetired;
+        const era = data.era || (isRetired ? `${data.retiredYear || 2026}` : 'Carriera');
         const notableNote = data.notableNote || '';
 
         let totalTitles = 0;
@@ -288,6 +289,7 @@ export class GoatScorer {
           races: totalRaces,
           goatScore: finalScore,
           isLegend,
+          isRetired,
           notableNote,
           isPlayer: false
         });
@@ -300,12 +302,17 @@ export class GoatScorer {
       // 1. Includi TUTTI i piloti del roster ufficiale della categoria presenti nel gioco
       if (targetCat && targetCat.roster) {
         targetCat.roster.forEach(d => {
+          const sPoolData = statsPool[d.id];
+          const isRet = !!sPoolData?.isRetired;
+          const eraVal = sPoolData?.era || (isRet ? `${sPoolData.retiredYear || 2026}` : 'Attivo');
+
           categoryDriversMap.set(d.id, {
             id: d.id,
             name: db.getDriverName(d.id, targetCat.discipline || 'auto'),
             discipline: targetCat.discipline || 'auto',
             isLegend: false,
-            era: 'Attivo',
+            isRetired: isRet,
+            era: eraVal,
             notableNote: '',
             ovr: d.ovr || 75
           });
@@ -319,13 +326,17 @@ export class GoatScorer {
         if (byCat[categoryFilter]) {
           const existing = categoryDriversMap.get(drvId) || {};
           const name = db.isRealNames ? (data.realName || data.name || existing.name) : (data.fictionalName || data.name || existing.name);
+          const isRet = !!data.isRetired || !!existing.isRetired;
+          const eraVal = data.era || existing.era || (isRet ? `${data.retiredYear || 2026}` : 'Carriera');
+
           categoryDriversMap.set(drvId, {
             ...existing,
             id: drvId,
             name: name || db.getDriverName(drvId, data.discipline || 'auto'),
             discipline: data.discipline || existing.discipline || 'auto',
             isLegend: !!data.isLegend,
-            era: data.era || existing.era || 'Carriera',
+            isRetired: isRet,
+            era: eraVal,
             notableNote: data.notableNote || existing.notableNote || '',
             ovr: existing.ovr || 75
           });
@@ -358,6 +369,7 @@ export class GoatScorer {
           races,
           goatScore: catScore,
           isLegend: drvInfo.isLegend,
+          isRetired: !!drvInfo.isRetired,
           notableNote: drvInfo.notableNote,
           ovr: drvInfo.ovr || 75,
           isPlayer: false
@@ -369,10 +381,12 @@ export class GoatScorer {
     if (playerDriver) {
       const pName = `${playerDriver.firstName || 'Pilota'} ${playerDriver.lastName || 'GOAT'} "${playerDriver.nickname || 'Flash'}"`;
       const pDiscipline = playerDriver.discipline || 'auto';
-      const pEra = `${careerStats?.startYear || 2026}-${careerStats?.currentYear || 2026}`;
+      const isPlayerRetired = !!(careerStats?.isRetired || playerDriver?.isRetired);
+      const pEra = careerStats?.era || `${careerStats?.startYear || 2026}-${careerStats?.currentYear || 2026}`;
 
       if (categoryFilter === 'all') {
         const breakdown = this.getScoreBreakdown(playerDriver, careerStats);
+        const goatScore = playerScore !== undefined ? playerScore : breakdown.total;
         ranking.push({
           id: 'player',
           name: pName,
@@ -383,8 +397,9 @@ export class GoatScorer {
           poles: breakdown.totalPoles,
           podiums: breakdown.totalPodiums,
           races: breakdown.totalRaces,
-          goatScore: playerScore !== undefined ? playerScore : breakdown.total,
-          isLegend: false,
+          goatScore,
+          isLegend: breakdown.totalTitles > 0 || goatScore >= 300,
+          isRetired: isPlayerRetired,
           isPlayer: true
         });
       } else {
@@ -411,7 +426,8 @@ export class GoatScorer {
           races,
           goatScore: catScore,
           ovr: playerDriver.ovr || 75,
-          isLegend: false,
+          isLegend: titles > 0 || catScore >= 150,
+          isRetired: isPlayerRetired,
           isPlayer: true
         });
       }

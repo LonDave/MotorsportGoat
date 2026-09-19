@@ -457,6 +457,11 @@ export class MarketView {
                             <div style="font-size: 12px; color: #cbd5e1;">
                               Scuderia: <strong>${teamName}</strong> • ${seriesName}
                             </div>
+                            ${reg.traitNote ? `
+                              <div style="font-size: 11px; color: #fbbf24; background: rgba(251, 191, 36, 0.08); border-left: 2px solid #fbbf24; padding: 4px 8px; border-radius: 4px; line-height: 1.3;">
+                                ⚡ <strong>Tratto DNA:</strong> ${reg.traitNote}
+                              </div>
+                            ` : ''}
                             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 10px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px; text-align: center;">
                               <div>Vel: <strong style="color:#38bdf8;">${curAttrs.pace || 75}</strong></div>
                               <div>Gara: <strong style="color:#f59e0b;">${curAttrs.racecraft || 75}</strong></div>

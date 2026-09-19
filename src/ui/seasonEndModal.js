@@ -330,6 +330,11 @@ export class SeasonEndModal {
                               </div>
                               <div style="font-size: 11px; color: #38bdf8;">Ispirato a: <strong>${reg.legendSource || 'Leggenda'}</strong></div>
                               <div style="font-size: 11px; color: #cbd5e1;">Ingaggiato da: <strong>${tName}</strong> (${reg.age} anni)</div>
+                              ${reg.traitNote ? `
+                                <div style="font-size: 10px; color: #fbbf24; background: rgba(251, 191, 36, 0.08); padding: 3px 6px; border-radius: 4px; margin-top: 2px;">
+                                  ⚡ ${reg.traitNote}
+                                </div>
+                              ` : ''}
                             </div>
                           `;
                         }).join('')}

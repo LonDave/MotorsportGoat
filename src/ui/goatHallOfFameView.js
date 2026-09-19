@@ -229,6 +229,7 @@ export class GoatHallOfFameView {
                             <strong>${leg.name}</strong>
                             ${leg.isPlayer ? '<span class="you-tag">TU</span>' : ''}
                             ${leg.isLegend ? '<span class="legend-chip">LEGGENDA</span>' : ''}
+                            ${leg.isRetired ? '<span class="retired-chip">RITIRATO</span>' : ''}
                           </div>
                           ${leg.notableNote ? `<small class="legend-note">${leg.notableNote}</small>` : ''}
                         </td>

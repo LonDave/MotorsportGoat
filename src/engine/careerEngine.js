@@ -503,38 +503,499 @@ export const INITIAL_DRIVER_AGES = {
 
 // Pool di Mostri Sacri e Leggende storiche per la generazione dinamica dei Regens (Automobilismo)
 export const AUTO_LEGENDS_REGEN_POOL = [
-  { id: "senna", realName: "Ayrton Senna", fictionalName: "Il Mago Senna", nationality: "BRA", number: 12 },
-  { id: "schumacher", realName: "Michael Schumacher", fictionalName: "Michele Il Barone Rosso", nationality: "DEU", number: 1 },
-  { id: "lauda", realName: "Niki Lauda", fictionalName: "Niki Il Computer Viennese", nationality: "AUT", number: 11 },
-  { id: "prost", realName: "Alain Prost", fictionalName: "Alain Il Professore", nationality: "FRA", number: 2 },
-  { id: "fangio", realName: "Juan Manuel Fangio", fictionalName: "El Chueco Maestro", nationality: "ARG", number: 1 },
-  { id: "vettel", realName: "Sebastian Vettel", fictionalName: "Seb Il Dito Imperiale", nationality: "DEU", number: 5 },
-  { id: "hunt", realName: "James Hunt", fictionalName: "James Il Ribelle", nationality: "GBR", number: 11 },
-  { id: "clark", realName: "Jim Clark", fictionalName: "Jim Lo Scozzese Volante", nationality: "GBR", number: 1 },
-  { id: "villeneuve", realName: "Gilles Villeneuve", fictionalName: "Gilles L'Aviatore", nationality: "CAN", number: 27 },
-  { id: "mansell", realName: "Nigel Mansell", fictionalName: "Nigel Il Leone", nationality: "GBR", number: 5 },
-  { id: "raikkonen", realName: "Kimi Räikkönen", fictionalName: "Kimi L'Uomo di Ghiaccio", nationality: "FIN", number: 7 },
-  { id: "hakkinen", realName: "Mika Häkkinen", fictionalName: "Mika Il Finlandese Volante", nationality: "FIN", number: 1 },
-  { id: "surtees", realName: "John Surtees", fictionalName: "John Il Titano Bivalente", nationality: "GBR", number: 7 },
-  { id: "piquet", realName: "Nelson Piquet", fictionalName: "Nelson Il Tattico Carioca", nationality: "BRA", number: 3 },
-  { id: "stewart", realName: "Jackie Stewart", fictionalName: "Sir Jackie La Leggenda", nationality: "GBR", number: 1 },
-  { id: "rindt", realName: "Jochen Rindt", fictionalName: "Jochen L'Intrepido", nationality: "AUT", number: 2 }
+  {
+    id: "senna",
+    realName: "Ayrton Senna",
+    fictionalName: "Il Mago Senna",
+    regenRealNames: ["Thiago Senna da Silva", "Mateo da Silva Sena", "Tiago Silveira"],
+    fictionalRegenNames: ["Tiago Il Mago", "Mateo O Fenômeno", "Thiago Il Carioca"],
+    nationality: "BRA",
+    number: 12,
+    traits: { paceBias: 5, racecraftBias: 4, tyreMgmtBias: -1, consistencyBias: 1, wetSkillBias: 9, traitNote: "Mago della pioggia, staccatore e velocista sul giro secco" }
+  },
+  {
+    id: "schumacher",
+    realName: "Michael Schumacher",
+    fictionalName: "Michele Il Barone Rosso",
+    regenRealNames: ["Maximilian Schuhmacher", "Lukas Schuhmann", "Mikael Schuber"],
+    fictionalRegenNames: ["Max Il Piccolo Barone", "Lukas Il Kaiser", "Mikael Il Tedesco"],
+    nationality: "DEU",
+    number: 1,
+    traits: { paceBias: 4, racecraftBias: 4, tyreMgmtBias: 3, consistencyBias: 7, wetSkillBias: 3, traitNote: "Costanza chirurgica, mentalità vincente e resistenza fisica" }
+  },
+  {
+    id: "lauda",
+    realName: "Niki Lauda",
+    fictionalName: "Niki Il Computer Viennese",
+    regenRealNames: ["Nikolas Lauden", "Klaus Lauder", "Nikolaus Lauer"],
+    fictionalRegenNames: ["Niko Il Calcolatore", "Klaus Mente Fredda", "Nikolaus Il Viennese"],
+    nationality: "AUT",
+    number: 11,
+    traits: { paceBias: 2, racecraftBias: 4, tyreMgmtBias: 7, consistencyBias: 6, wetSkillBias: 0, traitNote: "Analisi telemetrica, gestione gomme e intelligenza tattica" }
+  },
+  {
+    id: "prost",
+    realName: "Alain Prost",
+    fictionalName: "Alain Il Professore",
+    regenRealNames: ["Antoine Proust", "Alexis Prouteau", "Adrien Prosper"],
+    fictionalRegenNames: ["Antoine Il Professore Jr.", "Alexis Il Tattico", "Adrien Il Chirurgo"],
+    nationality: "FRA",
+    number: 2,
+    traits: { paceBias: 2, racecraftBias: 5, tyreMgmtBias: 8, consistencyBias: 6, wetSkillBias: -1, traitNote: "Gestione impeccabile degli pneumatici e zero errori in gara" }
+  },
+  {
+    id: "fangio",
+    realName: "Juan Manuel Fangio",
+    fictionalName: "El Chueco Maestro",
+    regenRealNames: ["Manuel Balcarce", "Marcos Fanzio", "Joaquin Fangione"],
+    fictionalRegenNames: ["Manuel El Maestrito", "Marcos Il Pibe", "Joaquin Il Pampa"],
+    nationality: "ARG",
+    number: 1,
+    traits: { paceBias: 4, racecraftBias: 6, tyreMgmtBias: 4, consistencyBias: 5, wetSkillBias: 2, traitNote: "Saggezza di guida, fluidità nei cambi di marcia e lettura della pista" }
+  },
+  {
+    id: "vettel",
+    realName: "Sebastian Vettel",
+    fictionalName: "Seb Il Dito Imperiale",
+    regenRealNames: ["Stefan Vettler", "Sven Vedder", "Simon Vettori"],
+    fictionalRegenNames: ["Stefan Baby Seb", "Sven Il Nuovo Dito", "Simon Tempesta"],
+    nationality: "DEU",
+    number: 5,
+    traits: { paceBias: 5, racecraftBias: 3, tyreMgmtBias: 2, consistencyBias: 4, wetSkillBias: 2, traitNote: "Partenze a razzo, dominio al comando e precisione in qualifica" }
+  },
+  {
+    id: "hunt",
+    realName: "James Hunt",
+    fictionalName: "James Il Ribelle",
+    regenRealNames: ["Jasper Hunter", "Jem Huntley", "Archie Huntington"],
+    fictionalRegenNames: ["Jasper Il Ribelle Jr.", "Jem Cuore di Leone", "Archie Wild Boy"],
+    nationality: "GBR",
+    number: 11,
+    traits: { paceBias: 5, racecraftBias: 6, tyreMgmtBias: -2, consistencyBias: -1, wetSkillBias: 4, traitNote: "Sorpassi audaci all'esterno, coraggio puro e staccate al limite" }
+  },
+  {
+    id: "clark",
+    realName: "Jim Clark",
+    fictionalName: "Jim Lo Scozzese Volante",
+    regenRealNames: ["Jamie Clarke", "Jock Clarkson", "Ewan MacClark"],
+    fictionalRegenNames: ["Jamie Lo Scozzese Jr.", "Jock Il Falco", "Ewan Il Silenzioso"],
+    nationality: "GBR",
+    number: 1,
+    traits: { paceBias: 7, racecraftBias: 3, tyreMgmtBias: 5, consistencyBias: 5, wetSkillBias: 3, traitNote: "Fluidità di traiettoria paradisiaca e conservazione meccanica" }
+  },
+  {
+    id: "villeneuve",
+    realName: "Gilles Villeneuve",
+    fictionalName: "Gilles L'Aviatore",
+    regenRealNames: ["Gabriel Villeneuve", "Gaétan Villeroy", "Guillaume Villefort"],
+    fictionalRegenNames: ["Gabriel L'Aviatore Jr.", "Gaétan Senza Paura", "Guillaume Il Folle"],
+    nationality: "CAN",
+    number: 27,
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: -3, consistencyBias: -1, wetSkillBias: 5, traitNote: "Controsterzi spettacolari, staccate selvagge e coraggio da vendere" }
+  },
+  {
+    id: "mansell",
+    realName: "Nigel Mansell",
+    fictionalName: "Nigel Il Leone",
+    regenRealNames: ["Noah Manning", "Niall Manson", "Oliver Manser"],
+    fictionalRegenNames: ["Noah Il Leoncino", "Niall Braccio di Ferro", "Oliver Il Gladiatore"],
+    nationality: "GBR",
+    number: 5,
+    traits: { paceBias: 5, racecraftBias: 6, tyreMgmtBias: 0, consistencyBias: 3, wetSkillBias: 2, traitNote: "Aggressività nel corpo a corpo, staccate poderose e cuore immenso" }
+  },
+  {
+    id: "raikkonen",
+    realName: "Kimi Räikkönen",
+    fictionalName: "Kimi L'Uomo di Ghiaccio",
+    regenRealNames: ["Kasper Rainio", "Kalle Rämänen", "Kristian Raiko"],
+    fictionalRegenNames: ["Kasper Ice Kid", "Kalle Il Freddo", "Kristian Il Silenzioso"],
+    nationality: "FIN",
+    number: 7,
+    traits: { paceBias: 6, racecraftBias: 4, tyreMgmtBias: 6, consistencyBias: 2, wetSkillBias: 1, traitNote: "Calma di ghiaccio sotto pressione e ritmo costante sul passo gara" }
+  },
+  {
+    id: "hakkinen",
+    realName: "Mika Häkkinen",
+    fictionalName: "Mika Il Finlandese Volante",
+    regenRealNames: ["Markus Häkkilä", "Matias Hakola", "Eero Hakanen"],
+    fictionalRegenNames: ["Markus Il Fulmine Bianco", "Matias Sisu", "Eero L'Anti-Kaiser"],
+    nationality: "FIN",
+    number: 1,
+    traits: { paceBias: 7, racecraftBias: 4, tyreMgmtBias: 1, consistencyBias: 4, wetSkillBias: 2, traitNote: "Giro secco infallibile e staccate millimetriche nelle curve veloci" }
+  },
+  {
+    id: "surtees",
+    realName: "John Surtees",
+    fictionalName: "John Il Titano Bivalente",
+    regenRealNames: ["Johnathan Surtis", "Jack Surman", "Julian Surtin"],
+    fictionalRegenNames: ["Jack Il Titano Jr.", "Johnathan Il Doppio Campione"],
+    nationality: "GBR",
+    number: 7,
+    traits: { paceBias: 4, racecraftBias: 5, tyreMgmtBias: 3, consistencyBias: 5, wetSkillBias: 3, traitNote: "Versatilità suprema tra 2 e 4 ruote, grande sensibilità meccanica" }
+  },
+  {
+    id: "piquet",
+    realName: "Nelson Piquet",
+    fictionalName: "Nelson Il Tattico Carioca",
+    regenRealNames: ["Nilo Piquet da Silva", "Nestor Piqueira", "Nicolas Piket"],
+    fictionalRegenNames: ["Nilo Il Tattico Jr.", "Nestor Astuzia Carioca"],
+    nationality: "BRA",
+    number: 3,
+    traits: { paceBias: 4, racecraftBias: 5, tyreMgmtBias: 4, consistencyBias: 3, wetSkillBias: 2, traitNote: "Astuzia tattica, partenze fulminee e mente da stratega" }
+  },
+  {
+    id: "stewart",
+    realName: "Jackie Stewart",
+    fictionalName: "Sir Jackie La Leggenda",
+    regenRealNames: ["Lachlan Stewartson", "Callum Stewart", "Gordon MacStewart"],
+    fictionalRegenNames: ["Lachlan Il Professore delle Highlands", "Callum Il Tattico Scozzese"],
+    nationality: "GBR",
+    number: 1,
+    traits: { paceBias: 4, racecraftBias: 4, tyreMgmtBias: 5, consistencyBias: 6, wetSkillBias: 2, traitNote: "Precisione di guida millimetrica e sicurezza impeccabile al volante" }
+  },
+  {
+    id: "rindt",
+    realName: "Jochen Rindt",
+    fictionalName: "Jochen L'Intrepido",
+    regenRealNames: ["Julian Rindter", "Jonas Rindtner", "Josef Rindter"],
+    fictionalRegenNames: ["Julian L'Intrepido Jr.", "Jonas Coraggio d'Acciaio"],
+    nationality: "AUT",
+    number: 2,
+    traits: { paceBias: 6, racecraftBias: 6, tyreMgmtBias: -1, consistencyBias: 2, wetSkillBias: 3, traitNote: "Attacco continuo, riflessi felini e traiettorie non convenzionali" }
+  }
 ];
 
 // Pool di Leggende per i Regens Motociclismo
 export const MOTO_LEGENDS_REGEN_POOL = [
-  { id: "rossi", realName: "Valentino Rossi", fictionalName: "Valentin Il Dottore 46", nationality: "ITA", number: 46 },
-  { id: "agostini", realName: "Giacomo Agostini", fictionalName: "Giacomo Ago Nazionale", nationality: "ITA", number: 1 },
-  { id: "stoner", realName: "Casey Stoner", fictionalName: "Casey Il Canguro Mannaro", nationality: "AUS", number: 27 },
-  { id: "doohan", realName: "Mick Doohan", fictionalName: "Mick Il Cannibale", nationality: "AUS", number: 1 },
-  { id: "lorenzo", realName: "Jorge Lorenzo", fictionalName: "Jorge Martillo Y Mantequilla", nationality: "ESP", number: 99 },
-  { id: "pedrosa", realName: "Dani Pedrosa", fictionalName: "Dani Il Piccolo Samurai", nationality: "ESP", number: 26 },
-  { id: "hayden", realName: "Nicky Hayden", fictionalName: "Kentucky Kid Leggendario", nationality: "USA", number: 69 },
-  { id: "rainey", realName: "Wayne Rainey", fictionalName: "Wayne Stella Californiana", nationality: "USA", number: 1 },
-  { id: "schwantz", realName: "Kevin Schwantz", fictionalName: "Kevin Il Matador 34", nationality: "USA", number: 34 },
-  { id: "sheene", realName: "Barry Sheene", fictionalName: "Barry Il Glamour British", nationality: "GBR", number: 7 },
-  { id: "criville", realName: "Alex Crivillé", fictionalName: "Alex Il Pioniere Iberico", nationality: "ESP", number: 1 }
+  {
+    id: "rossi",
+    realName: "Valentino Rossi",
+    fictionalName: "Valentin Il Dottore 46",
+    regenRealNames: ["Valerio Rossini", "Vasco De Rossi", "Mattia Rossello"],
+    fictionalRegenNames: ["Valerio Il Dottorino", "Vasco Tavullia Boy", "Mattia 46 Junior"],
+    nationality: "ITA",
+    number: 46,
+    traits: { paceBias: 4, racecraftBias: 8, tyreMgmtBias: 5, consistencyBias: 4, wetSkillBias: 3, traitNote: "Maestro nei corpo a corpo all'ultimo giro e gestione del posteriore" }
+  },
+  {
+    id: "agostini",
+    realName: "Giacomo Agostini",
+    fictionalName: "Giacomo Ago Nazionale",
+    regenRealNames: ["Gianni Agosti", "Giacomo D'Agostino", "Lorenzo Agostinelli"],
+    fictionalRegenNames: ["Gianni Ago Nazionale Jr.", "Giacomo Il Dominatore", "Lorenzo L'Immortale"],
+    nationality: "ITA",
+    number: 1,
+    traits: { paceBias: 5, racecraftBias: 5, tyreMgmtBias: 4, consistencyBias: 7, wetSkillBias: 2, traitNote: "Regolarità disarmante, fughe in solitaria e percentuali record" }
+  },
+  {
+    id: "stoner",
+    realName: "Casey Stoner",
+    fictionalName: "Casey Il Canguro Mannaro",
+    regenRealNames: ["Callum Stone", "Caleb Stoner", "Lachlan Stone"],
+    fictionalRegenNames: ["Callum Il Canguro Boy", "Caleb Polso d'Oro", "Lachlan Traiettoria Pura"],
+    nationality: "AUS",
+    number: 27,
+    traits: { paceBias: 8, racecraftBias: 3, tyreMgmtBias: -1, consistencyBias: 3, wetSkillBias: 5, traitNote: "Controllo millimetrico della derapata e velocità supersonica in inserimento" }
+  },
+  {
+    id: "doohan",
+    realName: "Mick Doohan",
+    fictionalName: "Mick Il Cannibale",
+    regenRealNames: ["Mitchell Dolan", "Mason Doogan", "Marcus Doohan"],
+    fictionalRegenNames: ["Mitchell Il Piccolo Cannibale", "Mason Pugno di Ferro", "Marcus Il Demolitore"],
+    nationality: "AUS",
+    number: 1,
+    traits: { paceBias: 5, racecraftBias: 6, tyreMgmtBias: 3, consistencyBias: 6, wetSkillBias: 2, traitNote: "Tenuta fisica brutale, accelerazione rabbiosa in uscita di curva" }
+  },
+  {
+    id: "lorenzo",
+    realName: "Jorge Lorenzo",
+    fictionalName: "Jorge Martillo Y Mantequilla",
+    regenRealNames: ["Jordi Lorente", "Joan Lorens", "Javier Lorenzetti"],
+    fictionalRegenNames: ["Jordi Martillo Jr.", "Joan Mantequilla", "Javier Compasso d'Oro"],
+    nationality: "ESP",
+    number: 99,
+    traits: { paceBias: 6, racecraftBias: 3, tyreMgmtBias: 3, consistencyBias: 8, wetSkillBias: -2, traitNote: "Passo martellante identico al decimo e partenze a fionda" }
+  },
+  {
+    id: "pedrosa",
+    realName: "Dani Pedrosa",
+    fictionalName: "Dani Il Piccolo Samurai",
+    regenRealNames: ["Daniel Pedron", "Diego Pedroza", "David Pedret"],
+    fictionalRegenNames: ["Daniel Il Giovane Samurai", "Diego Piuma d'Oro", "David Linea Perfetta"],
+    nationality: "ESP",
+    number: 26,
+    traits: { paceBias: 5, racecraftBias: 4, tyreMgmtBias: 5, consistencyBias: 5, wetSkillBias: 0, traitNote: "Rialzo immediato della moto in uscita e dolcezza sul gas" }
+  },
+  {
+    id: "hayden",
+    realName: "Nicky Hayden",
+    fictionalName: "Kentucky Kid Leggendario",
+    regenRealNames: ["Nathan Haywood", "Noah Hayden", "Colt Haydon"],
+    fictionalRegenNames: ["Nathan Kentucky Boy", "Noah Dirt Tracker", "Colt Cuore d'America"],
+    nationality: "USA",
+    number: 69,
+    traits: { paceBias: 4, racecraftBias: 6, tyreMgmtBias: 3, consistencyBias: 4, wetSkillBias: 4, traitNote: "Guida generosa di traverso, grande cuore e costanza encomiabile" }
+  },
+  {
+    id: "rainey",
+    realName: "Wayne Rainey",
+    fictionalName: "Wayne Stella Californiana",
+    regenRealNames: ["Wyatt Rayner", "Warren Raines", "Weston Rainey"],
+    fictionalRegenNames: ["Wyatt Stella Californiana Jr.", "Warren L'Ingegnere in Pista"],
+    nationality: "USA",
+    number: 1,
+    traits: { paceBias: 5, racecraftBias: 5, tyreMgmtBias: 5, consistencyBias: 6, wetSkillBias: 1, traitNote: "Guida impeccabile senza sbavature, staccatore di precisione chirurgica" }
+  },
+  {
+    id: "schwantz",
+    realName: "Kevin Schwantz",
+    fictionalName: "Kevin Il Matador 34",
+    regenRealNames: ["Kurt Schwartz", "Kyle Schwartzen", "Kip Schwantz"],
+    fictionalRegenNames: ["Kurt Il Matador Jr.", "Kyle Frenata Impossibile", "Kip Numero 34"],
+    nationality: "USA",
+    number: 34,
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: -2, consistencyBias: 1, wetSkillBias: 4, traitNote: "Staccate a ruota posteriore alzata e sorpassi nei punti più impensabili" }
+  },
+  {
+    id: "sheene",
+    realName: "Barry Sheene",
+    fictionalName: "Barry Il Glamour British",
+    regenRealNames: ["Barry Sheen", "Brodie Sheene", "Barty Sheenan"],
+    fictionalRegenNames: ["Barry Glamour British Jr.", "Brodie Lucky Seven"],
+    nationality: "GBR",
+    number: 7,
+    traits: { paceBias: 5, racecraftBias: 5, tyreMgmtBias: 2, consistencyBias: 3, wetSkillBias: 4, traitNote: "Carisma innato, astuzia nella scia e coraggio sul bagnato" }
+  },
+  {
+    id: "criville",
+    realName: "Alex Crivillé",
+    fictionalName: "Alex Il Pioniere Iberico",
+    regenRealNames: ["Alex Crivell", "Aleix Crivillero", "Arnau Crivellat"],
+    fictionalRegenNames: ["Aleix Il Pioniere Jr.", "Arnau Orgoglio Catalano"],
+    nationality: "ESP",
+    number: 1,
+    traits: { paceBias: 4, racecraftBias: 4, tyreMgmtBias: 4, consistencyBias: 5, wetSkillBias: 2, traitNote: "Determinazione incrollabile e metodo di lavoro scrupoloso" }
+  }
 ];
+
+// Profili di rigenerazione dinamica per piloti contemporanei che si ritirano durante la carriera
+export const RETIRED_DRIVERS_REGEN_PROFILES = {
+  // Formula 1 & Ruote Scoperte
+  drv_alonso: {
+    regenRealNames: ["Federico Alvarez", "Nando Alons", "Alfonso Solano"],
+    fictionalRegenNames: ["Nando Il Samurai Jr.", "Federico Il Gladiatore", "Alfonso Furia Asturiana"],
+    nationality: "ESP",
+    traits: { paceBias: 6, racecraftBias: 8, tyreMgmtBias: 6, consistencyBias: 7, wetSkillBias: 6, traitNote: "Guerriero indomabile nei corpo a corpo, staccate aggressive e partenze fulminee" }
+  },
+  drv_hamilton: {
+    regenRealNames: ["Liam Hamill", "Lewis Hammond", "Logan Milton"],
+    fictionalRegenNames: ["Liam Hammer Time Jr.", "Lewis Il Maestro", "Logan La Saetta Nera"],
+    nationality: "GBR",
+    traits: { paceBias: 7, racecraftBias: 7, tyreMgmtBias: 8, consistencyBias: 7, wetSkillBias: 8, traitNote: "Gestione magistrale del degrado gomme, velocità pura in qualifica e feeling eccezionale sul bagnato" }
+  },
+  drv_verstappen: {
+    regenRealNames: ["Marten van der Staap", "Mats Versloot", "Maxime van Steppen"],
+    fictionalRegenNames: ["Mats Mad Max Jr.", "Marten Il Predatore", "Maxime Il Mastino d'Olanda"],
+    nationality: "NLD",
+    traits: { paceBias: 9, racecraftBias: 8, tyreMgmtBias: 5, consistencyBias: 7, wetSkillBias: 8, traitNote: "Aggressività implacabile nei duelli ruota a ruota e ritmo devastante su asfalto scivoloso" }
+  },
+  drv_leclerc: {
+    regenRealNames: ["Charlot Leclerq", "Cédric Leclerc", "Julien Leclair"],
+    fictionalRegenNames: ["Charlot Il Predestinato Jr.", "Cédric Lampo di Monaco", "Julien Cuore Rosso"],
+    nationality: "MCO",
+    traits: { paceBias: 9, racecraftBias: 5, tyreMgmtBias: 4, consistencyBias: 4, wetSkillBias: 5, traitNote: "Giro secco strabiliante in qualifica e precisione millimetrica sul limite della pista" }
+  },
+  drv_norris: {
+    regenRealNames: ["Leo Norrington", "Luke Norris", "Lance North"],
+    fictionalRegenNames: ["Leo Last Lap Jr.", "Luke Il Fulmine Papaya", "Lance Sorpasso Pulito"],
+    nationality: "GBR",
+    traits: { paceBias: 7, racecraftBias: 6, tyreMgmtBias: 6, consistencyBias: 6, wetSkillBias: 7, traitNote: "Velocità di punta e passo martellante fino alla bandiera a scacchi" }
+  },
+  drv_russell: {
+    regenRealNames: ["Grant Russell", "George Rostron", "Giles Ross"],
+    fictionalRegenNames: ["Grant Mr Saturday Jr.", "George Il Calcolatore", "Giles Stella d'Argento"],
+    nationality: "GBR",
+    traits: { paceBias: 7, racecraftBias: 5, tyreMgmtBias: 5, consistencyBias: 7, wetSkillBias: 6, traitNote: "Qualificatore micidiale e freddezza chirurgica nella lettura della telemetria" }
+  },
+  drv_perez: {
+    regenRealNames: ["Santiago Pereda", "Saul Pereira", "Sergio Peraza"],
+    fictionalRegenNames: ["Santiago Ministro della Difesa Jr.", "Saul Checo II", "Sergio Re delle Cittadine"],
+    nationality: "MEX",
+    traits: { paceBias: 4, racecraftBias: 6, tyreMgmtBias: 9, consistencyBias: 6, wetSkillBias: 3, traitNote: "Cura maniacale degli pneumatici negli stint lunghi e difesa invalicabile" }
+  },
+  drv_bottas: {
+    regenRealNames: ["Viljami Bottio", "Verner Botta", "Valtteri Bottas"],
+    fictionalRegenNames: ["Viljami Il Boscaiolo Jr.", "Verner Freddo Polare", "Valtteri Passo Sicuro"],
+    nationality: "FIN",
+    traits: { paceBias: 6, racecraftBias: 4, tyreMgmtBias: 5, consistencyBias: 8, wetSkillBias: 5, traitNote: "Partenze pulitissime, consistenza glaciale e regolarità ai punti" }
+  },
+  drv_sainz: {
+    regenRealNames: ["Carlos Sanz", "Cristian Sainz", "Cesar Sanchez"],
+    fictionalRegenNames: ["Carlos Smooth Operator Jr.", "Cristian Mente Lucida", "Cesar Il Tattico"],
+    nationality: "ESP",
+    traits: { paceBias: 6, racecraftBias: 6, tyreMgmtBias: 7, consistencyBias: 8, wetSkillBias: 4, traitNote: "Intelligenza tattica sopraffina, grande sensibilità d'assetto e concretezza" }
+  },
+  drv_hulkenberg: {
+    regenRealNames: ["Niko Hülsemann", "Noah Hulberg", "Nick Hülser"],
+    fictionalRegenNames: ["Niko Hulk Jr.", "Noah Il Mastino Tedesco", "Nick Ritorno Vincente"],
+    nationality: "DEU",
+    traits: { paceBias: 6, racecraftBias: 6, tyreMgmtBias: 5, consistencyBias: 7, wetSkillBias: 6, traitNote: "Solidità a punti costante, velocità sul bagnato e grande esperienza tecnica" }
+  },
+  drv_piastri: {
+    regenRealNames: ["Owen Piastri", "Oliver Piasente", "Oscar Piastek"],
+    fictionalRegenNames: ["Owen Sangue Freddo Jr.", "Oliver L'Aussie Tranquillo", "Oscar Ghiaccio Puro"],
+    nationality: "AUS",
+    traits: { paceBias: 7, racecraftBias: 6, tyreMgmtBias: 6, consistencyBias: 8, wetSkillBias: 5, traitNote: "Lucidità imperturbabile sotto pressione e traiettorie geometriche impeccabili" }
+  },
+  drv_ricciardo: {
+    regenRealNames: ["Dante Rizzardi", "Darren Rich", "Daniel Ricciardo"],
+    fictionalRegenNames: ["Dante Honey Badger Jr.", "Darren Staccata Sorridente", "Daniel Il Mieliere"],
+    nationality: "AUS",
+    traits: { paceBias: 6, racecraftBias: 8, tyreMgmtBias: 5, consistencyBias: 5, wetSkillBias: 4, traitNote: "Staccate profonde con sorpassi spettacolari all'ultimo metro" }
+  },
+  drv_gasly: {
+    regenRealNames: ["Pascal Gascogne", "Patrice Gassin", "Pierre Gasly"],
+    fictionalRegenNames: ["Pascal Il Galletto Jr.", "Patrice Cuore Francese", "Pierre Riscatto Rapido"],
+    nationality: "FRA",
+    traits: { paceBias: 6, racecraftBias: 6, tyreMgmtBias: 6, consistencyBias: 6, wetSkillBias: 6, traitNote: "Grinta agonistica nei duelli di centro gruppo e tempismo perfetto nei cambi meteo" }
+  },
+  drv_ocon: {
+    regenRealNames: ["Eliot Oconnor", "Enzo Ocana", "Esteban Ocon"],
+    fictionalRegenNames: ["Eliot Barricata Jr.", "Enzo Il Tenace", "Esteban Muro d'Acciaio"],
+    nationality: "FRA",
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: 5, consistencyBias: 6, wetSkillBias: 5, traitNote: "Difensore coriaceo e implacabile nelle lotte ruota a ruota ad alta velocità" }
+  },
+  drv_albon: {
+    regenRealNames: ["Aaron Alborn", "Alan Alborg", "Alexander Albon"],
+    fictionalRegenNames: ["Aaron Il Condottiero Jr.", "Alan Sorpasso Pulito", "Alex L'Inguardabile"],
+    nationality: "THA",
+    traits: { paceBias: 7, racecraftBias: 6, tyreMgmtBias: 7, consistencyBias: 7, wetSkillBias: 5, traitNote: "Capacità di estrarre il 100% da qualsiasi pacchetto tecnico e costanza nei long-run" }
+  },
+  drv_tsunoda: {
+    regenRealNames: ["Yuta Tsuboi", "Yuya Tsunemura", "Yuki Tsunoda"],
+    fictionalRegenNames: ["Yuta Piccolo Guerriero Jr.", "Yuya Furia di Sagamihara", "Yuki Grinta d'Oriente"],
+    nationality: "JPN",
+    traits: { paceBias: 7, racecraftBias: 6, tyreMgmtBias: 4, consistencyBias: 5, wetSkillBias: 5, traitNote: "Foga agonistica esplosiva, staccatore coraggioso e reattività immediata" }
+  },
+  drv_stroll: {
+    regenRealNames: ["Lucas Strachan", "Logan Strolling", "Lance Stroll"],
+    fictionalRegenNames: ["Lucas Cavaliere delle Piogge Jr.", "Logan Il Canadese", "Lance Partenza a Fionda"],
+    nationality: "CAN",
+    traits: { paceBias: 4, racecraftBias: 5, tyreMgmtBias: 4, consistencyBias: 4, wetSkillBias: 8, traitNote: "Feeling eccezionale sul bagnato e rimonte clamorose nei primi giri" }
+  },
+  drv_magnussen: {
+    regenRealNames: ["Kurt Magnus", "Kasper Magness", "Kevin Magnussen"],
+    fictionalRegenNames: ["Kurt Il Vichingo Jr.", "Kasper Gomiti Larghi", "Kevin Cuore Danese"],
+    nationality: "DNK",
+    traits: { paceBias: 6, racecraftBias: 8, tyreMgmtBias: 3, consistencyBias: 5, wetSkillBias: 5, traitNote: "Coraggio senza paura nei corpo a corpo e partenze furiose allo spegnimento dei semafori" }
+  },
+  // WEC & IndyCar
+  drv_dixon: {
+    regenRealNames: ["Sean Dickson", "Stuart Dix", "Scott Dixon"],
+    fictionalRegenNames: ["Sean Il Professore Indy Jr.", "Stuart Ice Man Kiwi", "Scott Mago del Fuel Save"],
+    nationality: "NZL",
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: 9, consistencyBias: 9, wetSkillBias: 6, traitNote: "Gestione prodigiosa di carburante e pneumatici, rimonte leggendarie dalla distanza" }
+  },
+  drv_newgarden: {
+    regenRealNames: ["Jesse Newgard", "Julian Garden", "Josef Newgarden"],
+    fictionalRegenNames: ["Jesse Il Cowboy Jr.", "Julian Velocità Pura USA", "Josef Il Fulmine del Tennessee"],
+    nationality: "USA",
+    traits: { paceBias: 7, racecraftBias: 7, tyreMgmtBias: 6, consistencyBias: 7, wetSkillBias: 4, traitNote: "Velocità brutale sugli ovali e precisione chirurgica nei circuiti cittadini" }
+  },
+  drv_palou: {
+    regenRealNames: ["Arnau Palou", "Alvaro Palas", "Alex Palomero"],
+    fictionalRegenNames: ["Arnau Il Metronomo Catalano Jr.", "Alvaro Compasso d'Oro", "Alex Dominatore Calmo"],
+    nationality: "ESP",
+    traits: { paceBias: 8, racecraftBias: 7, tyreMgmtBias: 8, consistencyBias: 9, wetSkillBias: 5, traitNote: "Consistenza schiacciante e capacità di vincere su qualsiasi tipologia di tracciato" }
+  },
+  drv_kobayashi: {
+    regenRealNames: ["Kenji Kobata", "Koji Koba", "Kamui Kobayashi"],
+    fictionalRegenNames: ["Kenji Furia del Sol Levante Jr.", "Koji Staccata Estrema", "Kamui Re di Le Mans"],
+    nationality: "JPN",
+    traits: { paceBias: 7, racecraftBias: 8, tyreMgmtBias: 5, consistencyBias: 6, wetSkillBias: 6, traitNote: "Sorpassi al limite nel traffico delle endurance e staccate mozzafiato" }
+  },
+  drv_buemi: {
+    regenRealNames: ["Stephane Buemer", "Sylvain Buemel", "Sebastien Buemi"],
+    fictionalRegenNames: ["Stephane L'Orologiaio Svizzero Jr.", "Sylvain Esperienza Pura", "Sebastien Pluricampione Sarthe"],
+    nationality: "CHE",
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: 7, consistencyBias: 8, wetSkillBias: 7, traitNote: "Visione tattica impeccabile nelle gare di durata e sensibilità d'assetto" }
+  },
+
+  // MotoGP & Superbike
+  drv_bagnaia: {
+    regenRealNames: ["Pietro Bagnoli", "Paolo Bignami", "Patrizio Bagnesi"],
+    fictionalRegenNames: ["Pietro Il Martello Torinese Jr.", "Paolo Pecco II", "Patrizio Staccata Posteriore"],
+    nationality: "ITA",
+    traits: { paceBias: 8, racecraftBias: 6, tyreMgmtBias: 6, consistencyBias: 8, wetSkillBias: 4, traitNote: "Staccate micidiali con derapata controllata e passo da martello in solitaria" }
+  },
+  drv_martin: {
+    regenRealNames: ["Jaime Martinet", "Jordi Martinez", "Jorge Martin"],
+    fictionalRegenNames: ["Jaime Martinator Jr.", "Jordi Velocità Pura", "Jorge Lampo di Madrid"],
+    nationality: "ESP",
+    traits: { paceBias: 9, racecraftBias: 6, tyreMgmtBias: 4, consistencyBias: 6, wetSkillBias: 5, traitNote: "Giro secco atomico in qualifica, partenze a fionda e pieghe estreme gomito a terra" }
+  },
+  drv_marquez: {
+    regenRealNames: ["Mateo Marqués", "Marcello Marquez", "Manolo Marquez"],
+    fictionalRegenNames: ["Mateo Il Formichino Jr.", "Marcello L'Alieno di Cervera", "Manolo Furia Spagnola"],
+    nationality: "ESP",
+    traits: { paceBias: 8, racecraftBias: 8, tyreMgmtBias: 4, consistencyBias: 5, wetSkillBias: 8, traitNote: "Salvataggi acrobatici al limite della fisica e aggressività incontenibile nei duelli" }
+  },
+  drv_quartararo: {
+    regenRealNames: ["Florent Quartier", "Fabrice Quatrain", "Fabio Quartararo"],
+    fictionalRegenNames: ["Florent El Diablo Jr.", "Fabrice Danza in Curva", "Fabio Traiettoria Perfetta"],
+    nationality: "FRA",
+    traits: { paceBias: 8, racecraftBias: 5, tyreMgmtBias: 6, consistencyBias: 7, wetSkillBias: 3, traitNote: "Velocità di percorrenza curva inarrivabile e dolcezza straordinaria sul gas" }
+  },
+  drv_bastianini: {
+    regenRealNames: ["Enrico Bastianoni", "Elia Bastia", "Enea Bastiani"],
+    fictionalRegenNames: ["Enrico La Bestia Jr.", "Elia Finale Rovente", "Enea Rimonta Selvaggia"],
+    nationality: "ITA",
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: 9, consistencyBias: 5, wetSkillBias: 4, traitNote: "Gestione capolavoro della gomma posteriore e rimonte furiose negli ultimi 5 giri" }
+  },
+  drv_miller: {
+    regenRealNames: ["Jesse Milburn", "Jaxon Mills", "Jack Miller"],
+    fictionalRegenNames: ["Jesse Jackass Jr.", "Jaxon Acrobata dell'Acqua", "Jack Staccata da Baraccone"],
+    nationality: "AUS",
+    traits: { paceBias: 6, racecraftBias: 7, tyreMgmtBias: 3, consistencyBias: 4, wetSkillBias: 8, traitNote: "Mago indiscusso su asfalto bagnato o viscido e ingressi travolgenti in curva" }
+  },
+  drv_binder: {
+    regenRealNames: ["Brett Bindon", "Bryce Bingley", "Brad Binder"],
+    fictionalRegenNames: ["Brett Il Cobra Sudafricano Jr.", "Bryce Sorpasso di Ferro", "Brad Frenatore Folle"],
+    nationality: "ZAF",
+    traits: { paceBias: 6, racecraftBias: 8, tyreMgmtBias: 5, consistencyBias: 6, wetSkillBias: 6, traitNote: "Staccatore d'acciaio senza timori reverenziali e maestro delle battaglie di mischia" }
+  },
+  drv_aleix_espargaro: {
+    regenRealNames: ["Adria Esparga", "Artur Espada", "Aleix Espargat"],
+    fictionalRegenNames: ["Adria Il Capitano Jr.", "Artur Cuore Catalano", "Aleix Velocità di Corda"],
+    nationality: "ESP",
+    traits: { paceBias: 6, racecraftBias: 6, tyreMgmtBias: 6, consistencyBias: 7, wetSkillBias: 4, traitNote: "Guida pulita con elevata velocità di corda e metodo di sviluppo costante" }
+  },
+  drv_zarco: {
+    regenRealNames: ["Jules Zarque", "Jerome Zarc", "Johann Zarconi"],
+    fictionalRegenNames: ["Jules Il Tattico Francese Jr.", "Jerome Salto Mortale", "Johann Traiettorie Magiche"],
+    nationality: "FRA",
+    traits: { paceBias: 6, racecraftBias: 6, tyreMgmtBias: 7, consistencyBias: 6, wetSkillBias: 7, traitNote: "Sensibilità chirurgica con gomme da pioggia e linee di guida atipiche" }
+  },
+  drv_rea: {
+    regenRealNames: ["Jack Reade", "Joel Reader", "Jonah Rea"],
+    fictionalRegenNames: ["Jack Cannibale d'Ulster Jr.", "Joel Re della Superbike", "Jonah Tenacia d'Acciaio"],
+    nationality: "GBR",
+    traits: { paceBias: 7, racecraftBias: 8, tyreMgmtBias: 7, consistencyBias: 8, wetSkillBias: 6, traitNote: "Frenata rabbiosa, tenacia da guerriero e dominanza nei doppi round mondiali" }
+  },
+  drv_razgatlioglu: {
+    regenRealNames: ["Tarik Razgan", "Tayfun Razgatl", "Toprak Razgati"],
+    fictionalRegenNames: ["Tarik El Turco Jr.", "Tayfun Acrobata della Staccata", "Toprak Stop and Go Spettacolo"],
+    nationality: "TUR",
+    traits: { paceBias: 8, racecraftBias: 9, tyreMgmtBias: 5, consistencyBias: 6, wetSkillBias: 5, traitNote: "Staccate a ruota posteriore alzata e controllo acrobatico della moto nei cambi di direzione" }
+  },
+  drv_bautista: {
+    regenRealNames: ["Armando Bautista", "Alejandro Bautiz", "Alvaro Bautist"],
+    fictionalRegenNames: ["Armando Il Folletto Spagnolo Jr.", "Alejandro Missile in Uscita", "Alvaro Re dei Raccordi"],
+    nationality: "ESP",
+    traits: { paceBias: 8, racecraftBias: 6, tyreMgmtBias: 6, consistencyBias: 7, wetSkillBias: 3, traitNote: "Raddrizzo immediato della moto, velocità di punta nei rettilinei e accelerazione devastante" }
+  }
+};
 
 export class CareerEngine {
   constructor() {
@@ -1275,12 +1736,107 @@ export class CareerEngine {
     return { evolvedDrivers, improvers, decliners };
   }
 
-  // Processa i ritiri dei piloti AI veterani
+  // Procedural generator di profilo Regen ispirato a un pilota recentemente ritiratosi
+  generateRegenFromRetiredDriver(source, discipline = 'auto') {
+    if (!source) return null;
+    const sourceId = source.id || '';
+    const lookupKey = sourceId.startsWith('drv_') ? sourceId : `drv_${sourceId}`;
+
+    // 1. Controlla nel dizionario dei profili preconfigurati
+    let profile = RETIRED_DRIVERS_REGEN_PROFILES[lookupKey] || RETIRED_DRIVERS_REGEN_PROFILES[sourceId];
+    if (!profile) {
+      // Cerca per corrispondenza di cognome
+      for (const [k, p] of Object.entries(RETIRED_DRIVERS_REGEN_PROFILES)) {
+        if (source.name && source.name.toLowerCase().includes(k.replace('drv_', '').toLowerCase())) {
+          profile = p;
+          break;
+        }
+      }
+    }
+
+    if (profile) {
+      const realNames = profile.regenRealNames || [source.name];
+      const fictionalNames = profile.fictionalRegenNames || [profile.regenRealNames?.[0] || source.name];
+      const rIdx = Math.floor(Math.random() * realNames.length);
+
+      return {
+        id: source.id || 'retired_protege',
+        realName: realNames[rIdx],
+        fictionalName: fictionalNames[rIdx % fictionalNames.length],
+        nationality: profile.nationality || source.nationality || 'ITA',
+        number: Math.floor(Math.random() * 88 + 11),
+        traits: profile.traits || {},
+        legendSource: source.name
+      };
+    }
+
+    // 2. Procedural Fallback credibile per qualsiasi pilota ritirato
+    const nameParts = (source.name || 'Pilota Veterano').split(' ');
+    const lastName = nameParts[nameParts.length - 1] || 'Racer';
+    const nationality = source.nationality || 'ITA';
+
+    const firstNamesByNat = {
+      ITA: ["Matteo", "Lorenzo", "Davide", "Andrea", "Luca", "Edoardo", "Tommaso"],
+      ESP: ["Jordi", "Adrián", "Mateo", "Lucas", "César", "Iker", "Gael"],
+      GBR: ["Oliver", "Callum", "Archie", "George", "Leo", "Toby", "Harvey"],
+      FRA: ["Julien", "Cédric", "Lucas", "Mathis", "Adrien", "Tristan", "Robin"],
+      DEU: ["Lukas", "Maximilian", "Simon", "Jonas", "Felix", "Niklas", "Tim"],
+      NLD: ["Mats", "Lars", "Jesse", "Sem", "Milan", "Finn", "Daan"],
+      AUS: ["Lachlan", "Callum", "Jaxon", "Cooper", "Harrison", "Flynn"],
+      JPN: ["Ren", "Haruto", "Kaito", "Sota", "Riku", "Taiki", "Hayato"],
+      USA: ["Chase", "Colt", "Mason", "Wyatt", "Logan", "Austin", "Carter"],
+      BRA: ["Thiago", "Mateo", "Enzo", "Felipe", "Lucas", "Gabriel", "Rodrigo"]
+    };
+
+    const firstPool = firstNamesByNat[nationality] || ["Leo", "Alex", "Marco", "Lucas", "Julian"];
+    const chosenFirst = firstPool[Math.floor(Math.random() * firstPool.length)];
+
+    // Sfumatura evocativa del cognome
+    let evocativeLast = lastName;
+    if (lastName.endsWith('o') || lastName.endsWith('i')) evocativeLast = `${lastName.slice(0, -1)}ini`;
+    else if (lastName.endsWith('ez')) evocativeLast = `${lastName.slice(0, -2)}ado`;
+    else if (lastName.endsWith('er')) evocativeLast = `${lastName}mann`;
+    else if (lastName.endsWith('s')) evocativeLast = `${lastName}on`;
+    else evocativeLast = `${lastName}er`;
+
+    const generatedReal = `${chosenFirst} ${evocativeLast}`;
+    const generatedFictional = `${chosenFirst} Il Giovane ${lastName}`;
+
+    // Determina bias dai tratti/attributi del pilota
+    const sourceAttrs = source.attrs || source.stats || {};
+    const pace = sourceAttrs.pace || source.ovr || 75;
+    const tyreMgmt = sourceAttrs.tyreMgmt || 75;
+    const racecraft = sourceAttrs.racecraft || 75;
+
+    let traits = { paceBias: 4, racecraftBias: 4, tyreMgmtBias: 4, consistencyBias: 4, wetSkillBias: 3, traitNote: "Nuova promessa della scuderia" };
+    if (pace >= 85) {
+      traits = { paceBias: 7, racecraftBias: 5, tyreMgmtBias: 3, consistencyBias: 5, wetSkillBias: 5, traitNote: "Velocità di punta bruciante sul giro singolo" };
+    } else if (tyreMgmt >= 85) {
+      traits = { paceBias: 4, racecraftBias: 5, tyreMgmtBias: 8, consistencyBias: 7, wetSkillBias: 4, traitNote: "Gestione magistrale del degrado pneumatici" };
+    } else if (racecraft >= 85) {
+      traits = { paceBias: 5, racecraftBias: 8, tyreMgmtBias: 4, consistencyBias: 5, wetSkillBias: 5, traitNote: "Istinto predatorio e grinta feroce nei duelli" };
+    }
+
+    return {
+      id: source.id || 'retired_protege',
+      realName: generatedReal,
+      fictionalName: generatedFictional,
+      nationality,
+      number: Math.floor(Math.random() * 88 + 11),
+      traits,
+      legendSource: source.name
+    };
+  }
+
+  // Processa i ritiri dei piloti AI veterani e aggiorna la loro scheda nella Hall of Fame GOAT
   processAiDriverRetirements() {
     if (!this.career) return { retired: [] };
     if (!this.career.retiredDrivers) this.career.retiredDrivers = [];
     if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
     if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+    if (!this.career.driverCareerStats) {
+      this.career.driverCareerStats = JSON.parse(JSON.stringify(DRIVER_BASELINES));
+    }
 
     const discipline = this.player?.discipline || 'auto';
     const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
@@ -1330,6 +1886,47 @@ export class CareerEngine {
             this.career.freeAgents = this.career.freeAgents.filter(fa => fa.driverId !== dId);
           }
 
+          // Aggiornamento definitivo della scheda GOAT Hall of Fame
+          if (!this.career.driverCareerStats[dId]) {
+            this._ensureDriverStatsEntry(dId, category);
+          }
+          const statEntry = this.career.driverCareerStats[dId];
+          statEntry.isRetired = true;
+          statEntry.retiredYear = this.career.currentYear || 2026;
+
+          // Risolve e fissa l'era di attività (es. 2001-2027)
+          let startYear = 2026;
+          if (statEntry.era) {
+            const match = String(statEntry.era).match(/^(\d{4})/);
+            if (match) startYear = parseInt(match[1], 10);
+            else startYear = Math.max(1990, (this.career.currentYear || 2026) - (age - 20));
+          } else {
+            startYear = Math.max(1990, (this.career.currentYear || 2026) - (age - 20));
+          }
+          statEntry.era = `${startYear}-${this.career.currentYear || 2026}`;
+
+          // Calcolo palmarès totale
+          let totalTitles = 0;
+          let totalWins = 0;
+          let totalPodiums = 0;
+          let totalPoles = 0;
+          for (const cKey in statEntry.byCategory || {}) {
+            const cs = statEntry.byCategory[cKey];
+            totalTitles += cs.worldTitles || 0;
+            totalWins += cs.wins || 0;
+            totalPodiums += cs.podiums || 0;
+            totalPoles += cs.poles || 0;
+          }
+
+          if (totalTitles > 0 || totalWins >= 10) {
+            statEntry.isLegend = true;
+            statEntry.notableNote = `Leggenda del Motorsport ritiratasi nel ${this.career.currentYear} (${totalTitles} Titoli Mondiali, ${totalWins} Vittorie e ${totalPodiums} Podi)`;
+          } else if (totalWins > 0 || totalPodiums >= 5) {
+            statEntry.notableNote = `Veterano affermato ritiratosi nel ${this.career.currentYear} (${totalWins} Vittorie e ${totalPodiums} Podi in carriera)`;
+          } else {
+            statEntry.notableNote = `Pilota professionista ritiratosi nel ${this.career.currentYear} all'età di ${age} anni`;
+          }
+
           const retiredObj = {
             id: dId,
             name: driverName,
@@ -1338,8 +1935,8 @@ export class CareerEngine {
             finalTeamId: effTeam,
             finalTeamName,
             category,
-            retiredYear: this.career.currentYear,
-            stats: this.career.driverCareerStats?.[dId] || null
+            retiredYear: this.career.currentYear || 2026,
+            stats: JSON.parse(JSON.stringify(statEntry))
           };
 
           this.career.retiredDrivers.push(retiredObj);
@@ -1355,7 +1952,7 @@ export class CareerEngine {
     return { retired: retiredThisYear };
   }
 
-  // Genera un giovane talento Rookie (Regen) ispirato a un pilota ritirato o a una leggenda storica
+  // Genera un giovane talento Rookie (Regen) con nome di fantasia evocativo e tratti/caratteristiche comuni
   createRegenDriver(assignedTeamId, categoryKey, discipline = 'auto', source = null) {
     if (!this.career) return null;
     if (!this.career.regens) this.career.regens = {};
@@ -1367,50 +1964,78 @@ export class CareerEngine {
     const cat = categories[categoryKey];
     if (!cat) return null;
 
-    const legendPool = discipline === 'auto' ? AUTO_LEGENDS_REGEN_POOL : MOTO_LEGENDS_REGEN_POOL;
-    
-    // Trova una leggenda o usa il pilota ritirato sorgente
     let inspiration = null;
+    let legendSource = 'Leggenda Storica';
+
+    // 1. Se è fornito un pilota sorgente ritirato
     if (source && source.name) {
-      inspiration = {
-        realName: source.name,
-        fictionalName: source.name,
-        nationality: source.nationality || 'ITA',
-        number: Math.floor(Math.random() * 80 + 10)
-      };
+      inspiration = this.generateRegenFromRetiredDriver(source, discipline);
+      legendSource = source.name;
     } else {
-      // Cerca nel pool di leggende una non ancora usata nei regens
-      const usedLegendIds = new Set(Object.values(this.career.regens).map(r => r.legendId));
-      const unusedLegends = legendPool.filter(l => !usedLegendIds.has(l.id));
-      if (unusedLegends.length > 0) {
-        inspiration = unusedLegends[Math.floor(Math.random() * unusedLegends.length)];
+      // 2. Se ci sono piloti ritirati nella carriera non ancora omaggiati da un regen, 45% di probabilità di rigenerarli
+      const usedSourceNames = new Set(Object.values(this.career.regens || {}).map(r => r.legendSource));
+      const unusedRetired = (this.career.retiredDrivers || []).filter(rd => rd.name && !usedSourceNames.has(rd.name));
+
+      if (unusedRetired.length > 0 && Math.random() < 0.45) {
+        const pickedRetired = unusedRetired[Math.floor(Math.random() * unusedRetired.length)];
+        inspiration = this.generateRegenFromRetiredDriver(pickedRetired, discipline);
+        legendSource = pickedRetired.name;
       } else {
-        inspiration = legendPool[Math.floor(Math.random() * legendPool.length)];
+        // 3. Selezione dal pool di mostri sacri e leggende storiche
+        const legendPool = discipline === 'auto' ? AUTO_LEGENDS_REGEN_POOL : MOTO_LEGENDS_REGEN_POOL;
+        const usedLegendIds = new Set(Object.values(this.career.regens || {}).map(r => r.legendId));
+        const unusedLegends = legendPool.filter(l => !usedLegendIds.has(l.id));
+        const pickedLegend = (unusedLegends.length > 0)
+          ? unusedLegends[Math.floor(Math.random() * unusedLegends.length)]
+          : legendPool[Math.floor(Math.random() * legendPool.length)];
+
+        // Estrazione nomi di fantasia evocativi e tratti distintivi
+        const realNames = pickedLegend.regenRealNames || [pickedLegend.realName];
+        const fictionalNames = pickedLegend.fictionalRegenNames || [pickedLegend.fictionalName || pickedLegend.realName];
+        const rIdx = Math.floor(Math.random() * realNames.length);
+
+        inspiration = {
+          id: pickedLegend.id,
+          realName: realNames[rIdx],
+          fictionalName: fictionalNames[rIdx % fictionalNames.length],
+          nationality: pickedLegend.nationality || 'ITA',
+          number: pickedLegend.number || Math.floor(Math.random() * 88 + 11),
+          traits: pickedLegend.traits || {},
+          legendSource: pickedLegend.realName
+        };
+        legendSource = pickedLegend.realName;
       }
     }
+
+    if (!inspiration) return null;
 
     const uniqueSuffix = Math.random().toString(36).substring(2, 6);
     const regenId = `regen_${inspiration.id || 'rookie'}_${this.career.currentYear || 2026}_${uniqueSuffix}`;
 
-    const age = 17 + Math.floor(Math.random() * 3); // 17, 18, o 19 anni (giovanissimo talento)
+    const age = 17 + Math.floor(Math.random() * 3); // 17, 18, o 19 anni
 
-    // OVR tarato sulla categoria:
-    // F1 / MotoGP: 77 - 82 (fenomeno generazionale)
-    // F2 / Moto2 / WEC / Indy: 73 - 77
-    // F3 / F4 / Moto3: 69 - 74
+    // OVR tarato sulla categoria di debutto
     let baseOvr = 72;
     if (categoryKey === 'auto_f1' || categoryKey === 'moto_gp') baseOvr = 77 + Math.floor(Math.random() * 6);
     else if (categoryKey === 'auto_f2' || categoryKey === 'moto_2' || categoryKey === 'auto_wec' || categoryKey === 'auto_indy' || categoryKey === 'moto_sbk') baseOvr = 73 + Math.floor(Math.random() * 5);
     else baseOvr = 69 + Math.floor(Math.random() * 5);
 
-    const pace = Math.min(99, Math.max(60, baseOvr + Math.floor(Math.random() * 5 - 2)));
-    const racecraft = Math.min(99, Math.max(60, baseOvr + Math.floor(Math.random() * 5 - 2)));
-    const tyreMgmt = Math.min(99, Math.max(60, baseOvr - Math.floor(Math.random() * 4)));
-    const consistency = Math.min(99, Math.max(60, baseOvr - Math.floor(Math.random() * 3)));
-    const wetSkill = Math.min(99, Math.max(60, baseOvr + Math.floor(Math.random() * 6 - 3)));
+    // Applicazione caratteristiche comuni / bias di DNA
+    const traits = inspiration.traits || {};
+    const paceBias = traits.paceBias || 0;
+    const racecraftBias = traits.racecraftBias || 0;
+    const tyreMgmtBias = traits.tyreMgmtBias || 0;
+    const consistencyBias = traits.consistencyBias || 0;
+    const wetSkillBias = traits.wetSkillBias || 0;
 
-    const realName = `${inspiration.realName} (Regen)`;
-    const fictionalName = `${inspiration.fictionalName || inspiration.realName} Jr.`;
+    const pace = Math.min(99, Math.max(60, baseOvr + paceBias + Math.floor(Math.random() * 3 - 1)));
+    const racecraft = Math.min(99, Math.max(60, baseOvr + racecraftBias + Math.floor(Math.random() * 3 - 1)));
+    const tyreMgmt = Math.min(99, Math.max(60, baseOvr + tyreMgmtBias + Math.floor(Math.random() * 3 - 1)));
+    const consistency = Math.min(99, Math.max(60, baseOvr + consistencyBias + Math.floor(Math.random() * 3 - 1)));
+    const wetSkill = Math.min(99, Math.max(60, baseOvr + wetSkillBias + Math.floor(Math.random() * 3 - 1)));
+
+    const realName = inspiration.realName;
+    const fictionalName = inspiration.fictionalName || inspiration.realName;
 
     const regenData = {
       id: regenId,
@@ -1432,7 +2057,9 @@ export class CareerEngine {
       discipline,
       isRegen: true,
       legendId: inspiration.id || null,
-      legendSource: inspiration.realName
+      legendSource,
+      traits,
+      traitNote: traits.traitNote || 'Nuova stella promettente del vivaio'
     };
 
     // Registra nel DatabaseManager e nell'engine
@@ -1459,7 +2086,7 @@ export class CareerEngine {
 
     const assignedTeamName = db.getTeamName(assignedTeamId, discipline, categoryKey);
     this.career.aiTransferNews.unshift(
-      `⭐ DEBUTTO REGEN: ${assignedTeamName} ingaggia la giovanissima promessa ${realName} (${age} anni, OVR ${baseOvr}), regen di ${inspiration.realName}!`
+      `⭐ DEBUTTO PRODIGIO: ${assignedTeamName} promuove la giovane promessa ${realName} (${age} anni, OVR ${baseOvr}), ispirato a ${legendSource}! Stile: ${regenData.traitNote}.`
     );
 
     return regenData;
@@ -3639,8 +4266,43 @@ export class CareerEngine {
   // Ritiro dalle corse e verdetto GOAT finale
   retire() {
     this.career.isRetired = true;
-    const goatScore = GoatScorer.calculateScore(this.player, this.career.stats);
-    const hallOfFame = GoatScorer.getHallOfFameRanking(goatScore, this.player, this.career.stats);
+    const currentYear = this.career.currentYear || 2026;
+    const startYear = this.career.stats?.startYear || 2026;
+
+    if (!this.career.driverCareerStats) {
+      this.career.driverCareerStats = JSON.parse(JSON.stringify(DRIVER_BASELINES));
+    }
+
+    if (this.career.stats) {
+      this.career.stats.isRetired = true;
+      this.career.stats.retiredYear = currentYear;
+      this.career.stats.era = `${startYear}-${currentYear}`;
+    }
+
+    const pBreakdown = GoatScorer.getScoreBreakdown(this.player, this.career.stats);
+    const goatScore = pBreakdown.total;
+    const pTitles = pBreakdown.totalTitles || 0;
+    const pWins = pBreakdown.totalWins || 0;
+    const pPodiums = pBreakdown.totalPodiums || 0;
+
+    const pName = `${this.player?.firstName || 'Pilota'} ${this.player?.lastName || 'Player'}`;
+    this.career.driverCareerStats['player'] = {
+      id: 'player',
+      realName: pName,
+      fictionalName: pName,
+      name: pName,
+      discipline: this.player?.discipline || 'auto',
+      isLegend: pTitles > 0 || goatScore >= 300,
+      isRetired: true,
+      retiredYear: currentYear,
+      era: `${startYear}-${currentYear}`,
+      notableNote: pTitles > 0 
+        ? `Campione del Mondo (${pTitles} ${pTitles === 1 ? 'Titolo' : 'Titoli'}, ${pWins} Vittorie e ${pPodiums} Podi) ritiratosi nel ${currentYear}`
+        : `Pilota ritiratosi nel ${currentYear} con ${pWins} Vittorie e ${pPodiums} Podi in carriera`,
+      byCategory: this.career.stats?.byCategory || {}
+    };
+
+    const hallOfFame = GoatScorer.getHallOfFameRanking(goatScore, this.player, this.career.stats, 'all', this.career.driverCareerStats);
     const verdict = GoatScorer.getTitleAndTier(goatScore);
 
     this.saveToStorage();
