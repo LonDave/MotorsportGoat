@@ -66,7 +66,7 @@ export class LifestyleView {
           </div>
 
           <!-- TAB SELECTOR -->
-          <div class="standings-tab-bar lifestyle-tabs-bar">
+          <div class="standings-tab-bar lifestyle-tabs-bar" style="margin-bottom: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
             <button class="tab-btn ${this.currentTab === 'hq' ? 'active' : ''}" data-tab="hq">
               🏛️ Strutture HQ & Staff Personale (5)
             </button>

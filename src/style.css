@@ -2187,7 +2187,16 @@ body {
   box-shadow: none;
 }
 
-/* Tab Buttons — universal styling for all .tab-btn elements */
+/* Tab Bars & Buttons — universal styling for tabs */
+.standings-tab-bar,
+.rd-tabs-bar,
+.lifestyle-tabs-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
 .tab-btn {
   display: inline-flex;
   align-items: center;
@@ -9645,6 +9654,7 @@ body {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 6px !important;
+    margin-bottom: 20px !important;
   }
 
   .rd-tabs-bar .tab-btn,

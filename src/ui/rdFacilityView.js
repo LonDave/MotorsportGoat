@@ -167,7 +167,7 @@ export class RdFacilityView {
           ` : ''}
 
           <!-- TAB SELETTORE DIPARTIMENTI R&D -->
-          <div class="standings-tab-bar rd-tabs-bar">
+          <div class="standings-tab-bar rd-tabs-bar" style="margin-bottom: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="tab-btn ${this.currentTab === 'all' ? 'active' : ''}" data-tab="all">
               🔬 Tutti i Reparti (${allCompKeys.length})
             </button>
