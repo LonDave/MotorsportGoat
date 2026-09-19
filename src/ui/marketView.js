@@ -7,9 +7,10 @@ import { AUTO_CATEGORIES } from '../data/autoDatabase.js';
 import { MOTO_CATEGORIES } from '../data/motoDatabase.js';
 
 export class MarketView {
-  static currentTab = 'offers'; // 'offers' | 'free_agents' | 'news'
+  static currentTab = 'offers'; // 'offers' | 'grid' | 'free_agents'
 
   static render(container, onNavigate) {
+    if (this.currentTab === 'news') this.currentTab = 'offers';
     const player = career.player;
     const careerData = career.career;
     const currentTeam = career.getPlayerTeam() || db.getTeam(careerData.currentTeamId, player.discipline);
@@ -30,14 +31,13 @@ export class MarketView {
 
     const renderView = () => {
       const freeAgents = careerData.freeAgents || [];
-      const transferNews = careerData.aiTransferNews || [];
 
       container.innerHTML = `
         <div class="market-view-wrapper">
           <div class="weekend-top-header">
             <span class="session-badge">PADDOCK & TRATTATIVE</span>
             <h2>Mercato Piloti & Contratti Ufficiali</h2>
-            <p class="header-sub">Gestisci il tuo ingaggio, consulta le formazioni delle scuderie, i piloti svincolati e le trattative AI del motorsport mondiale.</p>
+            <p class="header-sub">Gestisci il tuo ingaggio, consulta le formazioni delle scuderie e i piloti svincolati del motorsport mondiale.</p>
           </div>
 
           <!-- TAB SELECTOR MERCATO -->
@@ -50,9 +50,6 @@ export class MarketView {
             </button>
             <button class="tab-btn ${this.currentTab === 'free_agents' ? 'active' : ''}" data-tab="free_agents">
               🆓 Piloti Svincolati (${freeAgents.length})
-            </button>
-            <button class="tab-btn ${this.currentTab === 'news' ? 'active' : ''}" data-tab="news">
-              📰 Ultime Notizie AI (${transferNews.length})
             </button>
           </div>
 
@@ -372,41 +369,6 @@ export class MarketView {
                         </div>
                       `;
                     }).join('')}
-                  </div>
-                `}
-              </div>
-            ` : ''}
-
-            <!-- TAB 3: ULTIME NOTIZIE MERCATO AI -->
-            ${this.currentTab === 'news' ? `
-              <div class="dash-card offers-card">
-                <h3 class="card-title">Bollettino Ufficiale: Mercato Piloti AI</h3>
-                <p class="section-subtext">Tutti i movimenti, passaggi di scuderia e ingaggi registrati nel paddock.</p>
-
-                ${transferNews.length === 0 ? `
-                  <div style="text-align: center; padding: 40px; color: #94a3b8;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">📰</div>
-                    <strong>Nessuna notizia di mercato recente</strong>
-                    <p style="font-size: 13px; margin-top: 4px;">Le trattative tra i team AI si animeranno al termine del campionato!</p>
-                  </div>
-                ` : `
-                  <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
-                    ${transferNews.map((news, nIdx) => `
-                      <div style="
-                        background: rgba(255, 255, 255, 0.03);
-                        border: 1px solid rgba(255, 255, 255, 0.08);
-                        border-radius: 10px;
-                        padding: 14px 18px;
-                        font-size: 13px;
-                        color: #f1f5f9;
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                      ">
-                        <span style="font-size: 18px;">🏁</span>
-                        <div style="line-height: 1.4;">${news}</div>
-                      </div>
-                    `).join('')}
                   </div>
                 `}
               </div>

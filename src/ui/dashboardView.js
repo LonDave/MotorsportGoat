@@ -23,6 +23,7 @@ export class DashboardView {
     const playerRank = playerStandingIndex >= 0 ? playerStandingIndex + 1 : 1;
     const playerPoints = playerStandingIndex >= 0 ? driverStandings[playerStandingIndex].points : 0;
     const leaderPoints = driverStandings[0]?.points || 0;
+    const aiNews = careerData.aiTransferNews || [];
 
     container.innerHTML = `
       <div class="dashboard-wrapper paddock-hub">
@@ -112,24 +113,68 @@ export class DashboardView {
               <p class="h2h-desc">Nel motorsport la prima regola è battere chi guida il tuo stesso mezzo. Mantieni il vantaggio per conservare la priorità tecnica negli sviluppi!</p>
             </div>
 
-            <!-- Scheda Notizie dal Paddock & Radiocronaca -->
+            <!-- Scheda Notizie dal Paddock & Rassegna Stampa -->
             <div class="dash-card paddock-news-card">
-              <h3 class="card-title">🎙️ Rassegna Stampa & Voci dal Paddock</h3>
-              <div class="news-items-list">
-                <div class="news-item">
-                  <span class="news-tag">UFFICIALE</span>
+              <div class="card-title-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 class="card-title" style="margin: 0;">🎙️ Rassegna Stampa & Ultime Notizie Paddock</h3>
+                <span style="font-size: 11px; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: #cbd5e1; padding: 3px 8px; border-radius: 6px;">
+                  ${aiNews.length + 1} Notizie
+                </span>
+              </div>
+
+              <div class="news-items-list" style="max-height: 380px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Notizia Ufficiale Prossimo GP -->
+                <div class="news-item" style="border-left: 3px solid #38bdf8;">
+                  <span class="news-tag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">UFFICIALE</span>
                   <div class="news-text">
                     <strong>Tutto pronto per il Round ${careerData.currentRaceIndex + 1}:</strong>
-                    Gli ingegneri di ${team.displayName || team.realName || team.fictionalName || team.name || 'Scuderia'} stanno ultimando i controlli telemetrici in vista della prima sessione di prove libere.
+                    Gli ingegneri di ${team.displayName || team.realName || team.fictionalName || team.name || 'Scuderia'} stanno ultimando i controlli telemetrici e le simulazioni di assetto per il Gran Premio.
                   </div>
                 </div>
-                <div class="news-item">
-                  <span class="news-tag highlight">MERCATO</span>
-                  <div class="news-text">
-                    <strong>Voci dal muretto:</strong>
-                    I team manager osservano con estrema attenzione le tue prestazioni. Un podio nel prossimo GP potrebbe sbloccare offerte per il 2027.
+
+                ${aiNews.length > 0 ? aiNews.map(item => {
+                  let tag = 'PADDOCK';
+                  let tagColor = '#94a3b8';
+                  let tagBg = 'rgba(255, 255, 255, 0.08)';
+                  let borderColor = 'rgba(255, 255, 255, 0.2)';
+
+                  if (item.includes('MERCATO') || item.includes('TRASFERIMENTO') || item.includes('INGAGGIO') || item.includes('SCAMBIO') || item.includes('SVINCOLO')) {
+                    tag = 'MERCATO';
+                    tagColor = '#f59e0b';
+                    tagBg = 'rgba(245, 158, 11, 0.15)';
+                    borderColor = '#f59e0b';
+                  } else if (item.includes('COLLABORAZIONE') || item.includes('SIMULATORE') || item.includes('COMPAGNO') || item.includes('BREAKTHROUGH')) {
+                    tag = 'COMPAGNO';
+                    tagColor = '#00d2ff';
+                    tagBg = 'rgba(0, 210, 255, 0.15)';
+                    borderColor = '#00d2ff';
+                  } else if (item.includes('R&D') || item.includes('EVOLUTIVO') || item.includes('PACCHETTO')) {
+                    tag = 'SVILUPPO R&D';
+                    tagColor = '#c084fc';
+                    tagBg = 'rgba(192, 132, 252, 0.15)';
+                    borderColor = '#a855f7';
+                  }
+
+                  // Pulisce l'eventuale prefisso tag dal testo della notizia per eleganza
+                  const cleanText = item.replace(/^(💼|🤝|🔧|📰|👋|🚀)\s*[A-Z& ]+:\s*/, '');
+
+                  return `
+                    <div class="news-item" style="border-left: 3px solid ${borderColor};">
+                      <span class="news-tag" style="background: ${tagBg}; color: ${tagColor};">${tag}</span>
+                      <div class="news-text">
+                        <span>${cleanText}</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('') : `
+                  <div class="news-item">
+                    <span class="news-tag highlight">MERCATO</span>
+                    <div class="news-text">
+                      <strong>Voci dal muretto:</strong>
+                      I team manager osservano con estrema attenzione le tue prestazioni. I trasferimenti e le trattative di mercato si intensificheranno al termine della stagione!
+                    </div>
                   </div>
-                </div>
+                `}
               </div>
             </div>
           </div>
