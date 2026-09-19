@@ -206,6 +206,10 @@ export class GoatHallOfFameView {
                 `).join('')}
               </div>
 
+              <div class="table-scroll-hint">
+                <span>👈 Scorri la classifica per vedere tutti i dati (Titoli, Vittorie, Podi, GOAT Score) 👉</span>
+              </div>
+
               <div class="hall-table-wrapper">
                 <table class="motorsport-table compact">
                   <thead>
@@ -269,6 +273,10 @@ export class GoatHallOfFameView {
               <div class="goat-stats-summary-pill">
                 <span>Totale Carriera: <strong>${totalTitles} ${totalTitles === 1 ? 'Titolo' : 'Titoli'}</strong> • <strong>${totalWins} Vittorie</strong> • <strong>${totalPoles} Pole</strong> • <strong>${totalPodiums} Podi</strong></span>
               </div>
+            </div>
+
+            <div class="table-scroll-hint">
+              <span>👈 Scorri il palmarès per visualizzare tutte le statistiche per categoria 👉</span>
             </div>
 
             <div class="table-responsive">

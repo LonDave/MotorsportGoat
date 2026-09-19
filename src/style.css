@@ -2443,40 +2443,6 @@ body {
   color: #fff;
 }
 
-.goat-main-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr;
-  gap: 24px;
-}
-
-@media (max-width: 950px) {
-  .goat-main-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.breakdown-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-
-.breakdown-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  font-size: 13px;
-}
-
-.breakdown-item strong {
-  font-family: var(--font-digital);
-  color: var(--gold-cup);
-}
-
 .retire-button {
   width: 100%;
   background: rgba(225, 6, 0, 0.15);
@@ -9806,11 +9772,14 @@ body {
 
 .goat-view-wrapper {
   max-width: 1400px;
+  width: 100%;
   margin: 0 auto;
   padding: 24px 20px 60px 20px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-sizing: border-box;
+  overflow-x: clip;
 }
 
 .goat-hero-banner {
@@ -9903,14 +9872,28 @@ body {
 
 .goat-main-grid {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 380px minmax(0, 1fr);
   gap: 24px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
   .goat-main-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
+}
+
+.goat-breakdown-card,
+.hall-of-fame-card,
+.goat-categories-card {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .breakdown-list {
@@ -9918,17 +9901,22 @@ body {
   flex-direction: column;
   gap: 10px;
   margin-top: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .breakdown-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
   transition: background 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .breakdown-item:hover {
@@ -9944,17 +9932,21 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .breakdown-item-info span {
   font-size: 13px;
   font-weight: 700;
   color: #e2e8f0;
+  word-break: break-word;
 }
 
 .breakdown-subtext {
   font-size: 11px;
   color: #64748b;
+  word-break: break-word;
 }
 
 .breakdown-pts {
@@ -9962,6 +9954,9 @@ body {
   font-weight: 800;
   color: #38bdf8;
   font-family: var(--font-digital, monospace);
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .breakdown-pts.gold-text {
@@ -10107,14 +10102,35 @@ body {
   font-size: 11px;
   color: #64748b;
   margin-top: 2px;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 260px;
 }
 
-.hall-table-wrapper {
+.table-scroll-hint {
+  display: none;
+  font-size: 11px;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 6px 0 10px 0;
+  text-align: center;
   width: 100%;
+  box-sizing: border-box;
+}
+
+.hall-table-wrapper,
+.table-responsive {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 10px;
   border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .hall-table-wrapper table {
@@ -10122,15 +10138,27 @@ body {
   min-width: 580px;
 }
 
+.table-responsive table {
+  width: 100%;
+  min-width: 680px;
+}
+
 @media (max-width: 768px) {
   .goat-view-wrapper {
     padding: 12px 6px 60px 6px !important;
     gap: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
 
   .goat-hero-banner {
     padding: 18px 12px !important;
     border-radius: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .goat-hero-title {
@@ -10146,6 +10174,7 @@ body {
   .goat-score-meter-box {
     padding: 12px 14px !important;
     width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
@@ -10163,19 +10192,37 @@ body {
   }
 
   .goat-main-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(0, 1fr) !important;
     gap: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .goat-breakdown-card,
   .hall-of-fame-card,
   .goat-categories-card {
     padding: 14px 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .card-title-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .goat-filter-bar {
     gap: 4px !important;
-    margin: 8px 0 12px 0 !important;
+    margin: 8px 0 10px 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .goat-filter-pill {
@@ -10184,28 +10231,67 @@ body {
     border-radius: 14px !important;
   }
 
+  .table-scroll-hint {
+    display: block !important;
+  }
+
   .goat-stats-summary-pill {
     font-size: 10.5px !important;
     padding: 6px 10px !important;
     width: 100% !important;
     text-align: center !important;
     box-sizing: border-box !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
   .breakdown-item {
     padding: 8px 10px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .breakdown-item-info {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
   }
 
   .breakdown-item-info span {
     font-size: 12px !important;
+    line-height: 1.3 !important;
+    word-break: break-word !important;
   }
 
   .breakdown-subtext {
     font-size: 10px !important;
+    word-break: break-word !important;
   }
 
   .breakdown-pts {
     font-size: 12.5px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .hall-table-wrapper,
+  .table-responsive {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+
+  .hall-table-wrapper table {
+    width: 100% !important;
+    min-width: 520px !important;
+  }
+
+  .table-responsive table {
+    width: 100% !important;
+    min-width: 580px !important;
   }
 }
 
