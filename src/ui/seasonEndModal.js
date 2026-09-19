@@ -2,6 +2,9 @@ import { career } from '../engine/careerEngine.js';
 import { db } from '../data/databaseManager.js';
 import { sound } from '../engine/audioManager.js';
 import { ToastNotification } from './toastNotification.js';
+import { TeammateSelectionModal } from './teammateSelectionModal.js';
+import { AUTO_CATEGORIES } from '../data/autoDatabase.js';
+import { MOTO_CATEGORIES } from '../data/motoDatabase.js';
 
 export class SeasonEndModal {
   static open(seasonResult, onComplete) {
@@ -333,6 +336,47 @@ export class SeasonEndModal {
           const chosen = offers.find(o => o.id === offerId);
           if (!chosen) return;
 
+          const categories = player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+          const targetCat = categories[chosen.category];
+          const maxDrivers = targetCat?.maxDriversPerTeam || 2;
+          const existingDrivers = (targetCat?.roster || []).filter(r => {
+            const effTeam = (careerData.teamDriverOverrides && careerData.teamDriverOverrides[r.id]) || r.teamId;
+            return effTeam === chosen.teamId;
+          });
+
+          const executeNewSeasonSigning = (chosenTeammateId = null, replacedDriverId = null) => {
+            if (chosenTeammateId && replacedDriverId) {
+              career.setTeamDrivers(chosen.teamId, chosen.category, chosenTeammateId, replacedDriverId);
+            }
+            const res = career.startNewSeason(chosen, dur);
+            if (res.success) {
+              sound.playChequeredFlag();
+              ToastNotification.show(`🚀 Ufficiale! Benvenuto in ${chosen.teamName}! ${res.paidBuyout > 0 ? `Pagata penale di rescissione di €${res.paidBuyout.toLocaleString()}.` : ''}`, 'success');
+              modalOverlay.remove();
+              window.dispatchEvent(new CustomEvent('career-data-updated'));
+              onComplete();
+            } else {
+              ToastNotification.show(res.reason || "Errore nella firma del contratto.", "danger");
+            }
+          };
+
+          const openSigningModalFlow = () => {
+            if (existingDrivers.length >= maxDrivers) {
+              TeammateSelectionModal.show({
+                team: { id: chosen.teamId, color: chosen.color },
+                category: targetCat,
+                existingDrivers,
+                maxDriversPerTeam: maxDrivers,
+                discipline: player.discipline,
+                onConfirm: ({ chosenTeammateId, replacedDriverId }) => {
+                  executeNewSeasonSigning(chosenTeammateId, replacedDriverId);
+                }
+              });
+            } else {
+              executeNewSeasonSigning();
+            }
+          };
+
           const needsBuyout = isUnderContract && buyoutPenalty > 0;
           let confirmMsg = `Confermi l'accordo di ${dur} anno/i con ${chosen.teamName} (${chosen.categoryName})?`;
           if (needsBuyout) {
@@ -346,16 +390,7 @@ export class SeasonEndModal {
             cancelText: "Valuta Ancora",
             danger: needsBuyout,
             onConfirm: () => {
-              const res = career.startNewSeason(chosen, dur);
-              if (res.success) {
-                sound.playChequeredFlag();
-                ToastNotification.show(`🚀 Ufficiale! Benvenuto in ${chosen.teamName}! ${res.paidBuyout > 0 ? `Pagata penale di rescissione di €${res.paidBuyout.toLocaleString()}.` : ''}`, 'success');
-                modalOverlay.remove();
-                window.dispatchEvent(new CustomEvent('career-data-updated'));
-                onComplete();
-              } else {
-                ToastNotification.show(res.reason || "Errore nella firma del contratto.", "danger");
-              }
+              openSigningModalFlow();
             }
           });
         };

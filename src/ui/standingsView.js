@@ -138,8 +138,9 @@ export class StandingsView {
                 const pos = index + 1;
                 const gap = index === 0 ? 'LEADER' : `-${leaderPoints - (entry.points || 0)} pts`;
 
-                // Trova i piloti di questa scuderia
-                const teamDrivers = catData.roster
+                // Trova i piloti di questa scuderia (esclude i piloti sostituiti dal giocatore)
+                const activeDrivers = career.getActiveRoster(catData.id);
+                const teamDrivers = activeDrivers
                   .filter(r => r.teamId === entry.teamId)
                   .map(r => db.getDriverName(r.id, player.discipline));
 

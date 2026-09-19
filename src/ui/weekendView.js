@@ -220,7 +220,7 @@ export class WeekendView {
   static renderPracticeSession(container, state, session, circuit, team, catData, player, nextPhase) {
     if (!state.practiceStates[session.id]) {
       state.practiceStates[session.id] = RaceEngine.initPracticeState(
-        circuit, catData, catData.roster, player, team, player.discipline, session.name
+        circuit, catData, career.getActiveRoster(catData.id), player, team, player.discipline, session.name
       );
     }
 
@@ -541,7 +541,7 @@ export class WeekendView {
       }, 0);
 
       state.qualifyingStates[session.id] = RaceEngine.initQualifyingState(
-        circuit, catData, catData.roster, player, team, bestBonus, player.discipline
+        circuit, catData, career.getActiveRoster(catData.id), player, team, bestBonus, player.discipline
       );
     }
     // aggiorna l'alias qualifyingState con lo stato più recente (usato per la griglia di gara)

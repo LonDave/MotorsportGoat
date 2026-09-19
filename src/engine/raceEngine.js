@@ -559,6 +559,7 @@ export class RaceEngine {
       let racecraft = 75;
       let reliability = 88;
       let setupWearMult = 1.0;
+      let carPace = 75;
 
       if (g.isPlayer) {
         tyreSkill = playerDriver?.attributes?.tyreMgmt || 75;
@@ -568,6 +569,8 @@ export class RaceEngine {
         racecraft = playerDriver?.attributes?.racecraft || 75;
         reliability = 90;
         setupWearMult = playerSetupInfo.wearMultiplier;
+        const pTeam = db.getTeam(g.teamId, discipline) || {};
+        carPace = pTeam.carPace || pTeam.bikePace || 75;
       } else {
         const ai = db.getDriver(g.driverId, discipline) || {};
         tyreSkill = ai.tyreMgmt || ai.ovr || 75;
@@ -576,7 +579,7 @@ export class RaceEngine {
         wetSkill = ai.wetSkill || ai.ovr || 75;
         racecraft = ai.racecraft || ai.ovr || 75;
         const aiTeam = db.getTeam(g.teamId, discipline) || {};
-        const carPace = aiTeam.carPace || aiTeam.bikePace || 75;
+        carPace = aiTeam.carPace || aiTeam.bikePace || 75;
         reliability = aiTeam.reliability || 85;
         // Qualità assetto per l'AI basata sulla scuderia
         setupWearMult = Math.max(0.88, Math.min(1.20, 1.0 - ((carPace - 75) / 250)));
@@ -609,6 +612,9 @@ export class RaceEngine {
         }
       }
 
+      // Distacco geometrico di partenza da piazzola griglia (~0.25s per posizione)
+      const startGap = (g.position - 1) * 0.25;
+
       return {
         ...g,
         startPos: g.position,
@@ -620,6 +626,7 @@ export class RaceEngine {
         baseWearRate: baseWearPerLap,
         setupWearMultiplier: setupWearMult,
         driverStatsMultiplier,
+        carPace,
         tyreSkill,
         consistency,
         paceSkill,
@@ -629,8 +636,8 @@ export class RaceEngine {
         plannedPitLaps,
         pitStops: 0,
         compoundsUsed: [startingTyre],
-        gapToLeaderSec: 0.0,
-        intervalAheadSec: 0.0,
+        gapToLeaderSec: startGap,
+        intervalAheadSec: g.position === 1 ? 0.0 : 0.25,
         status: "GRID",
         dnfReason: null,
         bestLapSec: null,
@@ -826,11 +833,24 @@ export class RaceEngine {
         }
       }
 
-      // Calcolo del ritmo sul giro con FISICA GOMME & METEO
-      let performanceDelta = (Math.random() - 0.5) * 0.35;
-      if (driver.paceMode === 'PUSH') performanceDelta -= 0.30;
-      if (driver.paceMode === 'SAVE') performanceDelta += 0.35;
-      if (driver.powerMode === 'ATTACK') performanceDelta -= 0.25;
+      // Calcolo del ritmo sul giro con FISICA GOMME, MEZZO, PILOTA & METEO
+      const vehiclePace = driver.carPace || 75;
+      const driverPace = driver.paceSkill || 75;
+      const isSpec = ['auto_f2', 'auto_f3', 'auto_f4', 'moto_2', 'moto_3'].includes(raceState.categoryId);
+      const carWeight = isSpec ? 0.35 : 0.55;
+      const driverWeight = 1.0 - carWeight;
+      const effectiveRating = (driverPace * driverWeight) + (vehiclePace * carWeight);
+
+      // Baseline delta rispetto al punto di riferimento 95 OVR (~0.04s per punto di valutazione)
+      const paceDeltaSec = (95 - effectiveRating) * 0.04;
+
+      let performanceDelta = (Math.random() - 0.5) * 0.30;
+      if (driver.paceMode === 'PUSH') performanceDelta -= 0.28;
+      if (driver.paceMode === 'SAVE') performanceDelta += 0.32;
+      if (driver.powerMode === 'ATTACK') performanceDelta -= 0.22;
+
+      // DRS vantaggio in scia (-0.35s al giro)
+      if (driver.hasDrs) performanceDelta -= 0.35;
 
       // Vantaggio mescola morbida / penalità mescola dura
       if (driver.tyreCompound === 'SOFT') performanceDelta -= 0.25;
@@ -905,7 +925,7 @@ export class RaceEngine {
       }
 
       if (!raceState.safetyCar) {
-        driver.gapToLeaderSec = Math.max(0, driver.gapToLeaderSec + performanceDelta);
+        driver.gapToLeaderSec = Math.max(0, driver.gapToLeaderSec + paceDeltaSec + performanceDelta);
       }
     });
 

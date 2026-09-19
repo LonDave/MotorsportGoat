@@ -175,8 +175,28 @@ export class CareerEngine {
       hqUpgrades: { simulatorLevel: 0, gymLevel: 0, prAgencyLevel: 0, telemetryCoachLevel: 0 },
       lifestyleItems: [],
       history: [],
+      chosenTeammateId: null,
+      teamBenchedDriverId: null,
+      freeAgents: [],
+      aiTransferNews: [],
+      teamDriverOverrides: {},
       isRetired: false
     };
+
+    // Configura compagno di squadra iniziale ed eventuale pilota svincolato per rispettare i limiti di categoria
+    const initTeamDrivers = (catData?.roster || []).filter(r => r.teamId === initialTeam.id);
+    const maxDrivers = catData?.maxDriversPerTeam || 2;
+    if (initTeamDrivers.length >= maxDrivers) {
+      const benched = initTeamDrivers[initTeamDrivers.length - 1];
+      this.career.chosenTeammateId = initTeamDrivers[0].id;
+      this.career.teamBenchedDriverId = benched.id;
+      this.career.freeAgents.push({
+        driverId: benched.id,
+        originalTeamId: initialTeam.id,
+        category: startingCategory,
+        year: 2026
+      });
+    }
 
     this.initSeasonStandings();
     this.saveToStorage();
@@ -298,18 +318,181 @@ export class CareerEngine {
     stats.racesStarted = finalRaces;
   }
 
+  // Ottiene il roster attivo dei piloti AI per una specifica categoria, escludendo il pilota sostituito dal giocatore
+  getActiveRoster(catKey = null) {
+    const key = catKey || this.career?.currentCategory;
+    const categories = this.player?.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const cat = categories[key];
+    if (!cat || !cat.roster) return [];
+
+    const isCurrentPlayerCat = (key === this.career?.currentCategory);
+    const maxDrivers = cat.maxDriversPerTeam || 2;
+
+    if (!isCurrentPlayerCat) {
+      return cat.roster;
+    }
+
+    const playerTeamId = this.career?.currentTeamId;
+    let benchedId = this.career?.teamBenchedDriverId;
+
+    // Se non è ancora stato memorizzato un benchedId per il team attuale
+    if (!benchedId) {
+      const teamDrivers = cat.roster.filter(d => d.teamId === playerTeamId);
+      if (teamDrivers.length >= maxDrivers) {
+        const defaultBenched = teamDrivers[teamDrivers.length - 1];
+        benchedId = defaultBenched.id;
+        this.career.teamBenchedDriverId = benchedId;
+        this.career.chosenTeammateId = teamDrivers[0].id;
+        if (!this.career.freeAgents) this.career.freeAgents = [];
+        if (!this.career.freeAgents.some(fa => fa.driverId === defaultBenched.id)) {
+          this.career.freeAgents.push({
+            driverId: defaultBenched.id,
+            originalTeamId: playerTeamId,
+            category: key,
+            year: this.career?.currentYear || 2026
+          });
+        }
+      }
+    }
+
+    return cat.roster.filter(d => {
+      const effectiveTeamId = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
+      if (effectiveTeamId === playerTeamId) {
+        if (Array.isArray(benchedId)) {
+          return !benchedId.includes(d.id);
+        }
+        return d.id !== benchedId;
+      }
+      return true;
+    }).map(d => {
+      const effectiveTeamId = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
+      if (effectiveTeamId !== d.teamId) {
+        return { ...d, teamId: effectiveTeamId };
+      }
+      return d;
+    });
+  }
+
+  // Configura la scelta del compagno e invia il pilota sostituito nei Free Agent
+  setTeamDrivers(teamId, catKey, chosenTeammateId, replacedDriverId) {
+    if (!this.career) return;
+    this.career.chosenTeammateId = chosenTeammateId;
+    this.career.teamBenchedDriverId = replacedDriverId;
+
+    if (!this.career.freeAgents) this.career.freeAgents = [];
+    if (replacedDriverId && !this.career.freeAgents.some(fa => fa.driverId === replacedDriverId)) {
+      this.career.freeAgents.push({
+        driverId: replacedDriverId,
+        originalTeamId: teamId,
+        category: catKey,
+        year: this.career.currentYear || 2026
+      });
+
+      const repName = db.getDriverName(replacedDriverId, this.player?.discipline);
+      const teamName = db.getTeamName(teamId, this.player?.discipline, catKey);
+      if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+      this.career.aiTransferNews.unshift(
+        `📢 MERCATO: ${repName} lascia ${teamName} e diventa Free Agent a seguito dell'ingaggio di ${this.player?.firstName} ${this.player?.lastName}!`
+      );
+    }
+  }
+
+  // Trasferimenti di mercato dinamici per i piloti AI e ingaggio Free Agents
+  aiDriverTransfers() {
+    if (!this.career) return;
+    if (!this.career.freeAgents) this.career.freeAgents = [];
+    if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+    if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
+
+    const discipline = this.player?.discipline || 'auto';
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const catKey = this.career.currentCategory;
+    const cat = categories[catKey];
+    if (!cat || !cat.roster || !cat.teams) return;
+
+    // 1. Ingaggio Free Agent da parte di team AI con piloti più deboli
+    const availableFAs = [...this.career.freeAgents];
+    availableFAs.forEach(fa => {
+      const faDriver = db.getDriver(fa.driverId, discipline);
+      if (!faDriver) return;
+      const faOvr = faDriver.ovr || 80;
+
+      const candidateTeams = cat.teams.filter(t => t.id !== this.career.currentTeamId);
+      for (const team of candidateTeams) {
+        const teamDrivers = cat.roster.filter(d => {
+          const effTeam = this.career.teamDriverOverrides[d.id] || d.teamId;
+          return effTeam === team.id;
+        });
+        const weakerDriver = teamDrivers.find(d => (d.ovr || 75) < faOvr - 3);
+        if (weakerDriver) {
+          this.career.teamDriverOverrides[fa.driverId] = team.id;
+          this.career.teamDriverOverrides[weakerDriver.id] = 'free_agent';
+          this.career.freeAgents = this.career.freeAgents.filter(f => f.driverId !== fa.driverId);
+          this.career.freeAgents.push({
+            driverId: weakerDriver.id,
+            originalTeamId: team.id,
+            category: catKey,
+            year: this.career.currentYear
+          });
+
+          const faName = db.getDriverName(fa.driverId, discipline);
+          const teamName = db.getTeamName(team.id, discipline, catKey);
+          this.career.aiTransferNews.unshift(
+            `🔥 BOMBA DI MERCATO: ${faName} firma ufficialmente con ${teamName} per la nuova stagione!`
+          );
+          break;
+        }
+      }
+    });
+
+    // 2. Scambio AI dinamico casuale tra due scuderie rivali
+    if (Math.random() < 0.65 && cat.teams.length >= 4) {
+      const rivalTeams = cat.teams.filter(t => t.id !== this.career.currentTeamId);
+      const teamA = rivalTeams[Math.floor(Math.random() * rivalTeams.length)];
+      const otherTeams = rivalTeams.filter(t => t.id !== teamA.id);
+      const teamB = otherTeams[Math.floor(Math.random() * otherTeams.length)];
+
+      if (teamA && teamB) {
+        const driversA = cat.roster.filter(d => (this.career.teamDriverOverrides[d.id] || d.teamId) === teamA.id);
+        const driversB = cat.roster.filter(d => (this.career.teamDriverOverrides[d.id] || d.teamId) === teamB.id);
+
+        if (driversA.length > 0 && driversB.length > 0) {
+          const dA = driversA[Math.floor(Math.random() * driversA.length)];
+          const dB = driversB[Math.floor(Math.random() * driversB.length)];
+
+          this.career.teamDriverOverrides[dA.id] = teamB.id;
+          this.career.teamDriverOverrides[dB.id] = teamA.id;
+
+          const nameA = db.getDriverName(dA.id, discipline);
+          const nameB = db.getDriverName(dB.id, discipline);
+          const tNameA = db.getTeamName(teamA.id, discipline, catKey);
+          const tNameB = db.getTeamName(teamB.id, discipline, catKey);
+
+          this.career.aiTransferNews.unshift(
+            `🔄 MERCATO PILOTI AI: ${nameA} approda in ${tNameB}, mentre ${nameB} passa in ${tNameA}!`
+          );
+        }
+      }
+    }
+
+    if (this.career.aiTransferNews.length > 12) {
+      this.career.aiTransferNews = this.career.aiTransferNews.slice(0, 12);
+    }
+  }
+
   // Inizializza la classifica piloti e team all'inizio di ogni stagione
   initSeasonStandings() {
     const categories = this.player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     const cat = categories[this.career.currentCategory];
     if (!cat) return;
 
-    // Driver standings
+    // Driver standings: Player + Active AI Roster only (esclude rigorosamente i piloti benched)
+    const activeRoster = this.getActiveRoster(this.career.currentCategory);
     const driverList = [
       { driverId: "player", points: 0, wins: 0, podiums: 0, poles: 0, isPlayer: true }
     ];
 
-    cat.roster.forEach(r => {
+    activeRoster.forEach(r => {
       driverList.push({
         driverId: r.id,
         points: 0,
@@ -373,13 +556,34 @@ export class CareerEngine {
   // Ottiene il compagno di squadra attuale
   getCurrentTeammate() {
     const catData = this.getCurrentCategoryData();
-    const teammate = catData.roster.find(r => r.teamId === this.career.currentTeamId);
-    if (teammate) {
+    if (!catData) return { name: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
+    
+    // Se c'è un compagno scelto esplicitamente
+    if (this.career?.chosenTeammateId) {
+      const chosenId = Array.isArray(this.career.chosenTeammateId) ? this.career.chosenTeammateId[0] : this.career.chosenTeammateId;
+      const driver = catData.roster.find(r => r.id === chosenId);
+      if (driver) {
+        return {
+          ...driver,
+          name: db.getDriverName(driver.id, this.player.discipline)
+        };
+      }
+    }
+
+    // Altrimenti cerca i piloti del team escludendo quello benched
+    const activeTeammates = catData.roster.filter(r => {
+      const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[r.id]) || r.teamId;
+      return effTeam === this.career.currentTeamId && r.id !== this.career.teamBenchedDriverId;
+    });
+
+    if (activeTeammates.length > 0) {
+      const teammate = activeTeammates[0];
       return {
         ...teammate,
         name: db.getDriverName(teammate.id, this.player.discipline)
       };
     }
+
     return { name: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
   }
 
@@ -835,6 +1039,9 @@ export class CareerEngine {
     // Reset R&D parziale per regolamento tecnico
     this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
 
+    // Esegui trasferimenti piloti AI e movimenti di mercato Free Agent
+    this.aiDriverTransfers();
+
     // Genera offerte contrattuali per il nuovo anno
     const offers = this.generateContractOffers();
 
@@ -1107,7 +1314,8 @@ export class CareerEngine {
     };
 
     // 1. Simula Qualifiche
-    const qualy = RaceEngine.initQualifyingState(circuit, catData, catData.roster, player, team, 0.2, player.discipline);
+    const activeRoster = this.getActiveRoster(this.career.currentCategory);
+    const qualy = RaceEngine.initQualifyingState(circuit, catData, activeRoster, player, team, 0.2, player.discipline);
     RaceEngine.fastForwardQualifyingToEnd(qualy, player, team, circuit, player.discipline);
     const qualyGrid = qualy.grid;
 
@@ -1271,6 +1479,12 @@ export class CareerEngine {
           if (!this.career.stats.byCategory) {
             this.career.stats.byCategory = {};
           }
+          if (!this.career.freeAgents) this.career.freeAgents = [];
+          if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+          if (!this.career.teamDriverOverrides) this.career.teamDriverOverrides = {};
+          if (this.career.chosenTeammateId === undefined) this.career.chosenTeammateId = null;
+          if (this.career.teamBenchedDriverId === undefined) this.career.teamBenchedDriverId = null;
+
           if (this.career.contract) {
             if (this.career.contract.durationYears === undefined) {
               this.career.contract.durationYears = this.career.contract.yearsLeft || 1;
@@ -1280,6 +1494,8 @@ export class CareerEngine {
             }
           }
           this.syncAndReconcileStats();
+          // Calcola il roster attivo per prevenire problemi di terzi piloti nei vecchi salvataggi
+          this.getActiveRoster();
         }
       }
     } catch (e) {
