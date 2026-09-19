@@ -13,6 +13,7 @@ export class RdFacilityView {
     const team = career.getPlayerTeam();
     const catData = career.getCurrentCategoryData();
     const vehicleType = player.discipline === 'auto' ? 'Monoposto' : 'Prototipo';
+    const eco = career.getCategoryEconomyMultiplier ? career.getCategoryEconomyMultiplier() : { moneyMult: 1, ptsMult: 1, label: 'Standard' };
 
     const reg = careerData.regulations || { currentCycle: 1, nextRegulationChangeYear: 2029, isRegulationYearAnnounced: false, playerNextGenInvestment: 0 };
     const yearsUntilRegChange = Math.max(0, (reg.nextRegulationChangeYear || 2029) - careerData.currentYear);
@@ -79,6 +80,10 @@ export class RdFacilityView {
               <div class="rd-stat-pill highlight-telemetry">
                 <span class="pill-lbl">Dati Telemetrici</span>
                 <strong class="pill-val" style="color: #38bdf8;">${telemetryPoints} <small>PT</small></strong>
+              </div>
+              <div class="rd-stat-pill highlight-eco">
+                <span class="pill-lbl">Costi Reparto</span>
+                <strong class="pill-val" style="color: #c084fc;" title="Moltiplicatore economico calibrato sulla categoria">${eco.label}</strong>
               </div>
               <div class="rd-stat-pill">
                 <span class="pill-lbl">Fondi Disponibili</span>
@@ -275,8 +280,9 @@ export class RdFacilityView {
 
     const maxLevel = cfg.maxLevel || 5;
     const isMax = level >= maxLevel;
-    const cost = cfg.baseCost + (level * cfg.costMult);
-    const ptsCost = cfg.basePoints + (level * cfg.pointsMult);
+    const { cost, ptsCost } = career.calculateSubComponentCost 
+      ? career.calculateSubComponentCost(compKey, level)
+      : { cost: cfg.baseCost + (level * cfg.costMult), ptsCost: cfg.basePoints + (level * cfg.pointsMult) };
 
     const hasMoney = playerMoney >= cost;
     const hasPoints = playerTelemetry >= ptsCost;
@@ -369,8 +375,9 @@ export class RdFacilityView {
           sound.playClick();
           const cfg = RD_SUBCOMPONENTS_CONFIG[compKey];
           const lvl = (career.career?.rdSubComponents?.[compKey]) || 0;
-          const cost = cfg ? cfg.baseCost + (lvl * cfg.costMult) : 0;
-          const ptsCost = cfg ? cfg.basePoints + (lvl * cfg.pointsMult) : 0;
+          const { cost, ptsCost } = career.calculateSubComponentCost 
+            ? career.calculateSubComponentCost(compKey, lvl)
+            : { cost: cfg ? cfg.baseCost + (lvl * cfg.costMult) : 0, ptsCost: cfg ? cfg.basePoints + (lvl * cfg.pointsMult) : 0 };
           const money = career.career?.money || 0;
           const pt = career.career?.rdTelemetryPoints || 0;
           if (money < cost) {

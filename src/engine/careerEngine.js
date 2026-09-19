@@ -1012,8 +1012,8 @@ export class CareerEngine {
     return !!this.player && !!this.career;
   }
 
-  // Avvio nuova carriera con personalizzazione completa del giocatore
-  startNewCareer(customData) {
+  // Avvio nuova carriera con personalizzazione completa del giocatore e scelta scuderia dai Rookie Test
+  startNewCareer(customData, chosenTeamId = null, chosenContract = null) {
     const discipline = customData.discipline || 'auto';
     const startingCategory = discipline === 'auto' ? 'auto_f4' : 'moto_3';
 
@@ -1035,10 +1035,10 @@ export class CareerEngine {
 
     const startMoney = bgProfile.startMoney;
 
-    // Trova scuderia iniziale della categoria base
+    // Trova scuderia iniziale della categoria base (da Rookie Test o default)
     const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     const catData = categories[startingCategory];
-    const initialTeam = catData.teams[0];
+    const initialTeam = (chosenTeamId && catData.teams.find(t => t.id === chosenTeamId)) || catData.teams[0];
 
     const pFirst = customData.firstName || "Alessandro";
     const pLast = customData.lastName || "Veloci";
@@ -1067,13 +1067,14 @@ export class CareerEngine {
       unspentSkillPoints: customData.unspentSkillPoints || 0
     };
 
+    const defaultSalary = customData.origin === 'paydriver' ? 0 : 5000;
     this.career = {
       currentYear: 2026,
       seasonNumber: 1,
       currentCategory: startingCategory,
       currentTeamId: initialTeam.id,
-      contract: {
-        salaryPerRace: customData.origin === 'paydriver' ? 0 : 5000,
+      contract: chosenContract || {
+        salaryPerRace: defaultSalary,
         durationYears: 1,
         yearsLeft: 1,
         role: "1st Driver",
@@ -2519,6 +2520,51 @@ export class CareerEngine {
     }
   }
 
+  // Moltiplicatori economici di sviluppo R&D in base alla categoria attiva
+  getCategoryEconomyMultiplier(categoryKey = null) {
+    const cat = categoryKey || this.career?.currentCategory || (this.player?.discipline === 'moto' ? 'moto_3' : 'auto_f4');
+    const multipliers = {
+      // Formule Junior / Moto minori: costi accessibili e proporzionati a montepremi e stipendi ridotti
+      auto_f4: { moneyMult: 0.15, ptsMult: 0.35, label: 'Formula 4 (Accessibile)' },
+      moto_3:  { moneyMult: 0.15, ptsMult: 0.35, label: 'Moto3 (Accessibile)' },
+      auto_f3: { moneyMult: 0.35, ptsMult: 0.55, label: 'Formula 3 (Moderata)' },
+      moto_2:  { moneyMult: 0.35, ptsMult: 0.55, label: 'Moto2 (Moderata)' },
+      // Serie Intermedie / Grandi campionati internazionali
+      auto_f2: { moneyMult: 0.65, ptsMult: 0.80, label: 'Formula 2 (Standard)' },
+      auto_indy: { moneyMult: 0.70, ptsMult: 0.85, label: 'IndyCar (Standard)' },
+      auto_wec: { moneyMult: 0.75, ptsMult: 0.90, label: 'WEC Hypercar (Avanzata)' },
+      moto_sbk: { moneyMult: 0.60, ptsMult: 0.80, label: 'WorldSBK (Standard)' },
+      // Top Class Assoluta
+      auto_f1: { moneyMult: 1.0, ptsMult: 1.0, label: 'Formula 1 (Massima Competizione)' },
+      moto_gp: { moneyMult: 1.0, ptsMult: 1.0, label: 'MotoGP (Massima Competizione)' },
+    };
+    return multipliers[cat] || { moneyMult: 0.40, ptsMult: 0.60, label: 'Formula Standard' };
+  }
+
+  // Calcolo dinamico costi in denaro e telemetria per un sottocomponente
+  calculateSubComponentCost(compKey, level = null) {
+    const cfg = RD_SUBCOMPONENTS_CONFIG[compKey];
+    if (!cfg) return { cost: 0, ptsCost: 0, rawCost: 0, rawPtsCost: 0, moneyMult: 1, ptsMult: 1, categoryLabel: '' };
+
+    const currentLvl = level !== null ? level : (this.career?.rdSubComponents?.[compKey] || 0);
+    const rawCost = cfg.baseCost + (currentLvl * cfg.costMult);
+    const rawPtsCost = cfg.basePoints + (currentLvl * cfg.pointsMult);
+
+    const eco = this.getCategoryEconomyMultiplier();
+    const cost = Math.round(rawCost * eco.moneyMult);
+    const ptsCost = Math.max(10, Math.round(rawPtsCost * eco.ptsMult));
+
+    return {
+      cost,
+      ptsCost,
+      rawCost,
+      rawPtsCost,
+      moneyMult: eco.moneyMult,
+      ptsMult: eco.ptsMult,
+      categoryLabel: eco.label
+    };
+  }
+
   // Calcola probabilità di fallimento e successo per un determinato sottocomponente R&D
   calculateSubComponentRisk(compKey) {
     this.initRdSystem();
@@ -3213,7 +3259,24 @@ export class CareerEngine {
     currentContract.yearsLeft = Math.max(0, prevYearsLeft - 1);
     const isUnderContract = currentContract.yearsLeft > 0;
 
-    // Gli upgrade R&D sui sottocomponenti vengono mantenuti di stagione in stagione (si riducono parzialmente solo ai cambi regolamentari FIA triennali)
+    // Reset annuale dei dati telemetrici per costringere a nuovo sviluppo in pista e dinamismo
+    this.career.rdTelemetryPoints = 0;
+    if (this.career.teammateCollaborationStats) {
+      this.career.teammateCollaborationStats.totalTelemetryContributed = 0;
+    }
+
+    // Decadimento organico annuale (-1 livello) dei sottocomponenti R&D per mantenere viva la sfida tecnica
+    // (Se è già anno di rivoluzione regolamentare FIA, checkRegulationMilestones applicherà il decremento specifico)
+    const isRegYear = this.career.regulations && (this.career.currentYear >= this.career.regulations.nextRegulationChangeYear);
+    if (!isRegYear && this.career.rdSubComponents) {
+      for (const k in this.career.rdSubComponents) {
+        if (this.career.rdSubComponents[k] > 0) {
+          this.career.rdSubComponents[k] = Math.max(0, this.career.rdSubComponents[k] - 1);
+        }
+      }
+    }
+
+    // Reset upgrade vettura standard
     this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
 
     // Esegui la crescita e il declino organico degli attributi di tutti i piloti AI
@@ -3660,8 +3723,7 @@ export class CareerEngine {
       return { success: false, message: `${cfg.name} è già al massimo livello consentito (${cfg.maxLevel}/5).` };
     }
 
-    const cost = cfg.baseCost + (currentLvl * cfg.costMult);
-    const ptsCost = cfg.basePoints + (currentLvl * cfg.pointsMult);
+    const { cost, ptsCost } = this.calculateSubComponentCost(compKey, currentLvl);
 
     if (this.career.money < cost) {
       return {

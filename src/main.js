@@ -12,6 +12,7 @@ import { MarketView } from './ui/marketView.js';
 import { LifestyleView } from './ui/lifestyleView.js';
 import { GoatHallOfFameView } from './ui/goatHallOfFameView.js';
 import { RetirementView } from './ui/retirementView.js';
+import { RookieTestView } from './ui/rookieTestView.js';
 import { ModManagerModal } from './ui/modManagerModal.js';
 
 class AppRouter {
@@ -19,6 +20,12 @@ class AppRouter {
     this.headerContainer = document.getElementById('app-header');
     this.mainContainer = document.getElementById('app-main-content');
     this.currentRoute = 'landing';
+    try {
+      const savedPending = sessionStorage.getItem('pending_custom_driver');
+      this.pendingCustomDriver = savedPending ? JSON.parse(savedPending) : null;
+    } catch (e) {
+      this.pendingCustomDriver = null;
+    }
 
     // Ascolta cambi nel database dei nomi (fittizi <-> reali 2026) e aggiorna la schermata all'istante
     db.onModeChange(() => {
@@ -51,7 +58,7 @@ class AppRouter {
   render() {
     // 1. Reindirizzamento: se non c'è una carriera salvata o se il pilota è ritirato
     const hasCareer = career.hasSavedCareer();
-    if (!hasCareer && this.currentRoute !== 'landing' && this.currentRoute !== 'creation') {
+    if (!hasCareer && this.currentRoute !== 'landing' && this.currentRoute !== 'creation' && this.currentRoute !== 'rookie-test') {
       this.currentRoute = 'landing';
     } else if (hasCareer && career.career?.isRetired) {
       if (['dashboard', 'calendar', 'rd', 'weekend', 'market', 'lifestyle'].includes(this.currentRoute)) {
@@ -78,7 +85,40 @@ class AppRouter {
         break;
 
       case 'creation':
-        CreationView.render(this.mainContainer, () => {
+        CreationView.render(this.mainContainer, (createdDriverData) => {
+          this.pendingCustomDriver = createdDriverData;
+          try {
+            sessionStorage.setItem('pending_custom_driver', JSON.stringify(createdDriverData));
+          } catch (e) {}
+          this.navigate('rookie-test');
+        });
+        break;
+
+      case 'rookie-test':
+        if (!this.pendingCustomDriver) {
+          try {
+            const savedPending = sessionStorage.getItem('pending_custom_driver');
+            if (savedPending) this.pendingCustomDriver = JSON.parse(savedPending);
+          } catch (e) {}
+        }
+        if (!this.pendingCustomDriver) {
+          if (career.hasActiveCareer()) {
+            this.navigate('dashboard');
+          } else {
+            this.navigate('creation');
+          }
+          break;
+        }
+        RookieTestView.render(this.mainContainer, this.pendingCustomDriver, (chosenTeamId, chosenContract) => {
+          career.startNewCareer(this.pendingCustomDriver, chosenTeamId, chosenContract);
+          if (this.pendingCustomDriver.initialTelemetryBonus) {
+            career.career.rdTelemetryPoints = (career.career.rdTelemetryPoints || 0) + this.pendingCustomDriver.initialTelemetryBonus;
+            career.saveToStorage();
+          }
+          try {
+            sessionStorage.removeItem('pending_custom_driver');
+          } catch (e) {}
+          this.pendingCustomDriver = null;
           this.navigate('dashboard');
         });
         break;

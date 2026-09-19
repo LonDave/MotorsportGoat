@@ -11,8 +11,8 @@ export class HeaderView {
     const player = hasCareer ? career.player : null;
     const careerData = hasCareer ? career.career : null;
 
-    // Se siamo sulla landing page o non c'è una carriera attiva, mostra l'header del portale
-    if (!hasCareer || currentRoute === 'landing') {
+    // Se siamo sulla landing page, in creazione, nei rookie test o non c'è una carriera attiva, mostra l'header del portale
+    if (!hasCareer || currentRoute === 'landing' || currentRoute === 'creation' || currentRoute === 'rookie-test') {
       container.innerHTML = `
         <header class="top-nav-bar landing-nav">
           <div class="logo-area clickable-home-logo" id="logo-click-home" title="Clicca per tornare alla Home / Landing Page">

@@ -269,8 +269,8 @@ export class CreationView {
 
             <div class="start-career-action-box">
               <button id="btn-start-career-submit" class="start-race-button">
-                <span>SCENDI IN PISTA • INIZIA LA CARRIERA</span>
-                <span class="btn-arrow">🏁</span>
+                <span>SCENDI IN PISTA PER I ROOKIE TEST</span>
+                <span class="btn-arrow">➔</span>
               </button>
             </div>
           </div>
@@ -432,12 +432,11 @@ export class CreationView {
       };
     });
 
-    // Invio form: Inizia la carriera
+    // Invio form: Accesso ai Rookie Test ufficiali
     const submitBtn = container.querySelector('#btn-start-career-submit');
     submitBtn.onclick = () => {
       sound.playEngineRev();
-      career.startNewCareer(state);
-      onComplete();
+      onComplete(state);
     };
   }
 }
