@@ -47,8 +47,8 @@ export class HeaderView {
         <!-- RIGA SUPERIORE: LOGO BRAND, IDENTITÀ PILOTA, STATS & CONTROLLI -->
         <div class="career-header-top">
           <!-- Blocco 1: Brand Logo -->
-          <div class="header-brand-block">
-            <div class="logo-area clickable-home-logo" id="header-brand-logo" title="Torna alla Home / Menu Principale">
+          <div class="header-brand-block" style="cursor: pointer;">
+            <div class="logo-area clickable-home-logo" id="header-brand-logo" title="Torna alla Home del Sito / Schermata Principale">
               <span class="goat-badge">GOAT</span>
               <span class="logo-title">MOTORSPORT EDITION</span>
             </div>
@@ -131,7 +131,7 @@ export class HeaderView {
             </button>
           ` : `
             <button class="subnav-tab ${currentRoute === 'dashboard' ? 'active' : ''}" data-route="dashboard">
-              <span class="tab-icon">🏠</span>
+              <span class="tab-icon">${player?.discipline === 'moto' ? '🏍️' : '🏎️'}</span>
               <span class="tab-title">Paddock</span>
             </button>
 
@@ -175,7 +175,8 @@ export class HeaderView {
   static bindLandingHeaderEvents(container, onNavigate, onOpenModManager) {
     const homeLogo = container.querySelector('#logo-click-home');
     if (homeLogo) {
-      homeLogo.onclick = () => {
+      homeLogo.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
         sound.playClick();
         onNavigate('landing');
       };
@@ -201,7 +202,17 @@ export class HeaderView {
   static bindCareerHeaderEvents(container, onNavigate, onOpenModManager) {
     const brandLogo = container.querySelector('#header-brand-logo');
     if (brandLogo) {
-      brandLogo.onclick = () => {
+      brandLogo.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        sound.playClick();
+        onNavigate('landing');
+      };
+    }
+
+    const brandBlock = container.querySelector('.header-brand-block');
+    if (brandBlock) {
+      brandBlock.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
         sound.playClick();
         onNavigate('landing');
       };
