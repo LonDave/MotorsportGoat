@@ -85,13 +85,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Migliora l\'inserimento in curva veloce, la sensibilità direzionale e il controllo dei vortici turbolenti.',
     icon: '🏎️',
     maxLevel: 5,
-    baseCost: 20000,
-    costMult: 14000,
-    basePoints: 35,
-    pointsMult: 20,
-    paceGain: 0.6,
+    baseCost: 28000,
+    costMult: 18000,
+    basePoints: 50,
+    pointsMult: 30,
+    paceGain: 0.35,
     reliabilityGain: 0,
-    spec: '+0.6 Passo • Inserimento in Curva & Bilanciamento'
+    spec: '+0.35 Passo • Inserimento in Curva & Bilanciamento'
   },
   aero_floor_venturi: {
     id: 'aero_floor_venturi',
@@ -101,13 +101,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Genera elevatissimo carico aerodinamico dal sottovettura mantenendo minima la resistenza all\'avanzamento.',
     icon: '🌪️',
     maxLevel: 5,
-    baseCost: 28000,
-    costMult: 18000,
-    basePoints: 50,
-    pointsMult: 28,
-    paceGain: 0.8,
+    baseCost: 36000,
+    costMult: 24000,
+    basePoints: 65,
+    pointsMult: 38,
+    paceGain: 0.45,
     reliabilityGain: 0,
-    spec: '+0.8 Passo • Carico Globale & Efficienza ad Alta Velocità'
+    spec: '+0.45 Passo • Carico Globale & Efficienza ad Alta Velocità'
   },
   aero_rear_wing_drs: {
     id: 'aero_rear_wing_drs',
@@ -117,13 +117,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Ottimizza lo scarico d\'aria sul retrotreno e la velocità di punta in rettilineo a DRS aperto.',
     icon: '⚡',
     maxLevel: 5,
-    baseCost: 22000,
-    costMult: 15000,
-    basePoints: 40,
-    pointsMult: 22,
-    paceGain: 0.6,
+    baseCost: 30000,
+    costMult: 20000,
+    basePoints: 55,
+    pointsMult: 32,
+    paceGain: 0.35,
     reliabilityGain: 0,
-    spec: '+0.6 Passo • Velocità di Punta & Sorpassi'
+    spec: '+0.35 Passo • Velocità di Punta & Efficacia DRS'
   },
 
   // 🔥 POWER UNIT & MOTORE
@@ -135,13 +135,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Aumenta la pressione nella camera di scoppio e i cavalli vapore effettivi a pieno regime di rotazione.',
     icon: '🔥',
     maxLevel: 5,
-    baseCost: 30000,
-    costMult: 20000,
-    basePoints: 55,
-    pointsMult: 30,
-    paceGain: 0.8,
+    baseCost: 40000,
+    costMult: 26000,
+    basePoints: 70,
+    pointsMult: 40,
+    paceGain: 0.45,
     reliabilityGain: 0,
-    spec: '+0.8 Passo • Cavalli Vapore & Allungo'
+    spec: '+0.45 Passo • Cavalli Vapore & Allungo'
   },
   engine_ers_hybrid: {
     id: 'engine_ers_hybrid',
@@ -151,13 +151,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Aumenta il recupero dell\'energia cinetica in staccata e la spinta della coppia elettrica istantanea in trazione.',
     icon: '🔋',
     maxLevel: 5,
-    baseCost: 25000,
-    costMult: 17000,
-    basePoints: 45,
-    pointsMult: 25,
-    paceGain: 0.7,
+    baseCost: 34000,
+    costMult: 22000,
+    basePoints: 60,
+    pointsMult: 35,
+    paceGain: 0.40,
     reliabilityGain: 0,
-    spec: '+0.7 Passo • Trazione Ibrida & Erogazione Coppia'
+    spec: '+0.40 Passo • Trazione Ibrida & Erogazione Coppia'
   },
   engine_ecu_exhaust: {
     id: 'engine_ecu_exhaust',
@@ -167,13 +167,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Mappature progressive del gas, isolamento termico avanzato e riduzione degli stress da detonazione.',
     icon: '💻',
     maxLevel: 5,
-    baseCost: 18000,
-    costMult: 12000,
-    basePoints: 30,
-    pointsMult: 18,
-    paceGain: 0.5,
+    baseCost: 25000,
+    costMult: 16000,
+    basePoints: 45,
+    pointsMult: 25,
+    paceGain: 0.25,
     reliabilityGain: 2,
-    spec: '+0.5 Passo • +2% Affidabilità Termica'
+    spec: '+0.25 Passo • +2% Affidabilità Termica'
   },
 
   // ⚙️ TELAIO & SOSPENSIONI
@@ -185,13 +185,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Ottimizza l\'assorbimento delle asperità e dei cordoli, preservando l\'impronta a terra degli pneumatici.',
     icon: '⚙️',
     maxLevel: 5,
-    baseCost: 22000,
-    costMult: 15000,
-    basePoints: 40,
-    pointsMult: 22,
-    paceGain: 0.6,
+    baseCost: 30000,
+    costMult: 20000,
+    basePoints: 55,
+    pointsMult: 32,
+    paceGain: 0.35,
     reliabilityGain: 0,
-    spec: '+0.6 Passo • Grip Meccanico & Gestione Gomme'
+    spec: '+0.35 Passo • Grip Meccanico & Gestione Gomme'
   },
   chassis_monocoque: {
     id: 'chassis_monocoque',
@@ -201,13 +201,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Riduce la massa sospesa complessiva, abbassando il baricentro ed esaltando la reattività nei cambi di direzione.',
     icon: '🏎️',
     maxLevel: 5,
-    baseCost: 26000,
-    costMult: 18000,
-    basePoints: 45,
-    pointsMult: 25,
-    paceGain: 0.7,
+    baseCost: 35000,
+    costMult: 24000,
+    basePoints: 65,
+    pointsMult: 36,
+    paceGain: 0.40,
     reliabilityGain: 0,
-    spec: '+0.7 Passo • Agilità & Reattività nei Settori Lenti'
+    spec: '+0.40 Passo • Agilità & Reattività nei Settori Lenti'
   },
   chassis_brakes: {
     id: 'chassis_brakes',
@@ -217,16 +217,16 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Staccate fulminee, minor surriscaldamento del liquido freni e controllo calibrato delle temperature cerchi.',
     icon: '🛑',
     maxLevel: 5,
-    baseCost: 18000,
-    costMult: 12000,
-    basePoints: 30,
-    pointsMult: 18,
-    paceGain: 0.5,
+    baseCost: 25000,
+    costMult: 16000,
+    basePoints: 45,
+    pointsMult: 25,
+    paceGain: 0.25,
     reliabilityGain: 2,
-    spec: '+0.5 Passo • +2% Affidabilità in Staccata'
+    spec: '+0.25 Passo • +2% Affidabilità in Staccata'
   },
 
-  // 🛡️ AFFIDABILITÀ & CONTROLLO QUALITÀ
+  // 🛡️ AFFIDABILITÀ & CONTROLLO QUALITÀ (Riducono anche il rischio di fallimento R&D)
   rel_sensor_telemetry: {
     id: 'rel_sensor_telemetry',
     dept: 'reliability',
@@ -235,13 +235,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Reti di sensori wireless sui componenti critici per rilevare anomalie prima che provochino un guasto in gara.',
     icon: '📡',
     maxLevel: 5,
-    baseCost: 16000,
-    costMult: 11000,
-    basePoints: 25,
-    pointsMult: 15,
+    baseCost: 22000,
+    costMult: 15000,
+    basePoints: 40,
+    pointsMult: 22,
     paceGain: 0,
-    reliabilityGain: 4,
-    spec: '+4% Affidabilità • Prevenzione Guasti Elettronici'
+    reliabilityGain: 3,
+    spec: '+3% Affidabilità • -1.5% Rischio Fallimento R&D'
   },
   rel_dyno_stress_test: {
     id: 'rel_dyno_stress_test',
@@ -251,13 +251,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Stress test termomeccanici al banco prova su cambio, scatola differenziale e circuito idraulico ad alta pressione.',
     icon: '🛡️',
     maxLevel: 5,
-    baseCost: 18000,
-    costMult: 13000,
-    basePoints: 30,
-    pointsMult: 18,
+    baseCost: 25000,
+    costMult: 17000,
+    basePoints: 45,
+    pointsMult: 25,
     paceGain: 0,
-    reliabilityGain: 4,
-    spec: '+4% Affidabilità • Resistenza Meccanica & Cambio'
+    reliabilityGain: 3,
+    spec: '+3% Affidabilità • -2.0% Rischio Fallimento R&D'
   }
 };
 
@@ -270,8 +270,8 @@ export const HQ_CONFIG = {
     baseCost: 45000,
     costMult: 35000,
     maxLevel: 5,
-    desc: "Genera Punti Telemetria (PT) ogni weekend di gara (+15 PT per livello) e affina la messa a punto sul giro secco in Qualifica (+0.03s per livello).",
-    perkText: (lvl) => `+${lvl * 15} PT/Gara • +${(lvl * 0.03).toFixed(2)}s Qualifica`
+    desc: "Genera Punti Telemetria (PT) ogni weekend (+12 PT per livello), affina la Qualifica (+0.02s per livello) e riduce il rischio di fallimento degli upgrade R&D (-2% per livello).",
+    perkText: (lvl) => `+${lvl * 12} PT • -${lvl * 2}% Rischio R&D • +${(lvl * 0.02).toFixed(2)}s Qualifica`
   },
   gymLevel: {
     id: "gymLevel",
@@ -300,8 +300,8 @@ export const HQ_CONFIG = {
     baseCost: 40000,
     costMult: 30000,
     maxLevel: 5,
-    desc: "Ottimizza il feedback per l'assetto (+0.02s per livello) e velocizza lo sviluppo R&D dei subcomponenti con +10 PT extra per gara.",
-    perkText: (lvl) => `+${lvl * 10} PT/Gara • +${(lvl * 0.02).toFixed(2)}s Setup Assetto`
+    desc: "Ottimizza il setup in qualifica (+0.02s per livello), genera +8 PT extra per gara e riduce il rischio di flop degli upgrade R&D (-1.5% per livello).",
+    perkText: (lvl) => `+${lvl * 8} PT • -${(lvl * 1.5).toFixed(1)}% Rischio R&D • Setup Assetto`
   },
   biohackingLevel: {
     id: "biohackingLevel",
@@ -1233,7 +1233,7 @@ export class CareerEngine {
   initRdSystem() {
     if (!this.career) return;
     if (this.career.rdTelemetryPoints === undefined) {
-      this.career.rdTelemetryPoints = 120;
+      this.career.rdTelemetryPoints = 60;
     }
     if (!this.career.rdSubComponents) {
       this.career.rdSubComponents = {
@@ -1263,6 +1263,47 @@ export class CareerEngine {
     }
   }
 
+  // Calcola probabilità di fallimento e successo per un determinato sottocomponente R&D
+  calculateSubComponentRisk(compKey) {
+    this.initRdSystem();
+    const cfg = RD_SUBCOMPONENTS_CONFIG[compKey];
+    if (!cfg) return { risk: 20, successRate: 80 };
+
+    const currentLvl = this.career.rdSubComponents[compKey] || 0;
+    const targetLvl = currentLvl + 1;
+
+    // Rischio base progressivo per livello:
+    // Livello 1: 18%, Livello 2: 26%, Livello 3: 34%, Livello 4: 42%, Livello 5: 50%
+    const baseRiskByLevel = [0, 18, 26, 34, 42, 50];
+    let risk = baseRiskByLevel[targetLvl] || 25;
+
+    // Mitigazioni Strategiche:
+    // 1. Livello Simulatore Dinamico HQ (-2% per livello, max -10%)
+    const simLvl = this.career.hqUpgrades?.simulatorLevel || 0;
+    risk -= simLvl * 2;
+
+    // 2. Race Engineer & Coach Telemetrico HQ (-1.5% per livello, max -7.5%)
+    const coachLvl = this.career.hqUpgrades?.telemetryCoachLevel || 0;
+    risk -= coachLvl * 1.5;
+
+    // 3. Feedback Tecnico del Pilota (Pilota esperto dà migliori indicazioni agli ingegneri)
+    const techFeedback = this.player?.attributes?.technicalFeedback || 60;
+    risk -= (techFeedback - 60) * 0.20;
+
+    // 4. Componenti di Controllo Qualità & Durabilità installati
+    const subComps = this.career.rdSubComponents || {};
+    const sensorLvl = subComps.rel_sensor_telemetry || 0;
+    const dynoLvl = subComps.rel_dyno_stress_test || 0;
+    risk -= sensorLvl * 1.5; // fino a -7.5%
+    risk -= dynoLvl * 2.0;   // fino a -10%
+
+    // Clamp tra 8% (minimo fisiologico in F1) e 65% (massimo rischio consentito)
+    risk = Math.max(8, Math.min(65, Math.round(risk)));
+    const successRate = 100 - risk;
+
+    return { risk, successRate };
+  }
+
   // Elabora la collaborazione tecnica ed economica del compagno di squadra dopo ogni weekend
   processTeammateCollaboration(finishPos = 10) {
     if (!this.career) return null;
@@ -1275,20 +1316,21 @@ export class CareerEngine {
     const tmName = tm?.name || db.getDriverName(tm?.id, discipline) || "Compagno di Squadra";
 
     // 1. Contributo Sponsor Commerciale del Compagno (€)
-    const sponsorMoney = Math.round(5000 + (tmMarketability * 160));
+    const sponsorMoney = Math.round(4000 + (tmMarketability * 120));
     this.career.money += sponsorMoney;
 
     // 2. Dati e Punti Telemetrici R&D (PT) generati dal lavoro in pista e al simulatore
-    const tmTelemetry = Math.round(8 + (tmFeedback * 0.30));
+    // Ribilanciato: generazione più calibrata (circa 20-30 PT per weekend)
+    const tmTelemetry = Math.round(4 + (tmFeedback * 0.12));
     const playerFeedback = this.player?.attributes?.technicalFeedback || 60;
-    const playerTelemetry = Math.round(12 + (playerFeedback * 0.35) + (finishPos <= 10 ? 8 : 2));
+    const playerTelemetry = Math.round(6 + (playerFeedback * 0.16) + (finishPos <= 10 ? 4 : 1));
     const totalTelemetry = tmTelemetry + playerTelemetry;
 
     this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + totalTelemetry;
 
-    // 3. Probabilità di Upgrade Autonomo / Breakthrough dal Simulatore da parte del compagno (~25-35%)
+    // 3. Breakthrough del Compagno: probabilità più rara (~8-12%) e soggetto a rischio fallimento
     let breakthrough = null;
-    const breakthroughChance = 0.16 + (tmFeedback / 450);
+    const breakthroughChance = 0.05 + (tmFeedback / 1200);
     if (Math.random() < breakthroughChance) {
       const compKeys = Object.keys(RD_SUBCOMPONENTS_CONFIG);
       const chosenCompKey = compKeys[Math.floor(Math.random() * compKeys.length)];
@@ -1296,28 +1338,47 @@ export class CareerEngine {
       const currentLvl = this.career.rdSubComponents[chosenCompKey] || 0;
 
       if (currentLvl < (compCfg.maxLevel || 5)) {
-        this.career.rdSubComponents[chosenCompKey] = currentLvl + 1;
-        breakthrough = {
-          type: 'component_upgrade',
-          componentName: compCfg.name,
-          deptName: compCfg.deptName,
-          newLevel: currentLvl + 1,
-          message: `Il compagno ${tmName} ha completato una sessione intensiva al simulatore testando con successo: ${compCfg.name} (Livello ${currentLvl + 1})!`
-        };
+        // Roll di affidabilità e correlazione sul test del compagno
+        const { risk } = this.calculateSubComponentRisk(chosenCompKey);
+        const compRoll = Math.random() * 100;
+        if (compRoll < risk) {
+          breakthrough = {
+            type: 'failed_breakthrough',
+            componentName: compCfg.name,
+            deptName: compCfg.deptName,
+            message: `Il compagno ${tmName} ha collaudato al simulatore una modifica per ${compCfg.name}, ma i dati hanno rilevato instabilità aerodinamica/termica. Il pacchetto è stato scartato.`
+          };
+          if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+          this.career.aiTransferNews.unshift(
+            `⚠️ COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
+          );
+        } else {
+          this.career.rdSubComponents[chosenCompKey] = currentLvl + 1;
+          breakthrough = {
+            type: 'component_upgrade',
+            componentName: compCfg.name,
+            deptName: compCfg.deptName,
+            newLevel: currentLvl + 1,
+            message: `Il compagno ${tmName} ha completato una sessione intensiva al simulatore testando con successo: ${compCfg.name} (Livello ${currentLvl + 1})!`
+          };
+          if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+          this.career.aiTransferNews.unshift(
+            `🤝 COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
+          );
+        }
       } else {
-        const bonusMoney = 15000;
+        const bonusMoney = 12000;
         this.career.money += bonusMoney;
         breakthrough = {
           type: 'sponsor_bonus',
           amount: bonusMoney,
           message: `Il compagno ${tmName} ha chiuso una partnership commerciale esclusiva portando un extra budget di €${bonusMoney.toLocaleString()}!`
         };
+        if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+        this.career.aiTransferNews.unshift(
+          `🤝 COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
+        );
       }
-
-      if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
-      this.career.aiTransferNews.unshift(
-        `🤝 COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
-      );
     }
 
     // Aggiorna statistiche cumulative di collaborazione
@@ -1325,7 +1386,9 @@ export class CareerEngine {
     stats.totalMoneyContributed = (stats.totalMoneyContributed || 0) + sponsorMoney;
     stats.totalTelemetryContributed = (stats.totalTelemetryContributed || 0) + tmTelemetry;
     if (breakthrough) {
-      stats.upgradesDelivered = (stats.upgradesDelivered || 0) + 1;
+      if (breakthrough.type === 'component_upgrade') {
+        stats.upgradesDelivered = (stats.upgradesDelivered || 0) + 1;
+      }
       stats.lastBreakthrough = breakthrough;
     }
 
@@ -1835,18 +1898,33 @@ export class CareerEngine {
     currentContract.yearsLeft = Math.max(0, prevYearsLeft - 1);
     const isUnderContract = currentContract.yearsLeft > 0;
 
-    // Fonde una quota degli upgrade R&D stagionali nel passo base permanente della vettura
+    // Fonde una quota calibrata degli upgrade R&D stagionali (subcomponenti e legacy) nel passo base della nuova vettura invernale
     if (this.career.teamDevelopment && this.career.teamDevelopment[this.career.currentTeamId]) {
       const up = this.career.carUpgrades || {};
-      const gained = Math.round((up.aero * 0.8) + (up.engine * 0.8) + (up.chassis * 0.6));
-      if (gained > 0) {
+      const subComps = this.career.rdSubComponents || {};
+      let subPaceTotal = 0;
+      for (const [key, lvl] of Object.entries(subComps)) {
+        const cfg = RD_SUBCOMPONENTS_CONFIG[key];
+        if (cfg && lvl > 0) {
+          subPaceTotal += (cfg.paceGain || 0) * lvl;
+        }
+      }
+      const legacyGain = (up.aero * 0.4) + (up.engine * 0.4) + (up.chassis * 0.3);
+      // Fonde circa il 35% del know-how sviluppato nel telaio della stagione successiva (max +4 pace permanente)
+      const permanentPaceGain = Math.min(4, Math.round((subPaceTotal * 0.35) + legacyGain));
+      if (permanentPaceGain > 0) {
         this.career.teamDevelopment[this.career.currentTeamId].carPace = Math.min(
           98,
-          (this.career.teamDevelopment[this.career.currentTeamId].carPace || 75) + gained
+          (this.career.teamDevelopment[this.career.currentTeamId].carPace || 75) + permanentPaceGain
         );
       }
     }
     this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
+    if (this.career.rdSubComponents) {
+      for (const k in this.career.rdSubComponents) {
+        this.career.rdSubComponents[k] = 0;
+      }
+    }
 
     // Esegui trasferimenti piloti AI e movimenti di mercato Free Agent
     this.aiDriverTransfers();
@@ -2240,18 +2318,34 @@ export class CareerEngine {
 
   // Acquisto Upgrade R&D Vettura/Moto (Macro Reparto Legacy)
   buyCarUpgrade(dept) {
-    const cost = 25000 * ((this.career.carUpgrades[dept] || 0) + 1);
-    if (this.career.money < cost) {
-      return { success: false, message: "Fondi insufficienti per questo pacchetto R&D." };
-    }
-    if ((this.career.carUpgrades[dept] || 0) >= 5) {
+    const currentLvl = this.career.carUpgrades[dept] || 0;
+    if (currentLvl >= 5) {
       return { success: false, message: "Reparto già al massimo sviluppo consentito per questa stagione." };
     }
 
+    const cost = 40000 * (currentLvl + 1);
+    if (this.career.money < cost) {
+      return { success: false, message: `Fondi insufficienti! Richiesti €${cost.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.` };
+    }
+
+    const targetLvl = currentLvl + 1;
+    const risk = Math.min(50, 15 + (targetLvl * 6));
+    const roll = Math.random() * 100;
     this.career.money -= cost;
-    this.career.carUpgrades[dept] = (this.career.carUpgrades[dept] || 0) + 1;
+
+    if (roll < risk) {
+      this.saveToStorage();
+      return {
+        success: false,
+        failedAttempt: true,
+        risk,
+        message: `Upgrade ${dept.toUpperCase()} fallito al banco prova (${risk}% rischio flop). Il prototipo ha mostrato difetti strutturali ed è stato scartato.`
+      };
+    }
+
+    this.career.carUpgrades[dept] = targetLvl;
     this.saveToStorage();
-    return { success: true, message: `Aggiornamento R&D ${dept.toUpperCase()} installato con successo!` };
+    return { success: true, message: `Aggiornamento R&D ${dept.toUpperCase()} collaudato e installato con successo!` };
   }
 
   // Acquisto Upgrade Sottocomponente R&D Dettagliato
@@ -2284,16 +2378,55 @@ export class CareerEngine {
       };
     }
 
+    // Calcolo probabilità di successo e rischio fallimento (mitigato da HQ, simulatore, pilota e qualità)
+    const { risk, successRate } = this.calculateSubComponentRisk(compKey);
+    const roll = Math.random() * 100;
+    const isFailed = roll < risk;
+
+    // Il costo del prototipo in denaro viene comunque consumato per fabbricazione e ore banco
     this.career.money -= cost;
+
+    if (isFailed) {
+      // In caso di fallimento: il livello non aumenta, ma il 45% dei punti telemetria viene salvato come telemetria diagnostica
+      const refundedPts = Math.round(ptsCost * 0.45);
+      this.career.rdTelemetryPoints -= (ptsCost - refundedPts);
+      this.saveToStorage();
+
+      const failureReasons = [
+        "disallineamento tra galleria del vento e pista (perdita di carico aerodinamico e turbolenze).",
+        "surriscaldamento anomalo al banco dinamico ad alti regimi di rotazione.",
+        "vibrazioni parassite e risonanza torsionale non tollerata sulle sospensioni.",
+        "difetto di laminazione del carbonio e cedimento strutturale sui carichi limite.",
+        "perdita di pressione nel circuito idraulico e mancata omologazione FIA."
+      ];
+      const reason = failureReasons[Math.floor(Math.random() * failureReasons.length)];
+
+      if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+      this.career.aiTransferNews.unshift(
+        `❌ FLOP R&D: Il pacchetto evolutivo ${cfg.name} (Lvl ${currentLvl + 1}) è stato bocciato dai tecnici per ${reason}`
+      );
+
+      return {
+        success: false,
+        failedAttempt: true,
+        risk,
+        successRate,
+        refundedPts,
+        message: `Test in pista/banco FALLITO (${risk}% rischio)! Il pacchetto ${cfg.name} è stato scartato per ${reason} (Recuperati ${refundedPts} PT di dati telemetrici).`
+      };
+    }
+
+    // Upgrade riuscito!
     this.career.rdTelemetryPoints -= ptsCost;
     this.career.rdSubComponents[compKey] = currentLvl + 1;
-
     this.saveToStorage();
 
     const gainStr = cfg.paceGain > 0 ? `+${cfg.paceGain} Passo Mezzo` : `+${cfg.reliabilityGain}% Affidabilità`;
     return {
       success: true,
-      message: `Upgrade installato! ${cfg.name} portato al Livello ${currentLvl + 1} (${gainStr}).`,
+      risk,
+      successRate,
+      message: `Upgrade promosso con successo (${successRate}% successo)! ${cfg.name} portato al Livello ${currentLvl + 1} (${gainStr}).`,
       newLevel: currentLvl + 1,
       cost,
       ptsCost
@@ -2573,8 +2706,9 @@ export class CareerEngine {
 
       const teamDev = this.career.teamDevelopment[team.id];
       const paceVal = teamDev.carPace || 75;
-      const baseGain = paceVal > 85 ? 0.35 : (paceVal > 78 ? 0.28 : 0.22);
-      const randBonus = Math.random() * 0.15;
+      // Ribilanciato: sviluppo più graduale (circa 1 upgrade ogni 4-6 gare per team anziché ogni 2 gare)
+      const baseGain = paceVal > 85 ? 0.12 : (paceVal > 78 ? 0.16 : 0.20);
+      const randBonus = Math.random() * 0.08;
 
       // Collaborazione Piloti AI: il feedback tecnico e gli sponsor dei piloti accelerano lo sviluppo vettura
       const teamDrivers = cat.roster.filter(d => {
@@ -2593,31 +2727,55 @@ export class CareerEngine {
       const avgFeedback = sumFeedback / dCount;
       const avgMarket = sumMarket / dCount;
 
-      const technicalBonus = (avgFeedback - 70) * 0.005; // Fino a +0.12 per top piloti
-      const sponsorBonus = (avgMarket - 65) * 0.003;     // Fino a +0.08 per piloti famosi
-      const totalGain = Math.max(0.12, baseGain + randBonus + technicalBonus + sponsorBonus);
+      const technicalBonus = (avgFeedback - 70) * 0.003;
+      const sponsorBonus = (avgMarket - 65) * 0.002;
+      const totalGain = Math.max(0.08, baseGain + randBonus + technicalBonus + sponsorBonus);
 
       teamDev.devPoints = (teamDev.devPoints || 0) + totalGain;
 
-      // Al raggiungimento di 1 punto sviluppo: +1 a carPace
+      // Al raggiungimento di 1 punto sviluppo: delibera del pacchetto evolutivo con rischio fallimento
       if (teamDev.devPoints >= 1.0) {
         teamDev.devPoints -= 1.0;
-        if (teamDev.carPace < 98) {
-          teamDev.carPace += 1;
-          teamDev.seasonPaceGain = (teamDev.seasonPaceGain || 0) + 1;
 
-          if (Math.random() < 0.25 && teamDrivers.length > 0) {
-            const teamName = db.getTeamName(team.id, discipline, currentCatKey);
-            const leadDriver = teamDrivers[0];
-            const dName = db.getDriverName(leadDriver.id, discipline);
+        // Calcolo probabilità di fallimento upgrade per l'AI (tra 10% e 45%)
+        let aiFailureRisk = paceVal >= 88 ? 32 : (paceVal >= 80 ? 25 : 20);
+        aiFailureRisk -= (avgFeedback - 70) * 0.35;
+        aiFailureRisk = Math.max(10, Math.min(45, Math.round(aiFailureRisk)));
+
+        const roll = Math.random() * 100;
+        const failed = roll < aiFailureRisk;
+        const teamName = db.getTeamName(team.id, discipline, currentCatKey);
+        const leadDriver = teamDrivers[0];
+        const dName = leadDriver ? db.getDriverName(leadDriver.id, discipline) : "collaudatori";
+
+        if (failed) {
+          teamDev.failedUpgrades = (teamDev.failedUpgrades || 0) + 1;
+          // In caso di flop, nessun incremento di passo vettura e potenziale piccolo difetto di affidabilità
+          if (Math.random() < 0.30 && teamDev.reliability > 70) {
+            teamDev.reliability -= 1;
+          }
+          if (Math.random() < 0.40) {
             if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
             this.career.aiTransferNews.unshift(
-              `🛠️ R&D PADDOCK: ${teamName} delibera un nuovo pacchetto evolutivo dopo i test condotti da ${dName}!`
+              `⚠️ FLOP R&D: Il pacchetto evolutivo portato in pista da ${teamName} ha fallito la correlazione coi dati di ${dName} e non darà vantaggi cronometrici!`
             );
           }
-        }
-        if (Math.random() < 0.35 && teamDev.reliability < 98) {
-          teamDev.reliability += 1;
+        } else {
+          // Upgrade AI promosso con successo
+          if (teamDev.carPace < 98) {
+            teamDev.carPace += 1;
+            teamDev.seasonPaceGain = (teamDev.seasonPaceGain || 0) + 1;
+
+            if (Math.random() < 0.30 && teamDrivers.length > 0) {
+              if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+              this.career.aiTransferNews.unshift(
+                `🛠️ R&D PADDOCK: ${teamName} promuove con successo il nuovo pacchetto evolutivo grazie ai collaudi di ${dName}!`
+              );
+            }
+          }
+          if (Math.random() < 0.25 && teamDev.reliability < 98) {
+            teamDev.reliability += 1;
+          }
         }
       }
     });

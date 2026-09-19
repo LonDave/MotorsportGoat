@@ -239,7 +239,7 @@ export class RdFacilityView {
 
     const hasMoney = playerMoney >= cost;
     const hasPoints = playerTelemetry >= ptsCost;
-    const canAfford = hasMoney && hasPoints;
+    const { risk, successRate } = career.calculateSubComponentRisk ? career.calculateSubComponentRisk(compKey) : { risk: 20, successRate: 80 };
 
     return `
       <div class="rd-subcomp-card ${isMax ? 'is-maxed' : ''}" data-comp="${compKey}">
@@ -263,6 +263,18 @@ export class RdFacilityView {
             ⚡ ${cfg.spec}
           </div>
 
+          <!-- RISCHIO FLOP & SUCCESSO UPGRADE -->
+          ${!isMax ? `
+            <div class="rd-risk-badge-row">
+              <span class="rd-risk-badge ${risk >= 35 ? 'risk-high' : (risk >= 24 ? 'risk-med' : 'risk-low')}">
+                🎲 Rischio Flop: <strong>${risk}%</strong>
+              </span>
+              <span class="rd-success-badge">
+                🎯 Successo: <strong>${successRate}%</strong>
+              </span>
+            </div>
+          ` : ''}
+
           <!-- BARRA LIVELLO SEGMENTATA -->
           <div class="rd-segment-bar">
             ${[1, 2, 3, 4, 5].map(step => `
@@ -275,7 +287,7 @@ export class RdFacilityView {
           ${!isMax ? `
             <div class="rd-cost-row">
               <div class="rd-cost-col">
-                <span class="rd-cost-lbl">COSTO UPGRADE:</span>
+                <span class="rd-cost-lbl">COSTO PROTOTIPO:</span>
                 <strong class="rd-cost-val ${hasMoney ? 'money-ok' : 'money-err'}">€${cost.toLocaleString()}</strong>
               </div>
               <div class="rd-cost-col right">
@@ -285,7 +297,7 @@ export class RdFacilityView {
             </div>
 
             <button class="btn-upgrade-subcomponent ${canAfford ? '' : 'btn-disabled'}" data-comp="${compKey}">
-              <span>${canAfford ? 'Installa Pacchetto Evolutivo ➔' : (!hasMoney ? 'Budget Insufficiente' : 'Telemetria Insufficiente')}</span>
+              <span>${canAfford ? `Sviluppa & Collauda In Pista (${successRate}% Successo) ➔` : (!hasMoney ? 'Budget Insufficiente' : 'Telemetria Insufficiente')}</span>
             </button>
           ` : `
             <div class="rd-max-notice">
@@ -315,6 +327,11 @@ export class RdFacilityView {
         if (res.success) {
           sound.playRadioBeep();
           ToastNotification.show(`⚙️ ${res.message}`, "success");
+          window.dispatchEvent(new CustomEvent('career-data-updated'));
+          renderPage();
+        } else if (res.failedAttempt) {
+          sound.playClick();
+          ToastNotification.show(`❌ ${res.message}`, "danger");
           window.dispatchEvent(new CustomEvent('career-data-updated'));
           renderPage();
         } else {
