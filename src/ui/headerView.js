@@ -48,7 +48,7 @@ export class HeaderView {
         <div class="career-header-top">
           <!-- Blocco 1: Brand Logo -->
           <div class="header-brand-block">
-            <div class="logo-area clickable-home-logo" id="header-brand-logo" title="Vai alla Dashboard">
+            <div class="logo-area clickable-home-logo" id="header-brand-logo" title="Torna alla Home / Menu Principale">
               <span class="goat-badge">GOAT</span>
               <span class="logo-title">MOTORSPORT EDITION</span>
             </div>
@@ -203,7 +203,7 @@ export class HeaderView {
     if (brandLogo) {
       brandLogo.onclick = () => {
         sound.playClick();
-        onNavigate('dashboard');
+        onNavigate('landing');
       };
     }
 

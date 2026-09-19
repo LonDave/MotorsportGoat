@@ -215,7 +215,7 @@ export class MarketView {
                   </span>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 14px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; margin-top: 14px;">
                   ${catTeams.map(t => {
                     const isPlayerTeam = t.id === careerData.currentTeamId;
                     const tName = db.getTeamName(t.id, player.discipline, careerData.currentCategory) || t.name;
@@ -327,7 +327,7 @@ export class MarketView {
                     <p style="font-size: 13px; margin-top: 4px;">Tutti i piloti delle categorie attive hanno un sedile ufficiale assegnato.</p>
                   </div>
                 ` : `
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 14px;">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; margin-top: 14px;">
                     ${freeAgents.map(fa => {
                       const driver = db.getDriver(fa.driverId, player.discipline) || {};
                       const driverName = db.getDriverName(fa.driverId, player.discipline);
