@@ -85,13 +85,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Migliora l\'inserimento in curva veloce, la sensibilità direzionale e il controllo dei vortici turbolenti.',
     icon: '🏎️',
     maxLevel: 5,
-    baseCost: 28000,
-    costMult: 18000,
-    basePoints: 50,
-    pointsMult: 30,
-    paceGain: 0.35,
+    baseCost: 45000,
+    costMult: 30000,
+    basePoints: 85,
+    pointsMult: 55,
+    paceGain: 0.15,
     reliabilityGain: 0,
-    spec: '+0.35 Passo • Inserimento in Curva & Bilanciamento'
+    spec: '+0.15 Passo • Inserimento in Curva & Bilanciamento'
   },
   aero_floor_venturi: {
     id: 'aero_floor_venturi',
@@ -101,13 +101,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Genera elevatissimo carico aerodinamico dal sottovettura mantenendo minima la resistenza all\'avanzamento.',
     icon: '🌪️',
     maxLevel: 5,
-    baseCost: 36000,
-    costMult: 24000,
-    basePoints: 65,
-    pointsMult: 38,
-    paceGain: 0.45,
+    baseCost: 65000,
+    costMult: 45000,
+    basePoints: 110,
+    pointsMult: 70,
+    paceGain: 0.20,
     reliabilityGain: 0,
-    spec: '+0.45 Passo • Carico Globale & Efficienza ad Alta Velocità'
+    spec: '+0.20 Passo • Carico Globale & Efficienza ad Alta Velocità'
   },
   aero_rear_wing_drs: {
     id: 'aero_rear_wing_drs',
@@ -117,13 +117,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Ottimizza lo scarico d\'aria sul retrotreno e la velocità di punta in rettilineo a DRS aperto.',
     icon: '⚡',
     maxLevel: 5,
-    baseCost: 30000,
-    costMult: 20000,
-    basePoints: 55,
-    pointsMult: 32,
-    paceGain: 0.35,
+    baseCost: 50000,
+    costMult: 35000,
+    basePoints: 90,
+    pointsMult: 60,
+    paceGain: 0.15,
     reliabilityGain: 0,
-    spec: '+0.35 Passo • Velocità di Punta & Efficacia DRS'
+    spec: '+0.15 Passo • Velocità di Punta & Efficacia DRS'
   },
 
   // 🔥 POWER UNIT & MOTORE
@@ -135,13 +135,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Aumenta la pressione nella camera di scoppio e i cavalli vapore effettivi a pieno regime di rotazione.',
     icon: '🔥',
     maxLevel: 5,
-    baseCost: 40000,
-    costMult: 26000,
-    basePoints: 70,
-    pointsMult: 40,
-    paceGain: 0.45,
+    baseCost: 75000,
+    costMult: 50000,
+    basePoints: 120,
+    pointsMult: 75,
+    paceGain: 0.20,
     reliabilityGain: 0,
-    spec: '+0.45 Passo • Cavalli Vapore & Allungo'
+    spec: '+0.20 Passo • Cavalli Vapore & Allungo'
   },
   engine_ers_hybrid: {
     id: 'engine_ers_hybrid',
@@ -151,13 +151,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Aumenta il recupero dell\'energia cinetica in staccata e la spinta della coppia elettrica istantanea in trazione.',
     icon: '🔋',
     maxLevel: 5,
-    baseCost: 34000,
-    costMult: 22000,
-    basePoints: 60,
-    pointsMult: 35,
-    paceGain: 0.40,
+    baseCost: 60000,
+    costMult: 40000,
+    basePoints: 100,
+    pointsMult: 65,
+    paceGain: 0.18,
     reliabilityGain: 0,
-    spec: '+0.40 Passo • Trazione Ibrida & Erogazione Coppia'
+    spec: '+0.18 Passo • Trazione Ibrida & Erogazione Coppia'
   },
   engine_ecu_exhaust: {
     id: 'engine_ecu_exhaust',
@@ -167,13 +167,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Mappature progressive del gas, isolamento termico avanzato e riduzione degli stress da detonazione.',
     icon: '💻',
     maxLevel: 5,
-    baseCost: 25000,
-    costMult: 16000,
-    basePoints: 45,
-    pointsMult: 25,
-    paceGain: 0.25,
+    baseCost: 40000,
+    costMult: 28000,
+    basePoints: 75,
+    pointsMult: 45,
+    paceGain: 0.12,
     reliabilityGain: 2,
-    spec: '+0.25 Passo • +2% Affidabilità Termica'
+    spec: '+0.12 Passo • +2% Affidabilità Termica'
   },
 
   // ⚙️ TELAIO & SOSPENSIONI
@@ -185,13 +185,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Ottimizza l\'assorbimento delle asperità e dei cordoli, preservando l\'impronta a terra degli pneumatici.',
     icon: '⚙️',
     maxLevel: 5,
-    baseCost: 30000,
-    costMult: 20000,
-    basePoints: 55,
-    pointsMult: 32,
-    paceGain: 0.35,
+    baseCost: 50000,
+    costMult: 35000,
+    basePoints: 90,
+    pointsMult: 60,
+    paceGain: 0.15,
     reliabilityGain: 0,
-    spec: '+0.35 Passo • Grip Meccanico & Gestione Gomme'
+    spec: '+0.15 Passo • Grip Meccanico & Gestione Gomme'
   },
   chassis_monocoque: {
     id: 'chassis_monocoque',
@@ -201,13 +201,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Riduce la massa sospesa complessiva, abbassando il baricentro ed esaltando la reattività nei cambi di direzione.',
     icon: '🏎️',
     maxLevel: 5,
-    baseCost: 35000,
-    costMult: 24000,
-    basePoints: 65,
-    pointsMult: 36,
-    paceGain: 0.40,
+    baseCost: 60000,
+    costMult: 42000,
+    basePoints: 105,
+    pointsMult: 68,
+    paceGain: 0.18,
     reliabilityGain: 0,
-    spec: '+0.40 Passo • Agilità & Reattività nei Settori Lenti'
+    spec: '+0.18 Passo • Agilità & Reattività nei Settori Lenti'
   },
   chassis_brakes: {
     id: 'chassis_brakes',
@@ -217,13 +217,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Staccate fulminee, minor surriscaldamento del liquido freni e controllo calibrato delle temperature cerchi.',
     icon: '🛑',
     maxLevel: 5,
-    baseCost: 25000,
-    costMult: 16000,
-    basePoints: 45,
-    pointsMult: 25,
-    paceGain: 0.25,
+    baseCost: 40000,
+    costMult: 28000,
+    basePoints: 75,
+    pointsMult: 45,
+    paceGain: 0.12,
     reliabilityGain: 2,
-    spec: '+0.25 Passo • +2% Affidabilità in Staccata'
+    spec: '+0.12 Passo • +2% Affidabilità in Staccata'
   },
 
   // 🛡️ AFFIDABILITÀ & CONTROLLO QUALITÀ (Riducono anche il rischio di fallimento R&D)
@@ -235,13 +235,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Reti di sensori wireless sui componenti critici per rilevare anomalie prima che provochino un guasto in gara.',
     icon: '📡',
     maxLevel: 5,
-    baseCost: 22000,
-    costMult: 15000,
-    basePoints: 40,
-    pointsMult: 22,
+    baseCost: 35000,
+    costMult: 25000,
+    basePoints: 70,
+    pointsMult: 40,
     paceGain: 0,
-    reliabilityGain: 3,
-    spec: '+3% Affidabilità • -1.5% Rischio Fallimento R&D'
+    reliabilityGain: 2,
+    spec: '+2% Affidabilità • -1.5% Rischio Fallimento R&D'
   },
   rel_dyno_stress_test: {
     id: 'rel_dyno_stress_test',
@@ -251,13 +251,13 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     desc: 'Stress test termomeccanici al banco prova su cambio, scatola differenziale e circuito idraulico ad alta pressione.',
     icon: '🛡️',
     maxLevel: 5,
-    baseCost: 25000,
-    costMult: 17000,
-    basePoints: 45,
-    pointsMult: 25,
+    baseCost: 40000,
+    costMult: 28000,
+    basePoints: 75,
+    pointsMult: 45,
     paceGain: 0,
-    reliabilityGain: 3,
-    spec: '+3% Affidabilità • -2.0% Rischio Fallimento R&D'
+    reliabilityGain: 2,
+    spec: '+2% Affidabilità • -2.0% Rischio Fallimento R&D'
   }
 };
 
@@ -267,51 +267,51 @@ export const HQ_CONFIG = {
     id: "simulatorLevel",
     name: "Simulatore Dinamico Professionale",
     icon: "🖥️",
-    baseCost: 45000,
-    costMult: 35000,
+    baseCost: 90000,
+    costMult: 70000,
     maxLevel: 5,
-    desc: "Genera Punti Telemetria (PT) ogni weekend (+12 PT per livello), affina la Qualifica (+0.02s per livello) e riduce il rischio di fallimento degli upgrade R&D (-2% per livello).",
-    perkText: (lvl) => `+${lvl * 12} PT • -${lvl * 2}% Rischio R&D • +${(lvl * 0.02).toFixed(2)}s Qualifica`
+    desc: "Genera Punti Telemetria (PT) ogni weekend (+6 PT per livello), affina la Qualifica (+0.02s per livello) e riduce il rischio di fallimento degli upgrade R&D (-2% per livello).",
+    perkText: (lvl) => `+${lvl * 6} PT • -${lvl * 2}% Rischio R&D • +${(lvl * 0.02).toFixed(2)}s Qualifica`
   },
   gymLevel: {
     id: "gymLevel",
     name: "Palestra, Fisioterapia & Crioterapia",
     icon: "🏋️",
-    baseCost: 35000,
-    costMult: 25000,
+    baseCost: 70000,
+    costMult: 55000,
     maxLevel: 5,
     desc: "Aumenta la resistenza fisica (Fitness) prevenendo errori e cali di concentrazione nei finali di gara e nelle gare ad alto degrado.",
-    perkText: (lvl) => `+${lvl * 2} Fitness • -${lvl * 12}% Calo fisico a fine gara`
+    perkText: (lvl) => `+${lvl * 2} Fitness • -${lvl * 10}% Calo fisico a fine gara`
   },
   prAgencyLevel: {
     id: "prAgencyLevel",
     name: "Ufficio Stampa & PR Agency Globale",
     icon: "📱",
-    baseCost: 50000,
-    costMult: 35000,
+    baseCost: 95000,
+    costMult: 80000,
     maxLevel: 5,
-    desc: "Attrae sponsor commerciali personali (+€6.000 a gara per livello) e potenzia costantemente la Marketability del pilota.",
-    perkText: (lvl) => `+€${(lvl * 6000).toLocaleString()} Sponsor/GP • +${lvl * 3} Marketability`
+    desc: "Attrae sponsor commerciali personali (+€1.800 a gara per livello) e potenzia costantemente la Marketability del pilota.",
+    perkText: (lvl) => `+€${(lvl * 1800).toLocaleString()} Sponsor/GP • +${lvl * 2} Marketability`
   },
   telemetryCoachLevel: {
     id: "telemetryCoachLevel",
     name: "Coach Telemetrico & Race Engineer Dedicato",
     icon: "📈",
-    baseCost: 40000,
-    costMult: 30000,
+    baseCost: 80000,
+    costMult: 65000,
     maxLevel: 5,
-    desc: "Ottimizza il setup in qualifica (+0.02s per livello), genera +8 PT extra per gara e riduce il rischio di flop degli upgrade R&D (-1.5% per livello).",
-    perkText: (lvl) => `+${lvl * 8} PT • -${(lvl * 1.5).toFixed(1)}% Rischio R&D • Setup Assetto`
+    desc: "Ottimizza il setup in qualifica (+0.02s per livello), genera +4 PT extra per gara e riduce il rischio di flop degli upgrade R&D (-1.5% per livello).",
+    perkText: (lvl) => `+${lvl * 4} PT • -${(lvl * 1.5).toFixed(1)}% Rischio R&D • Setup Assetto`
   },
   biohackingLevel: {
     id: "biohackingLevel",
     name: "Biohacking, Chef Nutrizionista & Mental Coach",
     icon: "🧠",
-    baseCost: 40000,
-    costMult: 30000,
+    baseCost: 80000,
+    costMult: 65000,
     maxLevel: 5,
     desc: "Migliora la lucidità e la Costanza in pista (+2 Costanza per livello), riducendo le probabilità di testacoda e sbavature in condizioni mutevoli.",
-    perkText: (lvl) => `+${lvl * 2} Costanza • -${lvl * 15}% Rischio Sbavature`
+    perkText: (lvl) => `+${lvl * 2} Costanza • -${lvl * 12}% Rischio Sbavature`
   }
 };
 
@@ -323,7 +323,7 @@ export const LIFESTYLE_ASSETS_CONFIG = [
     nameAutoFictional: "Supercar Cavallino SF90",
     nameMoto: "Ducati Panigale V4 SP2",
     nameMotoFictional: "Bologna Desmo V4 SP2",
-    price: 250000,
+    price: 450000,
     icon: "🏎️",
     desc: "Bolide stradale da sfoggiare nel paddock. Accresce la notorietà globale ed esalta il tuo status tra i piloti d'élite.",
     fameBonus: 8,
@@ -334,41 +334,41 @@ export const LIFESTYLE_ASSETS_CONFIG = [
   {
     id: "villa_monaco",
     name: "Residenza Fiscale a Monte Carlo",
-    price: 1800000,
+    price: 3500000,
     icon: "🏰",
-    desc: "Attico affacciato su Port Hercule. Garantisce l'azzeramento fiscale su stipendi e premi gara (+15% guadagni netti da contratto a ogni GP!).",
+    desc: "Attico affacciato su Port Hercule. Garantisce l'azzeramento fiscale su stipendi e premi gara (+8% guadagni netti da contratto a ogni GP!).",
     fameBonus: 15,
     goatBonus: 15,
     passivePerRace: 0,
-    taxExemption: 0.15,
-    perkBadge: "+15% Guadagni Netti da Contratto/Gara"
+    taxExemption: 0.08,
+    perkBadge: "+8% Guadagni Netti da Contratto/Gara"
   },
   {
     id: "kart_team",
     name: "Scuderia Personale Karting & Driver Academy",
-    price: 750000,
+    price: 1500000,
     icon: "🏁",
     desc: "Team di sviluppo giovanile che allena i talenti del futuro. Genera una solida rendita passiva da sponsor e premi di categoria.",
     fameBonus: 10,
     goatBonus: 12,
-    passivePerRace: 12000,
-    perkBadge: "Rendita Passiva +€12.000 a ogni GP"
+    passivePerRace: 3500,
+    perkBadge: "Rendita Passiva +€3.500 a ogni GP"
   },
   {
     id: "fashion_brand",
     name: "Brand Personale di Abbigliamento & Merchandising",
-    price: 450000,
+    price: 950000,
     icon: "🕶️",
     desc: "Linea esclusiva di streetwear e accessori sportivi venduta in tutto il mondo. Produce royalty proporzionali alla tua popolarità.",
     fameBonus: 12,
     goatBonus: 8,
-    passivePerRace: 8000,
-    perkBadge: "Rendita Royalty +€8.000 a ogni GP"
+    passivePerRace: 2200,
+    perkBadge: "Rendita Royalty +€2.200 a ogni GP"
   },
   {
     id: "private_jet",
     name: "Jet Privato Long-Range con Livrea Personalizzata",
-    price: 4000000,
+    price: 8500000,
     icon: "✈️",
     desc: "Velivolo intercontinentale per viaggiare nel massimo comfort. Annulla qualsiasi malus da jet-lag nei Gran Premi extra-europei (+1.5 Passo Mezzo nei round intercontinentali).",
     fameBonus: 25,
@@ -380,13 +380,13 @@ export const LIFESTYLE_ASSETS_CONFIG = [
   {
     id: "supercar_museum",
     name: "Museo Privato & Collezione Hypercar",
-    price: 2500000,
+    price: 5000000,
     icon: "🏛️",
     desc: "Padiglione privato con le vetture più iconiche della storia dei motori. Monumentale attrazione mediatica che consacra la tua leggenda.",
     fameBonus: 20,
     goatBonus: 35,
-    passivePerRace: 15000,
-    perkBadge: "Rendita +€15.000/GP • +35 Punti GOAT"
+    passivePerRace: 4500,
+    perkBadge: "Rendita +€4.500/GP • +35 Punti GOAT"
   }
 ];
 
@@ -396,7 +396,7 @@ export const TRAINING_CAMPS_CONFIG = [
     id: "wet_bootcamp",
     name: "Stage di Guida su Bagnato Estremo",
     icon: "🌧️",
-    cost: 25000,
+    cost: 60000,
     desc: "Sessioni intensive su pista allagata con kart e monoposto storiche per affinare la sensibilità sul viscido.",
     effect: "+3 Abilità Bagnato (Wet Skill)",
     apply: (player) => {
@@ -407,18 +407,18 @@ export const TRAINING_CAMPS_CONFIG = [
     id: "sim_marathon",
     name: "Maratona 48h al Simulatore con Ingegneri",
     icon: "⏱️",
-    cost: 30000,
+    cost: 75000,
     desc: "Test no-stop al simulatore dinamico per estrarre dati telemetrici e affinare il feeling dell'assetto.",
-    effect: "+85 Punti Telemetria (PT) per R&D",
+    effect: "+35 Punti Telemetria (PT) per R&D",
     apply: (player, career) => {
-      career.career.rdTelemetryPoints = (career.career.rdTelemetryPoints || 0) + 85;
+      career.career.rdTelemetryPoints = (career.career.rdTelemetryPoints || 0) + 35;
     }
   },
   {
     id: "altitude_camp",
     name: "Ritiro Atletico in Alta Quota (Alpi)",
     icon: "🏔️",
-    cost: 20000,
+    cost: 55000,
     desc: "Camp ad altitudine elevata con preparatori olimpici per potenziare il VO2 Max e la resistenza al calore.",
     effect: "+3 Forma Fisica (Fitness)",
     apply: (player) => {
@@ -429,7 +429,7 @@ export const TRAINING_CAMPS_CONFIG = [
     id: "media_tour",
     name: "Media Tour Globale & Showrun Cittadino",
     icon: "📺",
-    cost: 20000,
+    cost: 80000,
     desc: "Esibizione su strada e conferenze stampa internazionali nelle capitali mondiali per incendiare l'entusiasmo dei tifosi.",
     effect: "+5 Marketability & Notorietà Globale",
     apply: (player) => {
@@ -1164,8 +1164,8 @@ export class CareerEngine {
     }
     const team = catData.teams.find(t => t.id === this.career?.currentTeamId) || catData.teams[0];
     const upgrades = this.career?.carUpgrades || { aero: 0, engine: 0, chassis: 0, reliability: 0 };
-    const bonusPace = (upgrades.aero * 1.5) + (upgrades.engine * 1.5) + (upgrades.chassis * 1.2);
-    const bonusReliability = upgrades.reliability * 2.5;
+    const bonusPace = (upgrades.aero * 0.25) + (upgrades.engine * 0.25) + (upgrades.chassis * 0.20);
+    const bonusReliability = upgrades.reliability * 1.5;
 
     // Bonus derivanti dai sottocomponenti R&D specialistici
     const subComps = this.career?.rdSubComponents || {};
@@ -1183,12 +1183,20 @@ export class CareerEngine {
     const basePace = (dev && dev.carPace !== undefined) ? dev.carPace : (team.carPace || team.bikePace || 75);
     const baseReliability = (dev && dev.reliability !== undefined) ? dev.reliability : (team.reliability || 85);
 
+    // Curva di sviluppo e compressione asintotica sopra 90 per evitare di raggiungere 99 OVR troppo rapidamente
+    const rawPace = basePace + bonusPace + subPaceGain;
+    let finalPace = rawPace;
+    if (rawPace > 90) {
+      finalPace = 90 + ((rawPace - 90) * 0.5);
+    }
+    finalPace = Math.min(99, Math.round(finalPace));
+
     const resolvedName = db.getTeamName(team.id, this.player?.discipline);
 
     return {
       ...team,
-      carPace: Math.min(99, Math.round(basePace + bonusPace + subPaceGain)),
-      bikePace: Math.min(99, Math.round(basePace + bonusPace + subPaceGain)),
+      carPace: finalPace,
+      bikePace: finalPace,
       reliability: Math.min(99, Math.round(baseReliability + bonusReliability + subRelGain)),
       displayName: resolvedName || team.realName || team.fictionalName || team.name || 'Scuderia',
       color: team.color || '#e10600'
@@ -1233,7 +1241,7 @@ export class CareerEngine {
   initRdSystem() {
     if (!this.career) return;
     if (this.career.rdTelemetryPoints === undefined) {
-      this.career.rdTelemetryPoints = 60;
+      this.career.rdTelemetryPoints = 25;
     }
     if (!this.career.rdSubComponents) {
       this.career.rdSubComponents = {
@@ -1316,14 +1324,14 @@ export class CareerEngine {
     const tmName = tm?.name || db.getDriverName(tm?.id, discipline) || "Compagno di Squadra";
 
     // 1. Contributo Sponsor Commerciale del Compagno (€)
-    const sponsorMoney = Math.round(4000 + (tmMarketability * 120));
+    const sponsorMoney = Math.round(2200 + (tmMarketability * 70));
     this.career.money += sponsorMoney;
 
     // 2. Dati e Punti Telemetrici R&D (PT) generati dal lavoro in pista e al simulatore
-    // Ribilanciato: generazione più calibrata (circa 20-30 PT per weekend)
-    const tmTelemetry = Math.round(4 + (tmFeedback * 0.12));
+    // Ribilanciato: generazione mirata e misurata (~15-20 PT per weekend)
+    const tmTelemetry = Math.round(2 + (tmFeedback * 0.08));
     const playerFeedback = this.player?.attributes?.technicalFeedback || 60;
-    const playerTelemetry = Math.round(6 + (playerFeedback * 0.16) + (finishPos <= 10 ? 4 : 1));
+    const playerTelemetry = Math.round(3 + (playerFeedback * 0.10) + (finishPos <= 10 ? 3 : 0));
     const totalTelemetry = tmTelemetry + playerTelemetry;
 
     this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + totalTelemetry;
@@ -2323,7 +2331,7 @@ export class CareerEngine {
       return { success: false, message: "Reparto già al massimo sviluppo consentito per questa stagione." };
     }
 
-    const cost = 40000 * (currentLvl + 1);
+    const cost = 75000 * (currentLvl + 1);
     if (this.career.money < cost) {
       return { success: false, message: `Fondi insufficienti! Richiesti €${cost.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.` };
     }
@@ -2540,7 +2548,7 @@ export class CareerEngine {
     // 1. Dati Telemetrici da Strutture HQ (Simulatore + Telemetrista)
     const simLvl = hq.simulatorLevel || 0;
     const coachLvl = hq.telemetryCoachLevel || 0;
-    const hqTelemetry = (simLvl * 15) + (coachLvl * 10);
+    const hqTelemetry = (simLvl * 6) + (coachLvl * 4);
     if (hqTelemetry > 0) {
       telemetryGain += hqTelemetry;
       this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + hqTelemetry;
@@ -2550,7 +2558,7 @@ export class CareerEngine {
     // 2. Sponsor Commerciali Personali da Agenzia PR HQ
     const prLvl = hq.prAgencyLevel || 0;
     if (prLvl > 0) {
-      const prMoney = prLvl * 6000;
+      const prMoney = prLvl * 1800;
       passiveRevenue += prMoney;
       perksApplied.push(`+€${prMoney.toLocaleString()} Sponsor da Agenzia PR HQ`);
     }
@@ -2569,10 +2577,10 @@ export class CareerEngine {
     if (hasMonaco && this.career.contract) {
       const salary = this.career.contract.salaryPerRace || 5000;
       const winBonus = finishPos === 1 ? (this.career.contract.winBonus || 10000) : 0;
-      taxBonus = Math.round((salary + winBonus) * 0.15);
+      taxBonus = Math.round((salary + winBonus) * 0.08);
       if (taxBonus > 0) {
         passiveRevenue += taxBonus;
-        perksApplied.push(`+€${taxBonus.toLocaleString()} Risparmio Fiscale Monte Carlo (+15%)`);
+        perksApplied.push(`+€${taxBonus.toLocaleString()} Risparmio Fiscale Monte Carlo (+8%)`);
       }
     }
 
@@ -2611,19 +2619,19 @@ export class CareerEngine {
 
     const prLvl = hq.prAgencyLevel || 0;
     if (prLvl > 0) {
-      const prMoney = prLvl * 6000;
+      const prMoney = prLvl * 1800;
       passivePerRace += prMoney;
       activePerks.push(`Sponsor PR HQ: +€${prMoney.toLocaleString()}/GP`);
     }
 
     const simLvl = hq.simulatorLevel || 0;
     if (simLvl > 0) {
-      activePerks.push(`Simulatore HQ: +${simLvl * 15} PT/GP`);
+      activePerks.push(`Simulatore HQ: +${simLvl * 6} PT/GP`);
     }
 
     const coachLvl = hq.telemetryCoachLevel || 0;
     if (coachLvl > 0) {
-      activePerks.push(`Coach Telemetria: +${coachLvl * 10} PT/GP`);
+      activePerks.push(`Coach Telemetria: +${coachLvl * 4} PT/GP`);
     }
 
     const gymLvl = hq.gymLevel || 0;

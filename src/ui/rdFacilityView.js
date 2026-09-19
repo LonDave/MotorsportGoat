@@ -239,6 +239,7 @@ export class RdFacilityView {
 
     const hasMoney = playerMoney >= cost;
     const hasPoints = playerTelemetry >= ptsCost;
+    const canAfford = hasMoney && hasPoints;
     const { risk, successRate } = career.calculateSubComponentRisk ? career.calculateSubComponentRisk(compKey) : { risk: 20, successRate: 80 };
 
     return `
@@ -320,9 +321,25 @@ export class RdFacilityView {
     });
 
     // Acquisto Sottocomponente
-    container.querySelectorAll('.btn-upgrade-subcomponent:not(.btn-disabled)').forEach(btn => {
+    container.querySelectorAll('.btn-upgrade-subcomponent').forEach(btn => {
       btn.onclick = () => {
         const compKey = btn.dataset.comp;
+        if (btn.classList.contains('btn-disabled')) {
+          sound.playClick();
+          const cfg = RD_SUBCOMPONENTS_CONFIG[compKey];
+          const lvl = (career.career?.rdSubComponents?.[compKey]) || 0;
+          const cost = cfg ? cfg.baseCost + (lvl * cfg.costMult) : 0;
+          const ptsCost = cfg ? cfg.basePoints + (lvl * cfg.pointsMult) : 0;
+          const money = career.career?.money || 0;
+          const pt = career.career?.rdTelemetryPoints || 0;
+          if (money < cost) {
+            ToastNotification.show(`⚠️ Budget insufficiente! Richiesti €${cost.toLocaleString()}, disponibili €${money.toLocaleString()}.`, "warning");
+          } else if (pt < ptsCost) {
+            ToastNotification.show(`⚠️ Dati telemetrici insufficienti! Richiesti ${ptsCost} PT, disponibili ${pt} PT.`, "warning");
+          }
+          return;
+        }
+
         const res = career.buySubComponentUpgrade(compKey);
         if (res.success) {
           sound.playRadioBeep();
