@@ -369,7 +369,9 @@ export class RaceEngine {
 
         const ai = db.getDriver(d.driverId, discipline) || {};
         const aiTeam = db.getTeam(d.teamId, discipline) || {};
-        const rating = ((ai.pace || ai.ovr || 78) * 0.55 + (aiTeam.carPace || aiTeam.bikePace || 78) * 0.45);
+        const carWeight = qualyState.isMultiStage ? 0.65 : 0.45;
+        const driverWeight = 1.0 - carWeight;
+        const rating = ((ai.pace || ai.ovr || 78) * driverWeight + (aiTeam.carPace || aiTeam.bikePace || 78) * carWeight);
         const variance = (Math.random() - 0.5) * 0.45;
         let weatherPenalty = 0;
         if (qualyState.isWet && d.compound !== "WET" && d.compound !== "INTER") {
@@ -397,8 +399,10 @@ export class RaceEngine {
         p.lapsRun += 2;
         p.status = "IN PISTA";
 
-        const rating = ((playerDriver.attributes.pace || 75) * 0.55 + (playerCar.carPace || playerCar.bikePace || 75) * 0.45);
-        const variance = (Math.random() - 0.5) * 0.3;
+        const carWeight = qualyState.isMultiStage ? 0.65 : 0.45;
+        const driverWeight = 1.0 - carWeight;
+        const rating = ((playerDriver.attributes.pace || 75) * driverWeight + (playerCar.carPace || playerCar.bikePace || 75) * carWeight);
+        const variance = (Math.random() - 0.5) * 0.45;
         let weatherPenalty = 0;
         if (qualyState.isWet && p.compound !== "WET" && p.compound !== "INTER") {
           weatherPenalty = 9.0;
@@ -489,7 +493,10 @@ export class RaceEngine {
 
   static fastForwardQualifyingToEnd(qualyState, playerDriver, playerCar, circuit, discipline = 'auto') {
     while (!qualyState.isFinished) {
-      this.stepQualifyingTime(qualyState, 300, true, playerDriver, playerCar, circuit, discipline);
+      const p = qualyState.grid.find(d => d.isPlayer);
+      // In simulazione rapida, il giocatore effettua 2 tentativi realistici per sessione (es. inizio e finale)
+      const shouldPush = p && !p.eliminated && (p.lapsRun < 4 || qualyState.phaseTimeRemainingSec <= 180);
+      this.stepQualifyingTime(qualyState, 300, shouldPush, playerDriver, playerCar, circuit, discipline);
     }
     return qualyState;
   }
@@ -833,16 +840,38 @@ export class RaceEngine {
         }
       }
 
+      // Tattiche intelligenti per i piloti AI: attacco, gestione e difesa
+      if (!driver.isPlayer) {
+        if (driver.hasDrs || (driver.intervalAheadSec > 0 && driver.intervalAheadSec < 1.6)) {
+          // In scia o caccia al pilota davanti: modalità PUSH
+          driver.paceMode = 'PUSH';
+          if (driver.intervalAheadSec < 0.8 && Math.random() < 0.45) {
+            driver.powerMode = 'ATTACK';
+          } else {
+            driver.powerMode = 'STANDARD';
+          }
+        } else if (driver.tyreLife < 25) {
+          // Gomme usurate: gestione
+          driver.paceMode = 'SAVE';
+          driver.powerMode = 'STANDARD';
+        } else {
+          driver.paceMode = 'BALANCED';
+          driver.powerMode = 'STANDARD';
+        }
+      }
+
       // Calcolo del ritmo sul giro con FISICA GOMME, MEZZO, PILOTA & METEO
       const vehiclePace = driver.carPace || 75;
       const driverPace = driver.paceSkill || 75;
       const isSpec = ['auto_f2', 'auto_f3', 'auto_f4', 'moto_2', 'moto_3'].includes(raceState.categoryId);
-      const carWeight = isSpec ? 0.35 : 0.55;
+      const isPremier = ['auto_f1', 'moto_gp', 'auto_wec', 'auto_indy'].includes(raceState.categoryId);
+      const carWeight = isSpec ? 0.35 : (isPremier ? 0.70 : 0.55);
       const driverWeight = 1.0 - carWeight;
       const effectiveRating = (driverPace * driverWeight) + (vehiclePace * carWeight);
 
-      // Baseline delta rispetto al punto di riferimento 95 OVR (~0.04s per punto di valutazione)
-      const paceDeltaSec = (95 - effectiveRating) * 0.04;
+      // Baseline delta: in F1/MotoGP il distacco tra vetture è più marcato (~0.08s per punto rating)
+      const paceScaleSec = isPremier ? 0.08 : (isSpec ? 0.04 : 0.06);
+      const paceDeltaSec = (95 - effectiveRating) * paceScaleSec;
 
       let performanceDelta = (Math.random() - 0.5) * 0.30;
       if (driver.paceMode === 'PUSH') performanceDelta -= 0.28;
@@ -877,10 +906,10 @@ export class RaceEngine {
         // Gomme adatte (WET / INTER) su pista bagnata
         spinChance = 0.0025 * wetSkillFactor;
       } else {
-        // Asciutto normale: probabilità base bassissima e calibrata sull'affidabilità scuderia e costanza
+        // Asciutto normale: probabilità calibrata su affidabilità scuderia e costanza senza favoritismi
         const teamReliability = driver.reliability || 85;
         const relFactor = Math.max(0.5, 1.0 - ((teamReliability - 80) / 100));
-        spinChance = (driver.isPlayer ? 0.0003 : 0.0009) * consFactor * relFactor;
+        spinChance = 0.0006 * consFactor * relFactor;
       }
 
       // Penalità degrado battistrada ("the cliff")

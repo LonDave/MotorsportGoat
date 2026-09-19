@@ -261,6 +261,183 @@ export const RD_SUBCOMPONENTS_CONFIG = {
   }
 };
 
+// 🏛️ CONFIGURAZIONE STRUTTURE HQ & STAFF PERSONALE
+export const HQ_CONFIG = {
+  simulatorLevel: {
+    id: "simulatorLevel",
+    name: "Simulatore Dinamico Professionale",
+    icon: "🖥️",
+    baseCost: 45000,
+    costMult: 35000,
+    maxLevel: 5,
+    desc: "Genera Punti Telemetria (PT) ogni weekend di gara (+15 PT per livello) e affina la messa a punto sul giro secco in Qualifica (+0.03s per livello).",
+    perkText: (lvl) => `+${lvl * 15} PT/Gara • +${(lvl * 0.03).toFixed(2)}s Qualifica`
+  },
+  gymLevel: {
+    id: "gymLevel",
+    name: "Palestra, Fisioterapia & Crioterapia",
+    icon: "🏋️",
+    baseCost: 35000,
+    costMult: 25000,
+    maxLevel: 5,
+    desc: "Aumenta la resistenza fisica (Fitness) prevenendo errori e cali di concentrazione nei finali di gara e nelle gare ad alto degrado.",
+    perkText: (lvl) => `+${lvl * 2} Fitness • -${lvl * 12}% Calo fisico a fine gara`
+  },
+  prAgencyLevel: {
+    id: "prAgencyLevel",
+    name: "Ufficio Stampa & PR Agency Globale",
+    icon: "📱",
+    baseCost: 50000,
+    costMult: 35000,
+    maxLevel: 5,
+    desc: "Attrae sponsor commerciali personali (+€6.000 a gara per livello) e potenzia costantemente la Marketability del pilota.",
+    perkText: (lvl) => `+€${(lvl * 6000).toLocaleString()} Sponsor/GP • +${lvl * 3} Marketability`
+  },
+  telemetryCoachLevel: {
+    id: "telemetryCoachLevel",
+    name: "Coach Telemetrico & Race Engineer Dedicato",
+    icon: "📈",
+    baseCost: 40000,
+    costMult: 30000,
+    maxLevel: 5,
+    desc: "Ottimizza il feedback per l'assetto (+0.02s per livello) e velocizza lo sviluppo R&D dei subcomponenti con +10 PT extra per gara.",
+    perkText: (lvl) => `+${lvl * 10} PT/Gara • +${(lvl * 0.02).toFixed(2)}s Setup Assetto`
+  },
+  biohackingLevel: {
+    id: "biohackingLevel",
+    name: "Biohacking, Chef Nutrizionista & Mental Coach",
+    icon: "🧠",
+    baseCost: 40000,
+    costMult: 30000,
+    maxLevel: 5,
+    desc: "Migliora la lucidità e la Costanza in pista (+2 Costanza per livello), riducendo le probabilità di testacoda e sbavature in condizioni mutevoli.",
+    perkText: (lvl) => `+${lvl * 2} Costanza • -${lvl * 15}% Rischio Sbavature`
+  }
+};
+
+// 🏰 CONFIGURAZIONE ASSET LIFESTYLE & RENDITE PASSIVE
+export const LIFESTYLE_ASSETS_CONFIG = [
+  {
+    id: "supercar",
+    nameAuto: "Supercar Ferrari SF90 Stradale",
+    nameAutoFictional: "Supercar Cavallino SF90",
+    nameMoto: "Ducati Panigale V4 SP2",
+    nameMotoFictional: "Bologna Desmo V4 SP2",
+    price: 250000,
+    icon: "🏎️",
+    desc: "Bolide stradale da sfoggiare nel paddock. Accresce la notorietà globale ed esalta il tuo status tra i piloti d'élite.",
+    fameBonus: 8,
+    goatBonus: 5,
+    passivePerRace: 0,
+    perkBadge: "+8 Notorietà • +5 Punti GOAT"
+  },
+  {
+    id: "villa_monaco",
+    name: "Residenza Fiscale a Monte Carlo",
+    price: 1800000,
+    icon: "🏰",
+    desc: "Attico affacciato su Port Hercule. Garantisce l'azzeramento fiscale su stipendi e premi gara (+15% guadagni netti da contratto a ogni GP!).",
+    fameBonus: 15,
+    goatBonus: 15,
+    passivePerRace: 0,
+    taxExemption: 0.15,
+    perkBadge: "+15% Guadagni Netti da Contratto/Gara"
+  },
+  {
+    id: "kart_team",
+    name: "Scuderia Personale Karting & Driver Academy",
+    price: 750000,
+    icon: "🏁",
+    desc: "Team di sviluppo giovanile che allena i talenti del futuro. Genera una solida rendita passiva da sponsor e premi di categoria.",
+    fameBonus: 10,
+    goatBonus: 12,
+    passivePerRace: 12000,
+    perkBadge: "Rendita Passiva +€12.000 a ogni GP"
+  },
+  {
+    id: "fashion_brand",
+    name: "Brand Personale di Abbigliamento & Merchandising",
+    price: 450000,
+    icon: "🕶️",
+    desc: "Linea esclusiva di streetwear e accessori sportivi venduta in tutto il mondo. Produce royalty proporzionali alla tua popolarità.",
+    fameBonus: 12,
+    goatBonus: 8,
+    passivePerRace: 8000,
+    perkBadge: "Rendita Royalty +€8.000 a ogni GP"
+  },
+  {
+    id: "private_jet",
+    name: "Jet Privato Long-Range con Livrea Personalizzata",
+    price: 4000000,
+    icon: "✈️",
+    desc: "Velivolo intercontinentale per viaggiare nel massimo comfort. Annulla qualsiasi malus da jet-lag nei Gran Premi extra-europei (+1.5 Passo Mezzo nei round intercontinentali).",
+    fameBonus: 25,
+    goatBonus: 25,
+    passivePerRace: 0,
+    jetLagImmunity: true,
+    perkBadge: "Immunità Jet-Lag (+1.5 Passo nei GP Extra-UE)"
+  },
+  {
+    id: "supercar_museum",
+    name: "Museo Privato & Collezione Hypercar",
+    price: 2500000,
+    icon: "🏛️",
+    desc: "Padiglione privato con le vetture più iconiche della storia dei motori. Monumentale attrazione mediatica che consacra la tua leggenda.",
+    fameBonus: 20,
+    goatBonus: 35,
+    passivePerRace: 15000,
+    perkBadge: "Rendita +€15.000/GP • +35 Punti GOAT"
+  }
+];
+
+// ⏱️ CONFIGURAZIONE STAGE & RITIRI INTENSIVI
+export const TRAINING_CAMPS_CONFIG = [
+  {
+    id: "wet_bootcamp",
+    name: "Stage di Guida su Bagnato Estremo",
+    icon: "🌧️",
+    cost: 25000,
+    desc: "Sessioni intensive su pista allagata con kart e monoposto storiche per affinare la sensibilità sul viscido.",
+    effect: "+3 Abilità Bagnato (Wet Skill)",
+    apply: (player) => {
+      player.attributes.wetSkill = Math.min(99, (player.attributes.wetSkill || 75) + 3);
+    }
+  },
+  {
+    id: "sim_marathon",
+    name: "Maratona 48h al Simulatore con Ingegneri",
+    icon: "⏱️",
+    cost: 30000,
+    desc: "Test no-stop al simulatore dinamico per estrarre dati telemetrici e affinare il feeling dell'assetto.",
+    effect: "+85 Punti Telemetria (PT) per R&D",
+    apply: (player, career) => {
+      career.career.rdTelemetryPoints = (career.career.rdTelemetryPoints || 0) + 85;
+    }
+  },
+  {
+    id: "altitude_camp",
+    name: "Ritiro Atletico in Alta Quota (Alpi)",
+    icon: "🏔️",
+    cost: 20000,
+    desc: "Camp ad altitudine elevata con preparatori olimpici per potenziare il VO2 Max e la resistenza al calore.",
+    effect: "+3 Forma Fisica (Fitness)",
+    apply: (player) => {
+      player.attributes.fitness = Math.min(99, (player.attributes.fitness || 75) + 3);
+    }
+  },
+  {
+    id: "media_tour",
+    name: "Media Tour Globale & Showrun Cittadino",
+    icon: "📺",
+    cost: 20000,
+    desc: "Esibizione su strada e conferenze stampa internazionali nelle capitali mondiali per incendiare l'entusiasmo dei tifosi.",
+    effect: "+5 Marketability & Notorietà Globale",
+    apply: (player) => {
+      player.attributes.marketability = Math.min(99, (player.attributes.marketability || 60) + 5);
+    }
+  }
+];
+
 export class CareerEngine {
   constructor() {
     this.player = null;
@@ -1252,17 +1429,38 @@ export class CareerEngine {
     // Calcolo punti abilità:
     // Base garantita: 2 punti (esperienza giro in pista, telemetria, setup)
     // +1 se a punti (Top 10)
-    // +1 se a podio (Top 3)
-    // +1 se vittoria (1°)
-    // Totale: da 2 a 5 punti abilità per weekend completato!
+    // Calcolo punti abilità:
+    // Progressione bilanciata in base alla maturità/OVR del pilota:
+    // A basso OVR (rookie) si cresce più rapidamente, mentre ai vertici (85-90+ OVR)
+    // i punti abilità sono rari e richiedono grandi risultati.
     let earnedSkillPoints = 0;
-    if ((this.player.ovr || 60) < 99) {
-      earnedSkillPoints = 2;
-      if (playerResult) {
-        const pos = playerResult.currentPos;
-        if (pos <= 10) earnedSkillPoints += 1;
-        if (pos <= 3) earnedSkillPoints += 1;
-        if (pos === 1) earnedSkillPoints += 1;
+    const currentOvr = this.player.ovr || 60;
+    if (currentOvr < 99) {
+      if (currentOvr < 75) {
+        earnedSkillPoints = 2;
+        if (playerResult) {
+          if (playerResult.currentPos <= 10) earnedSkillPoints += 1;
+          if (playerResult.currentPos <= 3) earnedSkillPoints += 1;
+        }
+      } else if (currentOvr < 85) {
+        earnedSkillPoints = 1;
+        if (playerResult) {
+          if (playerResult.currentPos <= 8) earnedSkillPoints += 1;
+          if (playerResult.currentPos <= 3) earnedSkillPoints += 1;
+        }
+      } else if (currentOvr < 92) {
+        earnedSkillPoints = 0;
+        if (playerResult) {
+          if (playerResult.currentPos <= 10) earnedSkillPoints += 1;
+          if (playerResult.currentPos <= 3) earnedSkillPoints += 1;
+        }
+      } else {
+        // Sopra 92 OVR (livello superstar F1: Verstappen/Hamilton/Leclerc):
+        // I punti si guadagnano unicamente con podi e vittorie
+        earnedSkillPoints = 0;
+        if (playerResult) {
+          if (playerResult.currentPos <= 3) earnedSkillPoints += 1;
+        }
       }
     }
 
@@ -1276,11 +1474,15 @@ export class CareerEngine {
     // Collaborazione Compagno di Squadra: apporto sponsor, punti telemetria e upgrade simulatore
     const teammateContribution = this.processTeammateCollaboration(playerResult ? playerResult.currentPos : 10);
 
+    // Gestione perk Lifestyle, rendite passive e strutture HQ
+    const lifestylePerks = this.processLifestyleRacePerks(currentCircuit, playerResult ? playerResult.currentPos : 10);
+
     this.career.lastWeekendRecap = {
       earnedSkillPoints,
       finishPos: playerResult ? playerResult.currentPos : 10,
       isPole: !!(qualifyingGrid && qualifyingGrid[0]?.isPlayer),
-      teammateContribution
+      teammateContribution,
+      lifestylePerks
     };
 
     // Avanza indice del calendario
@@ -1415,8 +1617,17 @@ export class CareerEngine {
 
       if (sorted.length === 0) break;
       const target = sorted[0];
-      this.player.attributes[target] = Math.min(99, (this.player.attributes[target] || 60) + 1);
-      remaining--;
+      const val = this.player.attributes[target] || 60;
+      // Costo proporzionato al valore:
+      // < 80: 1 punto
+      // 80 - 89: 2 punti
+      // 90 - 94: 3 punti
+      // 95+: 4 punti
+      const cost = val >= 95 ? 4 : (val >= 90 ? 3 : (val >= 80 ? 2 : 1));
+      if (remaining < cost) break;
+
+      this.player.attributes[target] = Math.min(99, val + 1);
+      remaining -= cost;
     }
 
     this.player.unspentSkillPoints = remaining;
@@ -1951,7 +2162,8 @@ export class CareerEngine {
 
     // 1. Simula Qualifiche
     const activeRoster = this.getActiveRoster(this.career.currentCategory);
-    const qualy = RaceEngine.initQualifyingState(circuit, catData, activeRoster, player, team, 0.2, player.discipline);
+    const hqSetupBonus = (this.career?.hqUpgrades?.telemetryCoachLevel || 0) * 0.02;
+    const qualy = RaceEngine.initQualifyingState(circuit, catData, activeRoster, player, team, hqSetupBonus, player.discipline);
     RaceEngine.fastForwardQualifyingToEnd(qualy, player, team, circuit, player.discipline);
     const qualyGrid = qualy.grid;
 
@@ -2087,33 +2299,216 @@ export class CareerEngine {
 
   // Acquisto Upgrade HQ / Stile di vita
   buyHqUpgrade(type) {
-    const costs = {
-      simulatorLevel: 40000,
-      gymLevel: 30000,
-      prAgencyLevel: 50000,
-      telemetryCoachLevel: 45000
-    };
-    const cost = costs[type] || 35000;
+    const cfg = HQ_CONFIG[type];
+    if (!cfg) return { success: false, message: "Struttura HQ non riconosciuta." };
+    if (!this.career.hqUpgrades) {
+      this.career.hqUpgrades = { simulatorLevel: 0, gymLevel: 0, prAgencyLevel: 0, telemetryCoachLevel: 0, biohackingLevel: 0 };
+    }
+
+    const currentLvl = this.career.hqUpgrades[type] || 0;
+    if (currentLvl >= (cfg.maxLevel || 5)) {
+      return { success: false, message: `${cfg.name} è già al massimo livello consentito (${cfg.maxLevel}/5).` };
+    }
+
+    const cost = cfg.baseCost + (currentLvl * cfg.costMult);
     if (this.career.money < cost) {
-      return { success: false, message: "Budget insufficiente per espandere l'HQ." };
+      return { success: false, message: `Budget insufficiente! Richiesti €${cost.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.` };
     }
 
     this.career.money -= cost;
-    this.career.hqUpgrades[type] = (this.career.hqUpgrades[type] || 0) + 1;
+    this.career.hqUpgrades[type] = currentLvl + 1;
+
+    // Bonus immediato sugli attributi del pilota in base alla struttura
+    if (type === 'gymLevel') {
+      this.player.attributes.fitness = Math.min(99, (this.player.attributes.fitness || 75) + 1);
+    } else if (type === 'prAgencyLevel') {
+      this.player.attributes.marketability = Math.min(99, (this.player.attributes.marketability || 60) + 2);
+    } else if (type === 'biohackingLevel') {
+      this.player.attributes.consistency = Math.min(99, (this.player.attributes.consistency || 75) + 1);
+    } else if (type === 'telemetryCoachLevel') {
+      this.player.attributes.technicalFeedback = Math.min(99, (this.player.attributes.technicalFeedback || 70) + 1);
+    }
+
+    this.player.ovr = Math.min(99, this.calculateOvr(this.player.attributes));
     this.saveToStorage();
-    return { success: true, message: "Struttura HQ potenziata con successo!" };
+
+    return {
+      success: true,
+      message: `${cfg.name} potenziato al Livello ${currentLvl + 1}/5! (${cfg.perkText(currentLvl + 1)})`,
+      newLevel: currentLvl + 1,
+      cost
+    };
   }
 
-  // Acquisto oggetto di lusso / Lifestyle
+  // Acquisto immobile o asset di lusso a rendita passiva
   buyLifestyleItem(item) {
-    if (this.career.money < item.price) {
-      return { success: false, message: "Non hai abbastanza milioni per questo sfizio da celebrità." };
+    if (!this.career) return { success: false, message: "Nessuna carriera attiva." };
+    if (!this.career.lifestyleItems) this.career.lifestyleItems = [];
+    if (this.career.lifestyleItems.some(i => i.id === item.id)) {
+      return { success: false, message: "Possiedi già questo immobile / investimento!" };
     }
+    if (this.career.money < item.price) {
+      return { success: false, message: `Budget personale insufficiente! Richiesti €${item.price.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.` };
+    }
+
     this.career.money -= item.price;
     this.career.lifestyleItems.push(item);
-    this.player.attributes.marketability = Math.min(99, this.player.attributes.marketability + item.fameBonus);
+
+    if (item.fameBonus) {
+      this.player.attributes.marketability = Math.min(99, (this.player.attributes.marketability || 60) + item.fameBonus);
+    }
+    if (item.goatBonus && this.career.stats) {
+      this.career.stats.lifestyleGoatBonus = (this.career.stats.lifestyleGoatBonus || 0) + item.goatBonus;
+    }
+
     this.saveToStorage();
-    return { success: true, message: `Hai acquistato: ${item.name} (+${item.fameBonus} Notorietà Globale)` };
+    return {
+      success: true,
+      message: `Acquisto completato: ${item.name}! (${item.perkBadge || `+${item.fameBonus} Notorietà`})`
+    };
+  }
+
+  // Esecuzione di uno Stage o Ritiro intensivo di preparazione
+  executeTrainingCamp(campId) {
+    if (!this.career) return { success: false, message: "Nessuna carriera attiva." };
+    const camp = TRAINING_CAMPS_CONFIG.find(c => c.id === campId);
+    if (!camp) return { success: false, message: "Stage di preparazione non riconosciuto." };
+
+    if (this.career.money < camp.cost) {
+      return { success: false, message: `Budget insufficiente! Richiesti €${camp.cost.toLocaleString()}, disponibili €${this.career.money.toLocaleString()}.` };
+    }
+
+    this.career.money -= camp.cost;
+    camp.apply(this.player, this);
+
+    this.player.ovr = Math.min(99, this.calculateOvr(this.player.attributes));
+    this.saveToStorage();
+
+    return {
+      success: true,
+      message: `Stage completato con successo: ${camp.name}! (${camp.effect})`
+    };
+  }
+
+  // Accredita i perk lifestyle ad ogni Gran Premio (rendite passive, bonus telemetria HQ, esenzione fiscale)
+  processLifestyleRacePerks(circuit, finishPos = 10) {
+    if (!this.career) return null;
+    const hq = this.career.hqUpgrades || {};
+    const owned = this.career.lifestyleItems || [];
+
+    let passiveRevenue = 0;
+    let telemetryGain = 0;
+    let taxBonus = 0;
+    const perksApplied = [];
+
+    // 1. Dati Telemetrici da Strutture HQ (Simulatore + Telemetrista)
+    const simLvl = hq.simulatorLevel || 0;
+    const coachLvl = hq.telemetryCoachLevel || 0;
+    const hqTelemetry = (simLvl * 15) + (coachLvl * 10);
+    if (hqTelemetry > 0) {
+      telemetryGain += hqTelemetry;
+      this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + hqTelemetry;
+      perksApplied.push(`+${hqTelemetry} PT Telemetria da Simulatore & Coach HQ`);
+    }
+
+    // 2. Sponsor Commerciali Personali da Agenzia PR HQ
+    const prLvl = hq.prAgencyLevel || 0;
+    if (prLvl > 0) {
+      const prMoney = prLvl * 6000;
+      passiveRevenue += prMoney;
+      perksApplied.push(`+€${prMoney.toLocaleString()} Sponsor da Agenzia PR HQ`);
+    }
+
+    // 3. Rendite da Investimenti Lifestyle (Kart Academy, Fashion Brand, Museo)
+    owned.forEach(item => {
+      const cfg = LIFESTYLE_ASSETS_CONFIG.find(a => a.id === item.id);
+      if (cfg && cfg.passivePerRace > 0) {
+        passiveRevenue += cfg.passivePerRace;
+        perksApplied.push(`+€${cfg.passivePerRace.toLocaleString()} Rendita da ${cfg.name || item.name}`);
+      }
+    });
+
+    // 4. Esonero Fiscale Monte Carlo (se posseduta villa_monaco)
+    const hasMonaco = owned.some(i => i.id === 'villa_monaco');
+    if (hasMonaco && this.career.contract) {
+      const salary = this.career.contract.salaryPerRace || 5000;
+      const winBonus = finishPos === 1 ? (this.career.contract.winBonus || 10000) : 0;
+      taxBonus = Math.round((salary + winBonus) * 0.15);
+      if (taxBonus > 0) {
+        passiveRevenue += taxBonus;
+        perksApplied.push(`+€${taxBonus.toLocaleString()} Risparmio Fiscale Monte Carlo (+15%)`);
+      }
+    }
+
+    // Accredita il totale delle entrate passive
+    if (passiveRevenue > 0) {
+      this.career.money += passiveRevenue;
+      if (this.career.stats) {
+        this.career.stats.careerEarnings = (this.career.stats.careerEarnings || 0) + passiveRevenue;
+      }
+    }
+
+    return {
+      passiveRevenue,
+      telemetryGain,
+      taxBonus,
+      perksApplied
+    };
+  }
+
+  // Riepilogo finanziario per il cruscotto Lifestyle & Net Worth
+  getLifestyleFinancialSummary() {
+    if (!this.career) return { netWorth: 0, assetsValue: 0, passiveIncomePerRace: 0, activePerks: [], ownedAssetsCount: 0 };
+    const owned = this.career.lifestyleItems || [];
+    const hq = this.career.hqUpgrades || {};
+
+    let assetsValue = 0;
+    let passivePerRace = 0;
+    const activePerks = [];
+
+    owned.forEach(item => {
+      const cfg = LIFESTYLE_ASSETS_CONFIG.find(a => a.id === item.id) || item;
+      assetsValue += cfg.price || 0;
+      if (cfg.passivePerRace) passivePerRace += cfg.passivePerRace;
+      if (cfg.perkBadge) activePerks.push(cfg.perkBadge);
+    });
+
+    const prLvl = hq.prAgencyLevel || 0;
+    if (prLvl > 0) {
+      const prMoney = prLvl * 6000;
+      passivePerRace += prMoney;
+      activePerks.push(`Sponsor PR HQ: +€${prMoney.toLocaleString()}/GP`);
+    }
+
+    const simLvl = hq.simulatorLevel || 0;
+    if (simLvl > 0) {
+      activePerks.push(`Simulatore HQ: +${simLvl * 15} PT/GP`);
+    }
+
+    const coachLvl = hq.telemetryCoachLevel || 0;
+    if (coachLvl > 0) {
+      activePerks.push(`Coach Telemetria: +${coachLvl * 10} PT/GP`);
+    }
+
+    const gymLvl = hq.gymLevel || 0;
+    if (gymLvl > 0) {
+      activePerks.push(`Fisioterapia HQ: -${gymLvl * 12}% Calo Fisico`);
+    }
+
+    const bioLvl = hq.biohackingLevel || 0;
+    if (bioLvl > 0) {
+      activePerks.push(`Biohacking & Mind: -${bioLvl * 15}% Rischio Errori`);
+    }
+
+    const netWorth = (this.career.money || 0) + assetsValue;
+
+    return {
+      netWorth,
+      assetsValue,
+      passiveIncomePerRace: passivePerRace,
+      activePerks,
+      ownedAssetsCount: owned.length
+    };
   }
 
   // Inizializza il database di sviluppo delle vetture/moto per tutte le categorie
