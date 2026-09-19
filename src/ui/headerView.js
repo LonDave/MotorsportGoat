@@ -7,7 +7,7 @@ import { DriverSkillsModal } from './driverSkillsModal.js';
 
 export class HeaderView {
   static render(container, currentRoute, onNavigate, onOpenModManager) {
-    const hasCareer = career.hasActiveCareer();
+    const hasCareer = career.hasActiveCareer() || (career.hasSavedCareer() && career.career?.isRetired);
     const player = hasCareer ? career.player : null;
     const careerData = hasCareer ? career.career : null;
 
@@ -67,12 +67,19 @@ export class HeaderView {
                 <span class="discipline-tag ${player.discipline}">${player.discipline === 'auto' ? '🏎️ AUTO' : '🏍️ MOTO'}</span>
               </div>
               <div class="driver-team-row">
-                <span class="meta-chip team">
-                  <span class="team-bullet" style="background:${team.color || '#e10600'}"></span>
-                  <strong>${team.displayName}</strong>
-                </span>
-                <span class="meta-chip cat">${categoryName}</span>
-                <span class="meta-chip age">${player.age} Anni • Stag. ${careerData.seasonNumber}</span>
+                ${careerData.isRetired ? `
+                  <span class="meta-chip team" style="background: rgba(234, 179, 8, 0.15); border-color: rgba(234, 179, 8, 0.4); color: #facc15;">
+                    🏁 <strong>PILOTA RITIRATO (HALL OF FAME)</strong>
+                  </span>
+                  <span class="meta-chip age">${player.age} Anni • ${careerData.seasonNumber} Stagioni</span>
+                ` : `
+                  <span class="meta-chip team">
+                    <span class="team-bullet" style="background:${team.color || '#e10600'}"></span>
+                    <strong>${team.displayName}</strong>
+                  </span>
+                  <span class="meta-chip cat">${categoryName}</span>
+                  <span class="meta-chip age">${player.age} Anni • Stag. ${careerData.seasonNumber}</span>
+                `}
               </div>
             </div>
           </div>
@@ -109,45 +116,55 @@ export class HeaderView {
 
         <!-- RIGA INFERIORE: BARRA DI NAVIGAZIONE A TAB PER SPEZZETTARE LE PAGINE -->
         <nav class="career-subnav-bar">
-          <button class="subnav-tab ${currentRoute === 'landing' ? 'active' : ''}" data-route="landing" title="Torna alla Landing Page del portale">
-            <span class="tab-icon">🌐</span>
-            <span class="tab-title">Home</span>
-          </button>
-          
-          <button class="subnav-tab ${currentRoute === 'dashboard' ? 'active' : ''}" data-route="dashboard">
-            <span class="tab-icon">🏠</span>
-            <span class="tab-title">Paddock</span>
-          </button>
+          ${careerData.isRetired ? `
+            <button class="subnav-tab ${currentRoute === 'retirement' ? 'active' : ''}" data-route="retirement">
+              <span class="tab-icon">🏁</span>
+              <span class="tab-title">Riepilogo Ritiro</span>
+            </button>
+            <button class="subnav-tab ${currentRoute === 'goat' ? 'active' : ''}" data-route="goat">
+              <span class="tab-icon">👑</span>
+              <span class="tab-title">GOAT Hall of Fame</span>
+            </button>
+            <button class="subnav-tab ${currentRoute === 'standings' ? 'active' : ''}" data-route="standings">
+              <span class="tab-icon">📊</span>
+              <span class="tab-title">Albo d'Oro</span>
+            </button>
+          ` : `
+            <button class="subnav-tab ${currentRoute === 'dashboard' ? 'active' : ''}" data-route="dashboard">
+              <span class="tab-icon">🏠</span>
+              <span class="tab-title">Paddock</span>
+            </button>
 
-          <button class="subnav-tab ${currentRoute === 'calendar' ? 'active' : ''}" data-route="calendar">
-            <span class="tab-icon">📅</span>
-            <span class="tab-title">Calendario</span>
-          </button>
+            <button class="subnav-tab ${currentRoute === 'calendar' ? 'active' : ''}" data-route="calendar">
+              <span class="tab-icon">📅</span>
+              <span class="tab-title">Calendario</span>
+            </button>
 
-          <button class="subnav-tab ${currentRoute === 'standings' ? 'active' : ''}" data-route="standings">
-            <span class="tab-icon">📊</span>
-            <span class="tab-title">Classifiche</span>
-          </button>
+            <button class="subnav-tab ${currentRoute === 'standings' ? 'active' : ''}" data-route="standings">
+              <span class="tab-icon">📊</span>
+              <span class="tab-title">Classifiche</span>
+            </button>
 
-          <button class="subnav-tab ${currentRoute === 'rd' ? 'active' : ''}" data-route="rd">
-            <span class="tab-icon">⚙️</span>
-            <span class="tab-title">R&D</span>
-          </button>
+            <button class="subnav-tab ${currentRoute === 'rd' ? 'active' : ''}" data-route="rd">
+              <span class="tab-icon">⚙️</span>
+              <span class="tab-title">R&D</span>
+            </button>
 
-          <button class="subnav-tab ${currentRoute === 'market' ? 'active' : ''}" data-route="market">
-            <span class="tab-icon">💼</span>
-            <span class="tab-title">Mercato</span>
-          </button>
+            <button class="subnav-tab ${currentRoute === 'market' ? 'active' : ''}" data-route="market">
+              <span class="tab-icon">💼</span>
+              <span class="tab-title">Mercato</span>
+            </button>
 
-          <button class="subnav-tab ${currentRoute === 'lifestyle' ? 'active' : ''}" data-route="lifestyle">
-            <span class="tab-icon">🏛️</span>
-            <span class="tab-title">Lifestyle</span>
-          </button>
+            <button class="subnav-tab ${currentRoute === 'lifestyle' ? 'active' : ''}" data-route="lifestyle">
+              <span class="tab-icon">🏛️</span>
+              <span class="tab-title">Lifestyle</span>
+            </button>
 
-          <button class="subnav-tab ${currentRoute === 'goat' ? 'active' : ''}" data-route="goat">
-            <span class="tab-icon">👑</span>
-            <span class="tab-title">GOAT</span>
-          </button>
+            <button class="subnav-tab ${currentRoute === 'goat' ? 'active' : ''}" data-route="goat">
+              <span class="tab-icon">👑</span>
+              <span class="tab-title">GOAT</span>
+            </button>
+          `}
         </nav>
       </header>
     `;

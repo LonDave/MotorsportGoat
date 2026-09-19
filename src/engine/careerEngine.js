@@ -2,6 +2,7 @@ import { AUTO_CATEGORIES } from '../data/autoDatabase.js';
 import { MOTO_CATEGORIES } from '../data/motoDatabase.js';
 import { CIRCUITS_DATA } from '../data/circuitsDatabase.js';
 import { db } from '../data/databaseManager.js';
+import { DRIVER_BASELINES } from '../data/driverBaselines.js';
 import { GoatScorer } from './goatScorer.js';
 import { RaceEngine } from './raceEngine.js';
 
@@ -449,6 +450,10 @@ export class CareerEngine {
     return !!this.player && !!this.career && !this.career.isRetired;
   }
 
+  hasSavedCareer() {
+    return !!this.player && !!this.career;
+  }
+
   // Avvio nuova carriera con personalizzazione completa del giocatore
   startNewCareer(customData) {
     const discipline = customData.discipline || 'auto';
@@ -555,6 +560,7 @@ export class CareerEngine {
         teammateContribution: { money: 0, points: 0, log: [] },
         aiTeamInvestments: {}
       },
+      driverCareerStats: JSON.parse(JSON.stringify(DRIVER_BASELINES)),
       isRetired: false
     };
 
@@ -1294,6 +1300,114 @@ export class CareerEngine {
         this.career.regulations.aiTeamInvestments = {};
       }
     }
+
+    if (!this.career.driverCareerStats) {
+      this.career.driverCareerStats = JSON.parse(JSON.stringify(DRIVER_BASELINES));
+    } else {
+      // Assicura che nuove leggende o piloti baseline siano presenti
+      for (const [k, v] of Object.entries(DRIVER_BASELINES)) {
+        if (!this.career.driverCareerStats[k]) {
+          this.career.driverCareerStats[k] = JSON.parse(JSON.stringify(v));
+        }
+      }
+    }
+  }
+
+  // Registrazione dinamica statistiche carriera per tutti i piloti (Player & AI)
+  _ensureDriverStatsEntry(driverId, category) {
+    if (!this.career.driverCareerStats) {
+      this.career.driverCareerStats = JSON.parse(JSON.stringify(DRIVER_BASELINES));
+    }
+    if (!this.career.driverCareerStats[driverId]) {
+      const discipline = this.player?.discipline || 'auto';
+      const dName = driverId === 'player'
+        ? `${this.player?.firstName || 'Pilota'} ${this.player?.lastName || 'Player'}`
+        : db.getDriverName(driverId, discipline);
+      this.career.driverCareerStats[driverId] = {
+        id: driverId,
+        realName: dName,
+        fictionalName: dName,
+        discipline,
+        isLegend: false,
+        era: `${this.career.currentYear || 2026}-Attivo`,
+        byCategory: {}
+      };
+    }
+    const d = this.career.driverCareerStats[driverId];
+    if (!d.byCategory[category]) {
+      d.byCategory[category] = { worldTitles: 0, wins: 0, poles: 0, podiums: 0, racesStarted: 0 };
+    }
+    return d.byCategory[category];
+  }
+
+  recordDriverPole(driverId, category) {
+    const cat = this._ensureDriverStatsEntry(driverId, category);
+    cat.poles = (cat.poles || 0) + 1;
+  }
+
+  recordDriverWin(driverId, category) {
+    const cat = this._ensureDriverStatsEntry(driverId, category);
+    cat.wins = (cat.wins || 0) + 1;
+  }
+
+  recordDriverPodium(driverId, category) {
+    const cat = this._ensureDriverStatsEntry(driverId, category);
+    cat.podiums = (cat.podiums || 0) + 1;
+  }
+
+  recordDriverRaceStarted(driverId, category) {
+    const cat = this._ensureDriverStatsEntry(driverId, category);
+    cat.racesStarted = (cat.racesStarted || 0) + 1;
+  }
+
+  recordDriverTitle(driverId, category) {
+    const cat = this._ensureDriverStatsEntry(driverId, category);
+    cat.worldTitles = (cat.worldTitles || 0) + 1;
+  }
+
+  // Simula l'esito dei campionati delle categorie non attive per rendere vivo tutto il circus
+  simulateOtherCategoriesSeasonEnd() {
+    const categories = this.player?.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const discipline = this.player?.discipline || 'auto';
+    const activeCatKey = this.career.currentCategory;
+
+    for (const [catKey, catData] of Object.entries(categories)) {
+      if (catKey === activeCatKey) continue;
+      if (!catData || !catData.roster || catData.roster.length === 0) continue;
+
+      // Calcola punteggio stagionale per ciascun pilota della categoria
+      const scoredDrivers = catData.roster.map(d => {
+        const team = catData.teams.find(t => t.id === d.teamId);
+        const teamPace = (this.career.teamDevelopment?.[d.teamId]?.carPace) || (team?.carPace || team?.bikePace || 75);
+        const driverOvr = d.ovr || 75;
+        const form = (Math.random() * 12) - 6;
+        const score = (teamPace * 0.5) + (driverOvr * 0.5) + form;
+        return { driver: d, team, score };
+      }).sort((a, b) => b.score - a.score);
+
+      if (scoredDrivers.length > 0) {
+        const champ = scoredDrivers[0];
+        // Assegna titolo al campione
+        this.recordDriverTitle(champ.driver.id, catKey);
+        this.recordDriverWin(champ.driver.id, catKey);
+        this.recordDriverWin(champ.driver.id, catKey);
+        this.recordDriverWin(champ.driver.id, catKey);
+        this.recordDriverWin(champ.driver.id, catKey);
+        this.recordDriverPodium(champ.driver.id, catKey);
+        this.recordDriverPodium(champ.driver.id, catKey);
+        this.recordDriverPodium(champ.driver.id, catKey);
+
+        // Se è la categoria regina (F1 o MotoGP) e il giocatore correva altrove, aggiungi notizia ufficiale
+        if (catKey === 'auto_f1' || catKey === 'moto_gp') {
+          const dName = db.getDriverName(champ.driver.id, discipline);
+          const tName = champ.team ? db.getTeamName(champ.team.id, discipline, catKey) : 'Scuderia Ufficiale';
+          if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+          this.career.aiTransferNews.unshift(
+            `🏆 ALBO D'ORO ${this.career.currentYear - 1}: ${dName} (${tName}) si laurea Campione del Mondo nella classe regina!`
+          );
+        }
+      }
+    }
   }
 
   // Calcola probabilità di fallimento e successo per un determinato sottocomponente R&D
@@ -1491,6 +1605,7 @@ export class CareerEngine {
         this.career.standings.drivers.push(poleEntry);
       }
       poleEntry.poles = (poleEntry.poles || 0) + 1;
+      this.recordDriverPole(poleDriverId, currentCatKey);
 
       if (isPlayerPole) {
         stats.poles++;
@@ -1503,10 +1618,13 @@ export class CareerEngine {
     if (playerResult) {
       stats.racesStarted++;
       catStats.racesStarted = (catStats.racesStarted || 0) + 1;
+      this.recordDriverRaceStarted('player', currentCatKey);
+
       const pos = playerResult.currentPos;
       if (pos === 1) {
         stats.wins++;
         catStats.wins = (catStats.wins || 0) + 1;
+        this.recordDriverWin('player', currentCatKey);
         if (currentCircuit) {
           stats.specialWins[currentCircuit.id] = (stats.specialWins[currentCircuit.id] || 0) + 1;
         }
@@ -1514,6 +1632,7 @@ export class CareerEngine {
       if (pos <= 3) {
         stats.podiums++;
         catStats.podiums = (catStats.podiums || 0) + 1;
+        this.recordDriverPodium('player', currentCatKey);
       }
 
       // Punti gara
@@ -1538,6 +1657,14 @@ export class CareerEngine {
         const pts = this.getPointsForPosition(d.currentPos);
         this.addDriverPoints(d.driverId, pts, d.currentPos === 1, d.currentPos <= 3);
         this.addTeamPoints(d.teamId, pts);
+
+        this.recordDriverRaceStarted(d.driverId, currentCatKey);
+        if (d.currentPos === 1) {
+          this.recordDriverWin(d.driverId, currentCatKey);
+        }
+        if (d.currentPos <= 3) {
+          this.recordDriverPodium(d.driverId, currentCatKey);
+        }
       }
     });
 
@@ -1921,13 +2048,22 @@ export class CareerEngine {
       const catStats = this.getCategoryStats(this.career.currentCategory);
       catStats.worldTitles = (catStats.worldTitles || 0) + 1;
       this.career.licensePoints += baseLicensePts;
-    } else if (playerPos === 2) {
-      this.career.licensePoints += Math.round(baseLicensePts * 0.75);
-    } else if (playerPos === 3) {
-      this.career.licensePoints += Math.round(baseLicensePts * 0.5);
-    } else if (playerPos <= 5) {
-      this.career.licensePoints += Math.round(baseLicensePts * 0.25);
+      this.recordDriverTitle('player', this.career.currentCategory);
+    } else {
+      if (champion && champion.driverId) {
+        this.recordDriverTitle(champion.driverId, this.career.currentCategory);
+      }
+      if (playerPos === 2) {
+        this.career.licensePoints += Math.round(baseLicensePts * 0.75);
+      } else if (playerPos === 3) {
+        this.career.licensePoints += Math.round(baseLicensePts * 0.5);
+      } else if (playerPos <= 5) {
+        this.career.licensePoints += Math.round(baseLicensePts * 0.25);
+      }
     }
+
+    // Simula l'esito dei campionati delle categorie non attive per mantenere vivo tutto il circus
+    this.simulateOtherCategoriesSeasonEnd();
 
     // Confronto col compagno di squadra
     const teammate = this.getCurrentTeammate();

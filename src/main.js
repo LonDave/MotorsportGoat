@@ -11,6 +11,7 @@ import { WeekendView } from './ui/weekendView.js';
 import { MarketView } from './ui/marketView.js';
 import { LifestyleView } from './ui/lifestyleView.js';
 import { GoatHallOfFameView } from './ui/goatHallOfFameView.js';
+import { RetirementView } from './ui/retirementView.js';
 import { ModManagerModal } from './ui/modManagerModal.js';
 
 class AppRouter {
@@ -48,9 +49,14 @@ class AppRouter {
   }
 
   render() {
-    // 1. Se non c'è una carriera attiva e la rotta richiede la sessione pilota, reindirizza alla landing page
-    if (!career.hasActiveCareer() && this.currentRoute !== 'landing' && this.currentRoute !== 'creation') {
+    // 1. Reindirizzamento: se non c'è una carriera salvata o se il pilota è ritirato
+    const hasCareer = career.hasSavedCareer();
+    if (!hasCareer && this.currentRoute !== 'landing' && this.currentRoute !== 'creation') {
       this.currentRoute = 'landing';
+    } else if (hasCareer && career.career?.isRetired) {
+      if (['dashboard', 'calendar', 'rd', 'weekend', 'market', 'lifestyle'].includes(this.currentRoute)) {
+        this.currentRoute = 'retirement';
+      }
     }
 
     // 2. Render Header (con subnav tab durante la carriera)
@@ -121,6 +127,12 @@ class AppRouter {
 
       case 'goat':
         GoatHallOfFameView.render(this.mainContainer, (route) => {
+          this.navigate(route);
+        });
+        break;
+
+      case 'retirement':
+        RetirementView.render(this.mainContainer, (route) => {
           this.navigate(route);
         });
         break;

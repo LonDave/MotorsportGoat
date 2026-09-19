@@ -1,4 +1,5 @@
 import { db } from '../data/databaseManager.js';
+import { DRIVER_BASELINES } from '../data/driverBaselines.js';
 
 // Pesi e moltiplicatori di prestigio per ciascuna categoria del motorsport
 export const CATEGORY_TIER_CONFIG = {
@@ -207,229 +208,175 @@ export class GoatScorer {
     };
   }
 
-  // Classifica Hall of Fame storica con tutti i partecipanti ricalcolati su basi realistiche
-  static getHallOfFameRanking(playerScore, playerDriver, careerStats) {
-    const historicalLegends = [
-      {
-        realName: "Giacomo Agostini",
-        fictionalName: "Giacomo Ago Nazionale",
-        discipline: "moto",
-        titles: 15,
-        premierTitles: 8,
-        wins: 122,
-        poles: 9,
-        podiums: 159,
-        goatScore: 997,
-        era: "1963-1977",
-        notableNote: "15 Mondiali (8 in 500cc), 122 vittorie e 10 Tourist Trophy"
-      },
-      {
-        realName: "Lewis Hamilton",
-        fictionalName: "Sir Lewis Spamilton",
-        discipline: "auto",
-        titles: 7,
-        premierTitles: 7,
-        wins: 105,
-        poles: 104,
-        podiums: 201,
-        goatScore: 995,
-        era: "2007-Attivo",
-        notableNote: "Record assoluto di Vittorie (105) e Pole (104) in Formula 1"
-      },
-      {
-        realName: "Valentino Rossi",
-        fictionalName: "Valentin Il Dottore 46",
-        discipline: "moto",
-        titles: 9,
-        premierTitles: 7,
-        wins: 115,
-        poles: 65,
-        podiums: 235,
-        goatScore: 993,
-        era: "1996-2021",
-        notableNote: "9 Mondiali in 4 classi diverse, 235 podi e longevità infinita"
-      },
-      {
-        realName: "Michael Schumacher",
-        fictionalName: "Michele Il Barone Rosso",
-        discipline: "auto",
-        titles: 7,
-        premierTitles: 7,
-        wins: 91,
-        poles: 68,
-        podiums: 155,
-        goatScore: 991,
-        era: "1991-2012",
-        notableNote: "7 Titoli Mondiali F1 di cui 5 consecutivi con la Ferrari"
-      },
-      {
-        realName: "Marc Márquez",
-        fictionalName: "Marc La Formica Atomica",
-        discipline: "moto",
-        titles: 8,
-        premierTitles: 6,
-        wins: 88,
-        poles: 94,
-        podiums: 140,
-        goatScore: 984,
-        era: "2008-Attivo",
-        notableNote: "8 Titoli Mondiali, dominatore assoluto dell'era MotoGP moderna"
-      },
-      {
-        realName: "Max Verstappen",
-        fictionalName: "Max Versteppin Lo Sterminatore",
-        discipline: "auto",
-        titles: 4,
-        premierTitles: 4,
-        wins: 63,
-        poles: 40,
-        podiums: 111,
-        goatScore: 979,
-        era: "2015-Attivo",
-        notableNote: "Record di 19 vittorie in una stagione e 4 mondiali F1 dominati"
-      },
-      {
-        realName: "Juan Manuel Fangio",
-        fictionalName: "Juan Il Maestro Delle Pampas",
-        discipline: "auto",
-        titles: 5,
-        premierTitles: 5,
-        wins: 24,
-        poles: 29,
-        podiums: 35,
-        goatScore: 973,
-        era: "1950-1958",
-        notableNote: "Record storico di 47.1% di vittorie e 5 mondiali con 4 team diversi"
-      },
-      {
-        realName: "Ayrton Senna",
-        fictionalName: "Ayrton Il Mago Di San Paolo",
-        discipline: "auto",
-        titles: 3,
-        premierTitles: 3,
-        wins: 41,
-        poles: 65,
-        podiums: 80,
-        goatScore: 966,
-        era: "1984-1994",
-        notableNote: "Velocità pura sovrumana, 6 vittorie a Monaco e 65 pole position"
-      },
-      {
-        realName: "Alain Prost",
-        fictionalName: "Alain Il Professore Di Francia",
-        discipline: "auto",
-        titles: 4,
-        premierTitles: 4,
-        wins: 51,
-        poles: 33,
-        podiums: 106,
-        goatScore: 961,
-        era: "1980-1993",
-        notableNote: "4 Titoli Mondiali F1 e maestro supremo di strategia e intelligenza tattica"
-      },
-      {
-        realName: "Mick Doohan",
-        fictionalName: "Mick Mano Di Ferro",
-        discipline: "moto",
-        titles: 5,
-        premierTitles: 5,
-        wins: 54,
-        poles: 58,
-        podiums: 95,
-        goatScore: 954,
-        era: "1989-1999",
-        notableNote: "5 Titoli Mondiali 500cc consecutivi dominati con coraggio indomito"
-      },
-      {
-        realName: "Jorge Lorenzo",
-        fictionalName: "Giorgio Martillo Y Mantequilla",
-        discipline: "moto",
-        titles: 5,
-        premierTitles: 3,
-        wins: 68,
-        poles: 69,
-        podiums: 152,
-        goatScore: 948,
-        era: "2002-2019",
-        notableNote: "5 Titoli Mondiali (3 MotoGP), stile di guida chirurgico e ritmo martellante"
-      },
-      {
-        realName: "John Surtees",
-        fictionalName: "John Il Dominatore Di Due Mondi",
-        discipline: "both",
-        titles: 8,
-        premierTitles: 5,
-        wins: 44,
-        poles: 16,
-        podiums: 92,
-        goatScore: 945,
-        era: "1952-1972",
-        notableNote: "Unico pilota nella storia del motorsport iridato sia in F1 che in 500cc"
-      },
-      {
-        realName: "Casey Stoner",
-        fictionalName: "Casey Il Canguro Mannaro",
-        discipline: "moto",
-        titles: 2,
-        premierTitles: 2,
-        wins: 45,
-        poles: 43,
-        podiums: 89,
-        goatScore: 938,
-        era: "2002-2012",
-        notableNote: "Talento naturale puro, iridato MotoGP con Ducati e Honda"
-      },
-      {
-        realName: "Fernando Alonso",
-        fictionalName: "Fernando Il Samurai Asturiano",
-        discipline: "auto",
-        titles: 3,
-        premierTitles: 2,
-        wins: 37,
-        poles: 22,
-        podiums: 106,
-        goatScore: 932,
-        era: "2001-Attivo",
-        notableNote: "2 Mondiali F1, Campione del Mondo WEC e 2 vittorie a Le Mans"
-      },
-      {
-        realName: "Niki Lauda",
-        fictionalName: "Niki Il Computer Viennese",
-        discipline: "auto",
-        titles: 3,
-        premierTitles: 3,
-        wins: 25,
-        poles: 24,
-        podiums: 54,
-        goatScore: 928,
-        era: "1971-1985",
-        notableNote: "3 Titoli Mondiali F1 e leggenda vivente di determinazione e coraggio"
+  // Classifica Hall of Fame storica dinamica, con filtro per categoria e aggiornamento in tempo reale
+  static getHallOfFameRanking(playerScore, playerDriver, careerStats, categoryFilter = 'all', allDriverStats = null) {
+    const statsPool = allDriverStats || DRIVER_BASELINES;
+    const ranking = [];
+
+    // 1. Piloti e leggende dal pool dinamico delle carriere
+    for (const [drvId, data] of Object.entries(statsPool)) {
+      if (drvId === 'player') continue;
+      const byCat = data.byCategory || {};
+      const name = db.isRealNames ? (data.realName || data.name) : (data.fictionalName || data.name || data.realName);
+      const discipline = data.discipline || 'auto';
+      const isLegend = !!data.isLegend;
+      const era = data.era || 'Carriera';
+      const notableNote = data.notableNote || '';
+
+      if (categoryFilter === 'all') {
+        let totalTitles = 0;
+        let totalWins = 0;
+        let totalPoles = 0;
+        let totalPodiums = 0;
+        let totalRaces = 0;
+
+        let titlesPts = 0;
+        let winsPts = 0;
+        let polesPts = 0;
+        let podiumsPts = 0;
+
+        for (const [catKey, cs] of Object.entries(byCat)) {
+          const cfg = CATEGORY_TIER_CONFIG[catKey] || CATEGORY_TIER_CONFIG.auto_f4;
+          const t = cs.worldTitles || 0;
+          const w = cs.wins || 0;
+          const p = cs.poles || 0;
+          const pod = cs.podiums || 0;
+          const r = cs.racesStarted || 0;
+
+          totalTitles += t;
+          totalWins += w;
+          totalPoles += p;
+          totalPodiums += pod;
+          totalRaces += r;
+
+          titlesPts += t * cfg.titleWeight;
+          winsPts += w * cfg.winWeight;
+          polesPts += p * cfg.poleWeight;
+          podiumsPts += pod * cfg.podiumWeight;
+        }
+
+        if (totalRaces === 0 && totalTitles === 0 && totalWins === 0 && totalPodiums === 0) continue;
+
+        const winRate = totalRaces > 0 ? (totalWins / totalRaces) : 0;
+        let dominancePts = 0;
+        if (winRate >= 0.35) dominancePts = 35;
+        else if (winRate >= 0.20) dominancePts = 20;
+        else if (winRate >= 0.10) dominancePts = 10;
+
+        const longevityPts = Math.min(25, Math.floor(totalRaces * 0.1));
+        const finalScore = Math.min(1000, Math.round(titlesPts + winsPts + polesPts + podiumsPts + dominancePts + longevityPts));
+
+        ranking.push({
+          id: drvId,
+          name,
+          discipline,
+          era,
+          titles: totalTitles,
+          wins: totalWins,
+          poles: totalPoles,
+          podiums: totalPodiums,
+          races: totalRaces,
+          goatScore: finalScore,
+          isLegend,
+          notableNote,
+          isPlayer: false
+        });
+      } else {
+        // Categoria specifica (es. auto_f1, auto_f2, auto_f3, moto_gp, etc.)
+        const cs = byCat[categoryFilter];
+        if (!cs || (cs.racesStarted === 0 && cs.worldTitles === 0 && cs.wins === 0 && cs.podiums === 0)) {
+          continue;
+        }
+
+        const cfg = CATEGORY_TIER_CONFIG[categoryFilter] || CATEGORY_TIER_CONFIG.auto_f4;
+        const titles = cs.worldTitles || 0;
+        const wins = cs.wins || 0;
+        const poles = cs.poles || 0;
+        const podiums = cs.podiums || 0;
+        const races = cs.racesStarted || 0;
+        const catScore = Math.round((titles * cfg.titleWeight) + (wins * cfg.winWeight) + (poles * cfg.poleWeight) + (podiums * cfg.podiumWeight));
+
+        ranking.push({
+          id: drvId,
+          name,
+          discipline,
+          era,
+          titles,
+          wins,
+          poles,
+          podiums,
+          races,
+          goatScore: catScore,
+          isLegend,
+          notableNote,
+          isPlayer: false
+        });
       }
-    ].map(l => ({
-      ...l,
-      name: db.isRealNames ? l.realName : l.fictionalName
-    }));
+    }
 
-    const playerEntry = {
-      name: `${playerDriver?.firstName || 'Pilota'} ${playerDriver?.lastName || 'GOAT'} "${playerDriver?.nickname || 'Flash'}"`,
-      discipline: playerDriver?.discipline || 'auto',
-      titles: careerStats.worldTitles || 0,
-      wins: careerStats.wins || 0,
-      poles: careerStats.poles || 0,
-      podiums: careerStats.podiums || 0,
-      goatScore: playerScore,
-      era: `${careerStats.startYear || 2026}-${careerStats.currentYear || 2026}`,
-      isPlayer: true
-    };
+    // 2. Aggiunta del Giocatore
+    if (playerDriver) {
+      const pName = `${playerDriver.firstName || 'Pilota'} ${playerDriver.lastName || 'GOAT'} "${playerDriver.nickname || 'Flash'}"`;
+      const pDiscipline = playerDriver.discipline || 'auto';
+      const pEra = `${careerStats?.startYear || 2026}-${careerStats?.currentYear || 2026}`;
 
-    const combined = [...historicalLegends, playerEntry];
-    combined.sort((a, b) => b.goatScore - a.goatScore);
+      if (categoryFilter === 'all') {
+        const breakdown = this.getScoreBreakdown(playerDriver, careerStats);
+        ranking.push({
+          id: 'player',
+          name: pName,
+          discipline: pDiscipline,
+          era: pEra,
+          titles: breakdown.totalTitles,
+          wins: breakdown.totalWins,
+          poles: breakdown.totalPoles,
+          podiums: breakdown.totalPodiums,
+          races: breakdown.totalRaces,
+          goatScore: playerScore !== undefined ? playerScore : breakdown.total,
+          isLegend: false,
+          isPlayer: true
+        });
+      } else {
+        const pCat = (careerStats?.byCategory && careerStats.byCategory[categoryFilter]) || {
+          worldTitles: 0, wins: 0, poles: 0, podiums: 0, racesStarted: 0
+        };
+        const cfg = CATEGORY_TIER_CONFIG[categoryFilter] || CATEGORY_TIER_CONFIG.auto_f4;
+        const titles = pCat.worldTitles || 0;
+        const wins = pCat.wins || 0;
+        const poles = pCat.poles || 0;
+        const podiums = pCat.podiums || 0;
+        const races = pCat.racesStarted || 0;
+        const catScore = Math.round((titles * cfg.titleWeight) + (wins * cfg.winWeight) + (poles * cfg.poleWeight) + (podiums * cfg.podiumWeight));
 
-    const playerRank = combined.findIndex(item => item.isPlayer) + 1;
+        ranking.push({
+          id: 'player',
+          name: pName,
+          discipline: pDiscipline,
+          era: pEra,
+          titles,
+          wins,
+          poles,
+          podiums,
+          races,
+          goatScore: catScore,
+          isLegend: false,
+          isPlayer: true
+        });
+      }
+    }
+
+    // 3. Ordinamento classifica
+    if (categoryFilter === 'all') {
+      ranking.sort((a, b) => b.goatScore - a.goatScore || b.titles - a.titles || b.wins - a.wins);
+    } else {
+      ranking.sort((a, b) => b.titles - a.titles || b.wins - a.wins || b.podiums - a.podiums || b.goatScore - a.goatScore);
+    }
+
+    const playerRank = ranking.findIndex(d => d.isPlayer) + 1;
     return {
-      ranking: combined,
+      ranking,
       playerRank,
-      totalDrivers: combined.length
+      totalDrivers: ranking.length
     };
   }
 }
