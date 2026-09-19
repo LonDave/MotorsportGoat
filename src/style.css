@@ -476,6 +476,12 @@ body {
 .input-with-action {
   display: flex;
   gap: 6px;
+  width: 100%;
+}
+
+.input-with-action input {
+  flex: 1;
+  min-width: 0;
 }
 
 .secondary-mini-btn {
@@ -7944,6 +7950,207 @@ body {
   .telemetry-badge {
     font-size: 11px;
     padding: 3px 8px;
+  }
+
+  /* ==========================================================================
+     DRIVER CREATION SCREEN MOBILE RESPONSIVENESS (<= 768px)
+     ========================================================================== */
+  .creation-header-banner {
+    margin-bottom: 20px;
+    padding: 0 4px;
+  }
+
+  .creation-main-title {
+    font-size: 22px !important;
+  }
+
+  .creation-desc {
+    font-size: 13px !important;
+  }
+
+  .creation-grid-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .creation-card {
+    padding: 16px 12px !important;
+    border-radius: var(--radius-md) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .card-section-title {
+    font-size: 15px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* 1. Disciplina */
+  .discipline-selector-group .discipline-card {
+    padding: 10px 12px !important;
+    gap: 12px !important;
+  }
+
+  .discipline-selector-group .disc-icon {
+    font-size: 24px !important;
+  }
+
+  .disc-content strong {
+    font-size: 13px !important;
+  }
+
+  .disc-content span {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* 2. Dati Personali - Monocolonna fluida su mobile */
+  .bio-fields-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .input-field-group {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .input-field-group label {
+    font-size: 11px !important;
+  }
+
+  .dark-input,
+  .dark-select {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 13px !important;
+    padding: 9px 12px !important;
+  }
+
+  .input-with-action {
+    width: 100% !important;
+    display: flex !important;
+    gap: 6px !important;
+  }
+
+  .input-with-action input {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .secondary-mini-btn {
+    flex-shrink: 0 !important;
+    padding: 0 10px !important;
+  }
+
+  /* 3. Background e Origine - Nessun taglio pillole e badge */
+  .origin-option {
+    padding: 12px 10px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .origin-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  .origin-badge {
+    font-size: 13px !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .origin-pills {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  .origin-pill {
+    font-size: 10px !important;
+    padding: 2px 7px !important;
+    white-space: nowrap !important;
+  }
+
+  .origin-desc {
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  .origin-traits {
+    font-size: 10.5px !important;
+  }
+
+  /* 4. Casco & Livrea */
+  .preview-stage-box {
+    padding: 16px 12px !important;
+    min-height: 180px !important;
+  }
+
+  .visor-presets-grid,
+  .pattern-presets-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  .visor-btn,
+  .pattern-btn {
+    font-size: 11px !important;
+    padding: 7px 6px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* 5. Attributi Stepper */
+  .attr-stepper-row {
+    padding: 8px 10px !important;
+    gap: 8px !important;
+  }
+
+  .attr-info {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .attr-info strong {
+    font-size: 12px !important;
+  }
+
+  .attr-info small {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+
+  .attr-controls {
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .attr-btn {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .attr-display-val {
+    font-size: 14px !important;
+    min-width: 18px !important;
+  }
+
+  .start-race-button {
+    font-size: 13px !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 
