@@ -8,6 +8,8 @@ class DatabaseManager {
     const savedReal = typeof localStorage !== 'undefined' ? localStorage.getItem('il_nuovo_goat_real_names') : null;
     this.isRealNames = savedReal === 'true';
     this.customOverrides = {};
+    // Attributi dinamici AI aggiornati dalla carriera (crescita/declino stagionale)
+    this.aiDriverAttributes = {};
 
     // Prova a caricare eventuali override personalizzati
     try {
@@ -142,6 +144,11 @@ class DatabaseManager {
     return driverId;
   }
 
+  // Imposta gli attributi AI cresciuti dalla carriera (chiamato dopo loadFromStorage)
+  setAiDriverAttributes(attrs) {
+    this.aiDriverAttributes = attrs || {};
+  }
+
   // Risolve l'oggetto completo del pilota
   getDriver(driverId, discipline = 'auto') {
     const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
@@ -149,8 +156,11 @@ class DatabaseManager {
       const cat = categories[catKey];
       const driver = cat.roster?.find(d => d.id === driverId);
       if (driver) {
+        // Fonde gli attributi di crescita AI se disponibili
+        const grown = this.aiDriverAttributes[driverId];
+        const merged = grown ? { ...driver, ...grown } : driver;
         return {
-          ...driver,
+          ...merged,
           displayName: this.getDriverName(driverId, discipline)
         };
       }

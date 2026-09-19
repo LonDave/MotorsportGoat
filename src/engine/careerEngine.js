@@ -480,6 +480,74 @@ export class CareerEngine {
     }
   }
 
+  // Crescita organica degli attributi dei piloti AI a fine stagione
+  growAiDriverAttributes() {
+    if (!this.career || !this.career.aiDriverAttributes) {
+      this.career.aiDriverAttributes = {};
+    }
+
+    const discipline = this.player?.discipline || 'auto';
+    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    const catKey = this.career.currentCategory;
+    const cat = categories[catKey];
+    if (!cat || !cat.roster) return;
+
+    cat.roster.forEach(driver => {
+      const dId = driver.id;
+      // Inizializza il profilo AI se non esiste (clona gli attributi base)
+      if (!this.career.aiDriverAttributes[dId]) {
+        this.career.aiDriverAttributes[dId] = {
+          ovr: driver.ovr || 75,
+          pace: driver.pace || 75,
+          racecraft: driver.racecraft || 75,
+          tyreMgmt: driver.tyreMgmt || 75,
+          consistency: driver.consistency || 75,
+          wetSkill: driver.wetSkill || 75,
+          age: driver.age || 24
+        };
+      }
+
+      const attrs = this.career.aiDriverAttributes[dId];
+      attrs.age = (attrs.age || 24) + 1;
+      const age = attrs.age;
+
+      // Crescita dipende dall'età: i giovani crescono, i veterani declinano
+      if (attrs.ovr < 99) {
+        if (age <= 22) {
+          // Giovani talenti: crescita rapida
+          const gain = 0.6 + Math.random() * 0.6;
+          attrs.pace = Math.min(99, (attrs.pace || 75) + gain);
+          attrs.racecraft = Math.min(99, (attrs.racecraft || 75) + gain * 0.7);
+          attrs.consistency = Math.min(99, (attrs.consistency || 75) + gain * 0.5);
+        } else if (age <= 27) {
+          // Prime: piccola crescita, affinamento
+          const gain = 0.2 + Math.random() * 0.3;
+          attrs.racecraft = Math.min(99, (attrs.racecraft || 75) + gain);
+          attrs.tyreMgmt = Math.min(99, (attrs.tyreMgmt || 75) + gain * 0.6);
+        } else if (age <= 32) {
+          // Plateau/lieve declino: costanza aumenta, velocità resta
+          const gain = 0.1 + Math.random() * 0.1;
+          attrs.consistency = Math.min(99, (attrs.consistency || 75) + gain);
+        } else {
+          // Declino naturale post-32
+          const loss = 0.2 + Math.random() * 0.3;
+          attrs.pace = Math.max(60, (attrs.pace || 75) - loss);
+          if (age > 36) {
+            attrs.racecraft = Math.max(60, (attrs.racecraft || 75) - loss * 0.5);
+          }
+        }
+
+        // Ricalcola OVR come media pesata degli attributi
+        const sum = (attrs.pace || 75) * 0.3 + (attrs.racecraft || 75) * 0.25 +
+                    (attrs.tyreMgmt || 75) * 0.2 + (attrs.consistency || 75) * 0.15 + (attrs.wetSkill || 75) * 0.1;
+        attrs.ovr = Math.min(99, Math.round(sum));
+      }
+    });
+
+    // Sincronizza i nuovi attributi cresciuti al database per i calcoli di gara
+    db.setAiDriverAttributes(this.career.aiDriverAttributes);
+  }
+
   // Inizializza la classifica piloti e team all'inizio di ogni stagione
   initSeasonStandings() {
     const categories = this.player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
@@ -1042,6 +1110,9 @@ export class CareerEngine {
     // Esegui trasferimenti piloti AI e movimenti di mercato Free Agent
     this.aiDriverTransfers();
 
+    // Crescita annuale degli attributi AI (giovani migliorano, veterani declinano)
+    this.growAiDriverAttributes();
+
     // Genera offerte contrattuali per il nuovo anno
     const offers = this.generateContractOffers();
 
@@ -1493,9 +1564,12 @@ export class CareerEngine {
               this.career.contract.buyoutClause = 0;
             }
           }
+          if (!this.career.aiDriverAttributes) this.career.aiDriverAttributes = {};
           this.syncAndReconcileStats();
           // Calcola il roster attivo per prevenire problemi di terzi piloti nei vecchi salvataggi
           this.getActiveRoster();
+          // Sincronizza gli attributi AI cresciuti al database per i calcoli di gara
+          db.setAiDriverAttributes(this.career.aiDriverAttributes);
         }
       }
     } catch (e) {

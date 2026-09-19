@@ -2157,21 +2157,65 @@ body {
 
 .accept-offer-btn {
   width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border-glow);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border: 1px solid #10b981;
   color: #fff;
-  padding: 10px;
+  padding: 13px 18px;
   border-radius: var(--radius-md);
   font-family: var(--font-digital);
   font-weight: 800;
-  font-size: 12px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
 }
 
 .accept-offer-btn:hover {
-  background: var(--electric-cyan);
-  color: #000;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.5);
+}
+
+.accept-offer-btn.disabled,
+.accept-offer-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Tab Buttons — universal styling for all .tab-btn elements */
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  border-radius: var(--radius-md);
+  font-family: var(--font-digital);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.tab-btn:hover {
+  color: var(--text-pure);
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+}
+
+.tab-btn.active {
+  background: var(--racing-red);
+  color: #fff;
+  border-color: var(--racing-red);
+  box-shadow: 0 0 16px rgba(225, 6, 0, 0.35);
 }
 
 /* ==========================================================================
@@ -4005,9 +4049,10 @@ body {
 }
 
 .sub-tab-btn.active {
-  background: var(--f1-red);
+  background: var(--racing-red);
   color: #fff;
-  border-color: var(--f1-red);
+  border-color: var(--racing-red);
+  box-shadow: 0 0 14px rgba(225, 6, 0, 0.35);
 }
 
 .standings-card-full {
@@ -4975,7 +5020,7 @@ body {
 }
 
 .speed-btn.active {
-  background: var(--f1-red);
+  background: var(--racing-red);
   color: #fff;
 }
 
@@ -5002,8 +5047,174 @@ body {
 
 .btn-play-pause.pause {
   background: rgba(255, 208, 0, 0.15);
-  border-color: var(--f1-yellow);
-  color: var(--f1-yellow);
+  border-color: var(--gold-cup);
+  color: var(--gold-cup);
+}
+
+/* Speed Control Action Buttons (Session Step, Skip, Proceed) */
+.speed-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glow);
+  color: var(--text-pure);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-digital);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.speed-ctrl-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.speed-ctrl-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.speed-ctrl-btn.skip {
+  border-color: var(--gold-cup);
+  color: var(--gold-cup);
+}
+
+.speed-ctrl-btn.skip:hover {
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.speed-ctrl-btn.next {
+  border-color: var(--electric-cyan);
+  color: var(--electric-cyan);
+}
+
+.speed-ctrl-btn.next:hover {
+  background: rgba(0, 240, 255, 0.12);
+}
+
+.speed-ctrl-btn.start-race {
+  background: linear-gradient(135deg, var(--racing-red), #b30000);
+  border-color: var(--racing-red);
+  color: #fff;
+  font-size: 12px;
+  padding: 11px 20px;
+  box-shadow: 0 0 20px rgba(225, 6, 0, 0.4);
+}
+
+.speed-ctrl-btn.start-race:hover {
+  box-shadow: 0 0 35px rgba(225, 6, 0, 0.7);
+  transform: translateY(-1px);
+}
+
+.speed-ctrl-btn.podium {
+  background: linear-gradient(135deg, #ffd700, #f59e0b);
+  border-color: #ffd700;
+  color: #000;
+  font-size: 12px;
+  padding: 11px 20px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.speed-ctrl-btn.skip-finish {
+  border-color: #a855f7;
+  color: #a855f7;
+}
+
+.speed-ctrl-btn.skip-finish:hover {
+  background: rgba(168, 85, 247, 0.12);
+}
+
+/* Race Tactics Buttons */
+.tactic-btn {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-digital);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.tactic-btn:hover {
+  color: var(--text-pure);
+  border-color: var(--border-glow);
+}
+
+.tactic-btn.active {
+  background: var(--electric-cyan);
+  color: #000;
+  border-color: var(--electric-cyan);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+}
+
+/* Modal Buttons (usati in ToastNotification.confirm e celebrate) */
+.modal-btn {
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-digital);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-btn.btn-primary {
+  background: linear-gradient(135deg, var(--racing-red), #b30000);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(225, 6, 0, 0.3);
+}
+
+.modal-btn.btn-primary:hover {
+  box-shadow: 0 0 22px rgba(225, 6, 0, 0.6);
+  transform: translateY(-1px);
+}
+
+.modal-btn.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.modal-btn.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text-pure);
+}
+
+.modal-btn.btn-danger {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(220, 38, 38, 0.35);
+}
+
+.modal-btn.btn-danger:hover {
+  box-shadow: 0 0 24px rgba(220, 38, 38, 0.65);
+  transform: translateY(-1px);
+}
+
+.modal-btn.btn-gold {
+  background: linear-gradient(135deg, #ffd700, #f59e0b);
+  color: #000;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.35);
+}
+
+.modal-btn.btn-gold:hover {
+  box-shadow: 0 0 24px rgba(255, 215, 0, 0.65);
+  transform: translateY(-1px);
 }
 
 /* Race Broadcast Grid (Colonnina F1 a Sinistra + Cockpit a Destra) */
