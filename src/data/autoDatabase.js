@@ -12,14 +12,14 @@ export const AUTO_CATEGORIES = {
     licensePointsAwarded: 12,
     prizeBudgetPerRace: 10000,
     teams: [
-      { id: "f4_prema", fictionalName: "Prima Squadra Junior", realName: "PREMA Racing F4", carPace: 78, reliability: 88, color: "#e10600", country: "ITA" },
-      { id: "f4_us_racing", fictionalName: "US Schumacher Speed", realName: "US Racing", carPace: 77, reliability: 87, color: "#002b49", country: "DEU" },
-      { id: "f4_van_amersfoort", fictionalName: "Van Tulip Junior", realName: "Van Amersfoort Racing F4", carPace: 76, reliability: 86, color: "#ff7900", country: "NLD" },
-      { id: "f4_phm", fictionalName: "PHM Berlin Talents", realName: "PHM Racing", carPace: 75, reliability: 85, color: "#111111", country: "DEU" },
-      { id: "f4_cram", fictionalName: "Cram Scuderia Giovani", realName: "Cram Motorsport", carPace: 74, reliability: 84, color: "#c40000", country: "ITA" },
-      { id: "f4_jenzer", fictionalName: "Jenzer Helvetia Racing", realName: "Jenzer Motorsport F4", carPace: 74, reliability: 85, color: "#0055a5", country: "CHE" },
-      { id: "f4_iron_lynx", fictionalName: "Lince Rossa Junior Team", realName: "Iron Lynx Academy", carPace: 75, reliability: 86, color: "#d50000", country: "ITA" },
-      { id: "f4_race_gp", fictionalName: "Hexagone Junior GP", realName: "R-ace GP F4", carPace: 74, reliability: 84, color: "#0055ff", country: "FRA" }
+      { id: "f4_prema", fictionalName: "Prima Squadra Junior", realName: "PREMA Racing F4", carPace: 70, reliability: 88, color: "#e10600", country: "ITA" },
+      { id: "f4_us_racing", fictionalName: "US Schumacher Speed", realName: "US Racing", carPace: 69, reliability: 87, color: "#002b49", country: "DEU" },
+      { id: "f4_van_amersfoort", fictionalName: "Van Tulip Junior", realName: "Van Amersfoort Racing F4", carPace: 68, reliability: 86, color: "#ff7900", country: "NLD" },
+      { id: "f4_phm", fictionalName: "PHM Berlin Talents", realName: "PHM Racing", carPace: 67, reliability: 85, color: "#111111", country: "DEU" },
+      { id: "f4_cram", fictionalName: "Cram Scuderia Giovani", realName: "Cram Motorsport", carPace: 66, reliability: 84, color: "#c40000", country: "ITA" },
+      { id: "f4_jenzer", fictionalName: "Jenzer Helvetia Racing", realName: "Jenzer Motorsport F4", carPace: 66, reliability: 85, color: "#0055a5", country: "CHE" },
+      { id: "f4_iron_lynx", fictionalName: "Lince Rossa Junior Team", realName: "Iron Lynx Academy", carPace: 67, reliability: 86, color: "#d50000", country: "ITA" },
+      { id: "f4_race_gp", fictionalName: "Hexagone Junior GP", realName: "R-ace GP F4", carPace: 66, reliability: 84, color: "#0055ff", country: "FRA" }
     ],
     roster: [
       { id: "drv_f4_1", fictionalName: "Freddie Saetta", realName: "Freddie Slater", teamId: "f4_prema", ovr: 76, number: 27, nationality: "GBR", pace: 78, racecraft: 76, tyreMgmt: 74, consistency: 75, wetSkill: 76 },
@@ -53,16 +53,16 @@ export const AUTO_CATEGORIES = {
     licensePointsAwarded: 25,
     prizeBudgetPerRace: 28000,
     teams: [
-      { id: "f3_prema", fictionalName: "Prima Scuderia F3", realName: "PREMA Racing F3", carPace: 84, reliability: 89, color: "#e10600", country: "ITA" },
-      { id: "f3_trident", fictionalName: "Tridente Corse", realName: "Trident Motorsport F3", carPace: 84, reliability: 88, color: "#0047ba", country: "ITA" },
-      { id: "f3_art", fictionalName: "ART Grand Prix F3", realName: "ART Grand Prix F3", carPace: 83, reliability: 87, color: "#ffffff", country: "FRA" },
-      { id: "f3_campos", fictionalName: "Campos Iberia GP", realName: "Campos Racing F3", carPace: 82, reliability: 86, color: "#f2a900", country: "ESP" },
-      { id: "f3_hitech", fictionalName: "Hitech Pulse F3", realName: "Hitech Pulse-Eight F3", carPace: 81, reliability: 85, color: "#b0b0b0", country: "GBR" },
-      { id: "f3_van_amersfoort", fictionalName: "Van Tulip Racing F3", realName: "Van Amersfoort Racing F3", carPace: 80, reliability: 85, color: "#ff7900", country: "NLD" },
-      { id: "f3_mp", fictionalName: "Orange MP Speed F3", realName: "MP Motorsport F3", carPace: 80, reliability: 84, color: "#ff6600", country: "NLD" },
-      { id: "f3_rodin", fictionalName: "Rodin Down Under F3", realName: "Rodin Motorsport F3", carPace: 79, reliability: 84, color: "#002050", country: "NZL" },
-      { id: "f3_dams", fictionalName: "DAMS Bleu Racing", realName: "DAMS Lucas Oil F3", carPace: 79, reliability: 83, color: "#002f6c", country: "FRA" },
-      { id: "f3_jenzer", fictionalName: "Jenzer Helvetia GP", realName: "Jenzer Motorsport F3", carPace: 78, reliability: 84, color: "#0055a5", country: "CHE" }
+      { id: "f3_prema", fictionalName: "Prima Scuderia F3", realName: "PREMA Racing F3", carPace: 76, reliability: 89, color: "#e10600", country: "ITA" },
+      { id: "f3_trident", fictionalName: "Tridente Corse", realName: "Trident Motorsport F3", carPace: 76, reliability: 88, color: "#0047ba", country: "ITA" },
+      { id: "f3_art", fictionalName: "ART Grand Prix F3", realName: "ART Grand Prix F3", carPace: 75, reliability: 87, color: "#ffffff", country: "FRA" },
+      { id: "f3_campos", fictionalName: "Campos Iberia GP", realName: "Campos Racing F3", carPace: 74, reliability: 86, color: "#f2a900", country: "ESP" },
+      { id: "f3_hitech", fictionalName: "Hitech Pulse F3", realName: "Hitech Pulse-Eight F3", carPace: 73, reliability: 85, color: "#b0b0b0", country: "GBR" },
+      { id: "f3_van_amersfoort", fictionalName: "Van Tulip Racing F3", realName: "Van Amersfoort Racing F3", carPace: 73, reliability: 85, color: "#ff7900", country: "NLD" },
+      { id: "f3_mp", fictionalName: "Orange MP Speed F3", realName: "MP Motorsport F3", carPace: 72, reliability: 84, color: "#ff6600", country: "NLD" },
+      { id: "f3_rodin", fictionalName: "Rodin Down Under F3", realName: "Rodin Motorsport F3", carPace: 72, reliability: 84, color: "#002050", country: "NZL" },
+      { id: "f3_dams", fictionalName: "DAMS Bleu Racing", realName: "DAMS Lucas Oil F3", carPace: 71, reliability: 83, color: "#002f6c", country: "FRA" },
+      { id: "f3_jenzer", fictionalName: "Jenzer Helvetia GP", realName: "Jenzer Motorsport F3", carPace: 71, reliability: 84, color: "#0055a5", country: "CHE" }
     ],
     roster: [
       // PREMA (3 piloti)
@@ -120,17 +120,17 @@ export const AUTO_CATEGORIES = {
     licensePointsAwarded: 40,
     prizeBudgetPerRace: 80000,
     teams: [
-      { id: "f2_prema", fictionalName: "Prima Squadra F2", realName: "PREMA Racing F2", carPace: 88, reliability: 89, color: "#e60000", country: "ITA" },
-      { id: "f2_invicta", fictionalName: "Invicta Golden Arrows", realName: "Invicta Racing F2", carPace: 88, reliability: 88, color: "#ffd700", country: "GBR" },
-      { id: "f2_art", fictionalName: "ART Grand Prix Paris", realName: "ART Grand Prix F2", carPace: 87, reliability: 88, color: "#ffffff", country: "FRA" },
-      { id: "f2_mp", fictionalName: "Orange MP Speed", realName: "MP Motorsport F2", carPace: 86, reliability: 87, color: "#ff6600", country: "NLD" },
-      { id: "f2_campos", fictionalName: "Campos Iberia F2", realName: "Campos Racing F2", carPace: 86, reliability: 86, color: "#f2a900", country: "ESP" },
-      { id: "f2_hitech", fictionalName: "Hitech Pulse Engineering", realName: "Hitech Pulse-Eight F2", carPace: 85, reliability: 85, color: "#b0b0b0", country: "GBR" },
-      { id: "f2_rodin", fictionalName: "Rodin Down Under", realName: "Rodin Motorsport F2", carPace: 85, reliability: 85, color: "#002050", country: "NZL" },
-      { id: "f2_dams", fictionalName: "DAMS Lucas Oil", realName: "DAMS Lucas Oil F2", carPace: 84, reliability: 85, color: "#002f6c", country: "FRA" },
-      { id: "f2_trident", fictionalName: "Tridente F2", realName: "Trident F2", carPace: 84, reliability: 84, color: "#0047ba", country: "ITA" },
-      { id: "f2_van_amersfoort", fictionalName: "Van Tulip F2", realName: "Van Amersfoort Racing F2", carPace: 83, reliability: 84, color: "#ff7900", country: "NLD" },
-      { id: "f2_aix", fictionalName: "AIX Berlin Racing", realName: "AIX Racing", carPace: 83, reliability: 83, color: "#00e5ff", country: "DEU" }
+      { id: "f2_prema", fictionalName: "Prima Squadra F2", realName: "PREMA Racing F2", carPace: 81, reliability: 89, color: "#e60000", country: "ITA" },
+      { id: "f2_invicta", fictionalName: "Invicta Golden Arrows", realName: "Invicta Racing F2", carPace: 81, reliability: 88, color: "#ffd700", country: "GBR" },
+      { id: "f2_art", fictionalName: "ART Grand Prix Paris", realName: "ART Grand Prix F2", carPace: 80, reliability: 88, color: "#ffffff", country: "FRA" },
+      { id: "f2_mp", fictionalName: "Orange MP Speed", realName: "MP Motorsport F2", carPace: 79, reliability: 87, color: "#ff6600", country: "NLD" },
+      { id: "f2_campos", fictionalName: "Campos Iberia F2", realName: "Campos Racing F2", carPace: 79, reliability: 86, color: "#f2a900", country: "ESP" },
+      { id: "f2_hitech", fictionalName: "Hitech Pulse Engineering", realName: "Hitech Pulse-Eight F2", carPace: 78, reliability: 85, color: "#b0b0b0", country: "GBR" },
+      { id: "f2_rodin", fictionalName: "Rodin Down Under", realName: "Rodin Motorsport F2", carPace: 78, reliability: 85, color: "#002050", country: "NZL" },
+      { id: "f2_dams", fictionalName: "DAMS Lucas Oil", realName: "DAMS Lucas Oil F2", carPace: 77, reliability: 85, color: "#002f6c", country: "FRA" },
+      { id: "f2_trident", fictionalName: "Tridente F2", realName: "Trident F2", carPace: 77, reliability: 84, color: "#0047ba", country: "ITA" },
+      { id: "f2_van_amersfoort", fictionalName: "Van Tulip F2", realName: "Van Amersfoort Racing F2", carPace: 76, reliability: 84, color: "#ff7900", country: "NLD" },
+      { id: "f2_aix", fictionalName: "AIX Berlin Racing", realName: "AIX Racing", carPace: 76, reliability: 83, color: "#00e5ff", country: "DEU" }
     ],
     roster: [
       { id: "drv_mini", fictionalName: "Gabriele Veloce", realName: "Gabriele Minì", teamId: "f2_prema", ovr: 86, number: 3, nationality: "ITA", pace: 88, racecraft: 86, tyreMgmt: 85, consistency: 86, wetSkill: 87 },
@@ -176,17 +176,17 @@ export const AUTO_CATEGORIES = {
     licensePointsAwarded: 50,
     prizeBudgetPerRace: 480000,
     teams: [
-      { id: "f1_mclaren", fictionalName: "Papaya Rocket F1 (Norris #1/Piastri)", realName: "McLaren F1 Team", carPace: 97, reliability: 96, aero: 97, power: 96, chassis: 97, color: "#ff8000", country: "GBR" },
-      { id: "f1_ferrari", fictionalName: "Scuderia Cavallino HP (Hamilton/Leclerc)", realName: "Scuderia Ferrari HP", carPace: 96, reliability: 94, aero: 96, power: 97, chassis: 96, color: "#e10600", country: "ITA" },
-      { id: "f1_redbull", fictionalName: "Red Bullish Ford (Verstappen/Hadjar)", realName: "Oracle Red Bull Racing", carPace: 96, reliability: 93, aero: 96, power: 96, chassis: 96, color: "#1e41ff", country: "AUT" },
-      { id: "f1_mercedes", fictionalName: "Silver Star Factory (Russell/Antonelli)", realName: "Mercedes-AMG PETRONAS F1 Team", carPace: 96, reliability: 96, aero: 95, power: 97, chassis: 96, color: "#00d2be", country: "DEU" },
-      { id: "f1_aston", fictionalName: "British Green Newey Honda (Alonso/Stroll)", realName: "Aston Martin Aramco F1 Team", carPace: 93, reliability: 92, aero: 95, power: 94, chassis: 92, color: "#00665e", country: "GBR" },
-      { id: "f1_williams", fictionalName: "Williams Smooth Revival (Sainz/Albon)", realName: "Williams Racing", carPace: 91, reliability: 92, aero: 90, power: 95, chassis: 90, color: "#00a0dd", country: "GBR" },
-      { id: "f1_cadillac", fictionalName: "General Motors American Dream (Pérez/Bottas)", realName: "Cadillac Formula 1 Team", carPace: 88, reliability: 90, aero: 88, power: 93, chassis: 88, color: "#c4a000", country: "USA" },
-      { id: "f1_audi", fictionalName: "Audi German Ring Factory (Hülk/Bortoleto)", realName: "Audi Revolut F1 Team", carPace: 88, reliability: 89, aero: 88, power: 90, chassis: 88, color: "#e00000", country: "DEU" },
-      { id: "f1_haas", fictionalName: "Haas Stars & Stripes Toyota (Ocon/Bearman)", realName: "MoneyGram Haas F1 Team Toyota", carPace: 88, reliability: 89, aero: 87, power: 94, chassis: 87, color: "#b6babd", country: "USA" },
-      { id: "f1_rb", fictionalName: "Racing Bulls Faenza (Lawson/Lindblad)", realName: "Visa Cash App Racing Bulls F1", carPace: 87, reliability: 89, aero: 87, power: 93, chassis: 87, color: "#1634ca", country: "ITA" },
-      { id: "f1_alpine", fictionalName: "Bleu Alpine Mercedes (Gasly/Colapinto)", realName: "BWT Alpine F1 Team", carPace: 86, reliability: 88, aero: 85, power: 94, chassis: 86, color: "#0090ff", country: "FRA" }
+      { id: "f1_mclaren", fictionalName: "Papaya Rocket F1 (Norris #1/Piastri)", realName: "McLaren F1 Team", carPace: 89, reliability: 96, aero: 89, power: 88, chassis: 89, color: "#ff8000", country: "GBR" },
+      { id: "f1_ferrari", fictionalName: "Scuderia Cavallino HP (Hamilton/Leclerc)", realName: "Scuderia Ferrari HP", carPace: 88, reliability: 94, aero: 88, power: 89, chassis: 88, color: "#e10600", country: "ITA" },
+      { id: "f1_redbull", fictionalName: "Red Bullish Ford (Verstappen/Hadjar)", realName: "Oracle Red Bull Racing", carPace: 88, reliability: 93, aero: 88, power: 88, chassis: 88, color: "#1e41ff", country: "AUT" },
+      { id: "f1_mercedes", fictionalName: "Silver Star Factory (Russell/Antonelli)", realName: "Mercedes-AMG PETRONAS F1 Team", carPace: 88, reliability: 96, aero: 87, power: 89, chassis: 88, color: "#00d2be", country: "DEU" },
+      { id: "f1_aston", fictionalName: "British Green Newey Honda (Alonso/Stroll)", realName: "Aston Martin Aramco F1 Team", carPace: 84, reliability: 92, aero: 86, power: 85, chassis: 84, color: "#00665e", country: "GBR" },
+      { id: "f1_williams", fictionalName: "Williams Smooth Revival (Sainz/Albon)", realName: "Williams Racing", carPace: 82, reliability: 92, aero: 81, power: 86, chassis: 81, color: "#00a0dd", country: "GBR" },
+      { id: "f1_cadillac", fictionalName: "General Motors American Dream (Pérez/Bottas)", realName: "Cadillac Formula 1 Team", carPace: 79, reliability: 90, aero: 79, power: 84, chassis: 79, color: "#c4a000", country: "USA" },
+      { id: "f1_audi", fictionalName: "Audi German Ring Factory (Hülk/Bortoleto)", realName: "Audi Revolut F1 Team", carPace: 79, reliability: 89, aero: 79, power: 81, chassis: 79, color: "#e00000", country: "DEU" },
+      { id: "f1_haas", fictionalName: "Haas Stars & Stripes Toyota (Ocon/Bearman)", realName: "MoneyGram Haas F1 Team Toyota", carPace: 79, reliability: 89, aero: 78, power: 84, chassis: 78, color: "#b6babd", country: "USA" },
+      { id: "f1_rb", fictionalName: "Racing Bulls Faenza (Lawson/Lindblad)", realName: "Visa Cash App Racing Bulls F1", carPace: 78, reliability: 89, aero: 78, power: 83, chassis: 78, color: "#1634ca", country: "ITA" },
+      { id: "f1_alpine", fictionalName: "Bleu Alpine Mercedes (Gasly/Colapinto)", realName: "BWT Alpine F1 Team", carPace: 77, reliability: 88, aero: 76, power: 84, chassis: 77, color: "#0090ff", country: "FRA" }
     ],
     roster: [
       { id: "drv_norris", fictionalName: "Lando Porris Il Campione", realName: "Lando Norris", teamId: "f1_mclaren", ovr: 96, number: 1, nationality: "GBR", pace: 97, racecraft: 95, tyreMgmt: 96, consistency: 95, wetSkill: 96 },

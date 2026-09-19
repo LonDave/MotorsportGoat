@@ -337,16 +337,16 @@ export class MarketView {
           const categories = player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
           const targetCat = categories[chosenOffer.category];
           const maxDrivers = targetCat?.maxDriversPerTeam || 2;
-          const existingDrivers = (targetCat?.roster || []).filter(r => {
+          let existingDrivers = (targetCat?.roster || []).filter(r => {
             const effTeam = (careerData.teamDriverOverrides && careerData.teamDriverOverrides[r.id]) || r.teamId;
             return effTeam === chosenOffer.teamId;
           });
+          if (existingDrivers.length === 0 && targetCat?.roster) {
+            existingDrivers = targetCat.roster.filter(r => r.teamId === chosenOffer.teamId);
+          }
 
           const executeContractSigning = (chosenTeammateId = null, replacedDriverId = null) => {
-            if (chosenTeammateId && replacedDriverId) {
-              career.setTeamDrivers(chosenOffer.teamId, chosenOffer.category, chosenTeammateId, replacedDriverId);
-            }
-            const res = career.acceptContract(chosenOffer, duration);
+            const res = career.acceptContract(chosenOffer, duration, false, { chosenTeammateId, replacedDriverId });
             if (res.success) {
               sound.playChequeredFlag();
               ToastNotification.show(
@@ -361,8 +361,8 @@ export class MarketView {
           };
 
           const openSigningFlow = () => {
-            // Se il team ha già piloti pari o superiori alla capacità massima, mostra la scelta compagno
-            if (existingDrivers.length >= maxDrivers) {
+            // Se si cambia team e ci sono piloti nel team di destinazione, mostra sempre la scelta del compagno
+            if (!isSameTeam && existingDrivers.length > 0) {
               TeammateSelectionModal.show({
                 team: { id: chosenOffer.teamId, color: chosenOffer.color },
                 category: targetCat,

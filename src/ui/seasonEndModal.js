@@ -339,16 +339,16 @@ export class SeasonEndModal {
           const categories = player.discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
           const targetCat = categories[chosen.category];
           const maxDrivers = targetCat?.maxDriversPerTeam || 2;
-          const existingDrivers = (targetCat?.roster || []).filter(r => {
+          let existingDrivers = (targetCat?.roster || []).filter(r => {
             const effTeam = (careerData.teamDriverOverrides && careerData.teamDriverOverrides[r.id]) || r.teamId;
             return effTeam === chosen.teamId;
           });
+          if (existingDrivers.length === 0 && targetCat?.roster) {
+            existingDrivers = targetCat.roster.filter(r => r.teamId === chosen.teamId);
+          }
 
           const executeNewSeasonSigning = (chosenTeammateId = null, replacedDriverId = null) => {
-            if (chosenTeammateId && replacedDriverId) {
-              career.setTeamDrivers(chosen.teamId, chosen.category, chosenTeammateId, replacedDriverId);
-            }
-            const res = career.startNewSeason(chosen, dur);
+            const res = career.startNewSeason(chosen, dur, { chosenTeammateId, replacedDriverId });
             if (res.success) {
               sound.playChequeredFlag();
               ToastNotification.show(`🚀 Ufficiale! Benvenuto in ${chosen.teamName}! ${res.paidBuyout > 0 ? `Pagata penale di rescissione di €${res.paidBuyout.toLocaleString()}.` : ''}`, 'success');
@@ -361,7 +361,7 @@ export class SeasonEndModal {
           };
 
           const openSigningModalFlow = () => {
-            if (existingDrivers.length >= maxDrivers) {
+            if (existingDrivers.length > 0) {
               TeammateSelectionModal.show({
                 team: { id: chosen.teamId, color: chosen.color },
                 category: targetCat,

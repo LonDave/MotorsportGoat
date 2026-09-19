@@ -46,6 +46,13 @@ export class StandingsView {
   }
 
   static renderDriversTable(driverStandings, player, careerData, catData, leaderPoints) {
+    const activeDrivers = career.getActiveRoster(catData.id);
+    const activeDriverIds = new Set(activeDrivers.map(d => d.id));
+
+    // Mostra solo il giocatore e i piloti effettivamente attivi nella categoria corrente (esclude svincolati)
+    const filteredStandings = driverStandings.filter(entry => entry.isPlayer || activeDriverIds.has(entry.driverId));
+    const currentLeaderPts = filteredStandings[0]?.points || 0;
+
     return `
       <div class="standings-card-full">
         <div class="table-responsive">
@@ -63,18 +70,19 @@ export class StandingsView {
               </tr>
             </thead>
             <tbody>
-              ${driverStandings.map((entry, index) => {
+              ${filteredStandings.map((entry, index) => {
                 const isPlayer = entry.isPlayer;
                 const driverName = isPlayer 
                   ? `${player.firstName} ${player.lastName} "${player.nickname}"`
                   : db.getDriverName(entry.driverId, player.discipline);
                 
+                const activeDriverObj = activeDrivers.find(r => r.id === entry.driverId);
                 const driverTeamId = isPlayer 
                   ? careerData.currentTeamId 
-                  : (catData.roster.find(r => r.id === entry.driverId)?.teamId || "f1_generic");
+                  : (careerData.teamDriverOverrides?.[entry.driverId] || activeDriverObj?.teamId || catData.roster?.find(r => r.id === entry.driverId)?.teamId || "f1_generic");
                 
                 const teamInfo = db.getTeam(driverTeamId, player.discipline);
-                const gap = index === 0 ? 'LEADER' : `-${leaderPoints - (entry.points || 0)} pts`;
+                const gap = index === 0 ? 'LEADER' : `-${currentLeaderPts - (entry.points || 0)} pts`;
                 const pos = index + 1;
 
                 return `
@@ -163,7 +171,7 @@ export class StandingsView {
                       </div>
                     </td>
                     <td class="lineup-cell">
-                      <small>${teamDrivers.slice(0, 2).join(' • ')}</small>
+                      <small>${teamDrivers.join(' • ')}</small>
                     </td>
                     <td class="stat-cell text-center">
                       <span class="car-pace-tag">${player.discipline === 'auto' ? teamInfo.carPace : teamInfo.bikePace}/99</span>

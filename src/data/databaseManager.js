@@ -10,6 +10,8 @@ class DatabaseManager {
     this.customOverrides = {};
     // Attributi dinamici AI aggiornati dalla carriera (crescita/declino stagionale)
     this.aiDriverAttributes = {};
+    // Sviluppo dinamico vetture/moto aggiornato da R&D e progressione AI
+    this.teamDevelopment = {};
 
     // Prova a caricare eventuali override personalizzati
     try {
@@ -98,6 +100,11 @@ class DatabaseManager {
     return teamId || 'Scuderia';
   }
 
+  // Imposta lo sviluppo dinamico delle vetture/moto (aggiornato dalla carriera e R&D)
+  setTeamDevelopment(teamDev) {
+    this.teamDevelopment = teamDev || {};
+  }
+
   // Risolve le informazioni complete di un team
   getTeam(teamId, discipline = 'auto') {
     if (!teamId) {
@@ -105,8 +112,15 @@ class DatabaseManager {
     }
     const override = this.customOverrides[discipline]?.teams?.[teamId];
     if (override && this.isRealNames) {
+      const dev = this.teamDevelopment[teamId];
+      const carPace = dev?.carPace !== undefined ? dev.carPace : (override.carPace || 75);
+      const bikePace = dev?.bikePace !== undefined ? dev.bikePace : (override.bikePace || 75);
+      const reliability = dev?.reliability !== undefined ? dev.reliability : (override.reliability || 75);
       return {
         ...override,
+        carPace,
+        bikePace,
+        reliability,
         displayName: override.name || override.displayName || teamId || 'Scuderia',
         color: override.color || '#e10600'
       };
@@ -118,14 +132,21 @@ class DatabaseManager {
       const team = cat.teams.find(t => t.id === teamId);
       if (team) {
         const name = this.getTeamName(teamId, discipline, catKey);
+        const dev = this.teamDevelopment[teamId];
+        const carPace = dev?.carPace !== undefined ? dev.carPace : (team.carPace || team.bikePace || 75);
+        const bikePace = dev?.bikePace !== undefined ? dev.bikePace : (team.bikePace || team.carPace || 75);
+        const reliability = dev?.reliability !== undefined ? dev.reliability : (team.reliability || 75);
         return {
           ...team,
+          carPace,
+          bikePace,
+          reliability,
           displayName: name || team.realName || team.fictionalName || team.name || teamId || 'Scuderia',
           color: team.color || '#e10600'
         };
       }
     }
-    return { id: teamId, displayName: teamId || 'Scuderia', color: "#888888", carPace: 80, bikePace: 80, reliability: 80 };
+    return { id: teamId, displayName: teamId || 'Scuderia', color: "#888888", carPace: 75, bikePace: 75, reliability: 75 };
   }
 
   // Risolve il nome di un pilota avversario
