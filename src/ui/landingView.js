@@ -2,13 +2,14 @@ import { career } from '../engine/careerEngine.js';
 import { db } from '../data/databaseManager.js';
 import { sound } from '../engine/audioManager.js';
 import { ToastNotification } from './toastNotification.js';
+import { SaveManagerModal } from './saveManagerModal.js';
 
 export class LandingView {
   static render(container, onNavigate, onOpenModManager) {
-    const hasSave = career.hasActiveCareer();
-    const player = hasSave ? career.player : null;
-    const careerData = hasSave ? career.career : null;
-    const team = (hasSave && player && careerData) 
+    const hasSave = career.hasActiveCareer() || career.hasAnySavedCareer();
+    const player = career.hasActiveCareer() ? career.player : null;
+    const careerData = career.hasActiveCareer() ? career.career : null;
+    const team = (player && careerData) 
       ? db.getTeam(careerData.currentTeamId, player.discipline) 
       : null;
 
@@ -156,14 +157,21 @@ export class LandingView {
                   <span class="cta-icon">▶</span>
                   <div class="cta-text-box">
                     <strong>CONTINUA CARRIERA</strong>
-                    <small>${player.firstName} ${player.lastName} (${player.ovr} OVR) • ${team ? team.displayName : 'Scuderia'}</small>
+                    <small>${player ? `${player.firstName} ${player.lastName} (${player.ovr} OVR) • ${team ? team.displayName : 'Scuderia'}` : 'Carica una carriera salvata'}</small>
                   </div>
                 </button>
                 <button id="landing-btn-new-career" class="landing-cta-btn secondary">
                   <span class="cta-icon">⚡</span>
                   <div class="cta-text-box">
                     <strong>NUOVA CARRIERA</strong>
-                    <small>Crea un nuovo pilota da zero</small>
+                    <small>Crea un pilota in un nuovo slot</small>
+                  </div>
+                </button>
+                <button id="landing-btn-saves" class="landing-cta-btn tertiary" style="background: rgba(14, 165, 233, 0.12); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8;">
+                  <span class="cta-icon">💾</span>
+                  <div class="cta-text-box">
+                    <strong>GESTIONE SALVATAGGI</strong>
+                    <small>3 Slot & Backup (.json)</small>
                   </div>
                 </button>
               ` : `
@@ -172,6 +180,13 @@ export class LandingView {
                   <div class="cta-text-box">
                     <strong>INIZIA LA TUA CARRIERA</strong>
                     <small>Crea il tuo pilota, casco e scegli Auto o Moto</small>
+                  </div>
+                </button>
+                <button id="landing-btn-saves" class="landing-cta-btn secondary" style="background: rgba(14, 165, 233, 0.12); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8;">
+                  <span class="cta-icon">💾</span>
+                  <div class="cta-text-box">
+                    <strong>IMPORTA / GESTISCI SALVATAGGI</strong>
+                    <small>Carica backup file (.json) o slot</small>
                   </div>
                 </button>
               `}
@@ -397,17 +412,66 @@ export class LandingView {
     const newCareerBtn = container.querySelector('#landing-btn-new-career');
     if (newCareerBtn) {
       newCareerBtn.onclick = () => {
-        ToastNotification.confirm({
-          title: "Iniziare una Nuova Carriera?",
-          message: "La carriera corrente verrà sovrascritta. Vuoi procedere con la creazione di un nuovo pilota?",
-          confirmText: "Crea Nuovo Pilota",
-          cancelText: "Annulla",
-          danger: true,
-          onConfirm: () => {
-            career.resetCareer();
-            ToastNotification.show("Carriera azzerata. Benvenuto nella schermata di creazione!", "info");
-            onNavigate('creation');
+        sound.playClick();
+        const freeSlot = career.getFreeSlot();
+        if (freeSlot) {
+          ToastNotification.confirm({
+            title: `Nuova Carriera nello Slot ${freeSlot}`,
+            message: `È disponibile lo Slot ${freeSlot} libero! Vuoi iniziare qui la tua nuova avventura? La tua carriera attuale rimarrà salvata e al sicuro.`,
+            confirmText: `Inizia nello Slot ${freeSlot}`,
+            cancelText: "Scegli un Altro Slot",
+            onConfirm: () => {
+              career.setActiveSlot(freeSlot);
+              career.player = null;
+              career.career = null;
+              ToastNotification.show(`Slot ${freeSlot} selezionato. Benvenuto nella creazione pilota!`, "info");
+              onNavigate('creation');
+            },
+            onCancel: () => {
+              SaveManagerModal.open((hasLoadedNew) => {
+                if (hasLoadedNew) onNavigate('dashboard');
+              }, (newSlot) => {
+                career.setActiveSlot(newSlot);
+                career.player = null;
+                career.career = null;
+                onNavigate('creation');
+              });
+            }
+          });
+        } else {
+          ToastNotification.confirm({
+            title: "Tutti i 3 Slot Sono Pieni",
+            message: "Tutti i 3 slot contengono già una carriera salvata. Apri il Gestore Salvataggi per scegliere quale slot sostituire o esportare prima di iniziare.",
+            confirmText: "Apri Gestore Salvataggi",
+            cancelText: "Annulla",
+            onConfirm: () => {
+              SaveManagerModal.open((hasLoadedNew) => {
+                if (hasLoadedNew) onNavigate('dashboard');
+              }, (newSlot) => {
+                career.setActiveSlot(newSlot);
+                career.player = null;
+                career.career = null;
+                onNavigate('creation');
+              });
+            }
+          });
+        }
+      };
+    }
+
+    const savesBtn = container.querySelector('#landing-btn-saves');
+    if (savesBtn) {
+      savesBtn.onclick = () => {
+        sound.playClick();
+        SaveManagerModal.open((hasLoadedNew) => {
+          if (hasLoadedNew) {
+            onNavigate('dashboard');
           }
+        }, (newSlot) => {
+          career.setActiveSlot(newSlot);
+          career.player = null;
+          career.career = null;
+          onNavigate('creation');
         });
       };
     }

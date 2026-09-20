@@ -1004,12 +1004,57 @@ export class CareerEngine {
     this.loadFromStorage();
   }
 
+  getActiveSlot() {
+    if (typeof localStorage === 'undefined') return 1;
+    const raw = localStorage.getItem('il_nuovo_goat_active_slot');
+    if (!raw) return 1;
+    const num = parseInt(raw.replace('slot_', ''), 10);
+    return (num >= 1 && num <= 3) ? num : 1;
+  }
+
+  setActiveSlot(slotNum) {
+    if (typeof localStorage === 'undefined') return;
+    const validNum = (slotNum >= 1 && slotNum <= 3) ? slotNum : 1;
+    localStorage.setItem('il_nuovo_goat_active_slot', `slot_${validNum}`);
+  }
+
+  getStorageKeyForSlot(slotNum) {
+    const num = (slotNum >= 1 && slotNum <= 3) ? slotNum : 1;
+    return num === 1 ? 'il_nuovo_goat_motorsport_save' : `il_nuovo_goat_save_slot_${num}`;
+  }
+
   hasActiveCareer() {
     return !!this.player && !!this.career && !this.career.isRetired;
   }
 
-  hasSavedCareer() {
+  hasSavedCareer(slotNum = null) {
+    if (slotNum) {
+      if (typeof localStorage === 'undefined') return false;
+      const key = this.getStorageKeyForSlot(slotNum);
+      const raw = localStorage.getItem(key);
+      if (raw) return true;
+      if (slotNum === 1) return !!localStorage.getItem('il_nuovo_goat_motorsport_save');
+      return false;
+    }
     return !!this.player && !!this.career;
+  }
+
+  hasAnySavedCareer() {
+    if (this.hasSavedCareer()) return true;
+    if (typeof localStorage === 'undefined') return false;
+    return !!localStorage.getItem('il_nuovo_goat_motorsport_save') ||
+           !!localStorage.getItem('il_nuovo_goat_save_slot_2') ||
+           !!localStorage.getItem('il_nuovo_goat_save_slot_3');
+  }
+
+  getFreeSlot() {
+    if (typeof localStorage === 'undefined') return 1;
+    for (let i = 1; i <= 3; i++) {
+      const key = this.getStorageKeyForSlot(i);
+      const data = localStorage.getItem(key);
+      if (!data) return i;
+    }
+    return null;
   }
 
   // Avvio nuova carriera con personalizzazione completa del giocatore e scelta scuderia dai Rookie Test
@@ -4506,24 +4551,37 @@ export class CareerEngine {
   }
 
   // Persistenza salvataggio su localStorage
-  saveToStorage() {
+  saveToStorage(targetSlotNum = null) {
     try {
       if (typeof localStorage === 'undefined') return;
+      if (!this.player || !this.career) return;
       this.syncAndReconcileStats();
+      const slotNum = targetSlotNum || this.getActiveSlot();
+      const key = this.getStorageKeyForSlot(slotNum);
       const data = {
         player: this.player,
-        career: this.career
+        career: this.career,
+        savedAt: new Date().toISOString()
       };
-      localStorage.setItem('il_nuovo_goat_motorsport_save', JSON.stringify(data));
+      localStorage.setItem(key, JSON.stringify(data));
+      if (slotNum === 1) {
+        localStorage.setItem('il_nuovo_goat_motorsport_save', JSON.stringify(data));
+      }
     } catch (e) {
       console.error("Errore nel salvataggio della carriera:", e);
     }
   }
 
-  loadFromStorage() {
+  loadFromStorage(targetSlotNum = null) {
     try {
       if (typeof localStorage === 'undefined') return;
-      const raw = localStorage.getItem('il_nuovo_goat_motorsport_save');
+      const slotNum = targetSlotNum || this.getActiveSlot();
+      this.setActiveSlot(slotNum);
+      const key = this.getStorageKeyForSlot(slotNum);
+      let raw = localStorage.getItem(key);
+      if (!raw && slotNum === 1) {
+        raw = localStorage.getItem('il_nuovo_goat_motorsport_save');
+      }
       if (raw) {
         const data = JSON.parse(raw);
         this.player = data.player;
@@ -4793,12 +4851,19 @@ export class CareerEngine {
     return result;
   }
 
-  resetCareer() {
+  resetCareer(targetSlotNum = null, clearInMemory = true) {
+    const slotNum = targetSlotNum || this.getActiveSlot();
     if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('il_nuovo_goat_motorsport_save');
+      const key = this.getStorageKeyForSlot(slotNum);
+      localStorage.removeItem(key);
+      if (slotNum === 1) {
+        localStorage.removeItem('il_nuovo_goat_motorsport_save');
+      }
     }
-    this.player = null;
-    this.career = null;
+    if (clearInMemory) {
+      this.player = null;
+      this.career = null;
+    }
   }
 }
 

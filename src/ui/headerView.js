@@ -193,6 +193,11 @@ export class HeaderView {
           if (hasLoadedNew) {
             onNavigate('dashboard');
           }
+        }, (newSlot) => {
+          career.setActiveSlot(newSlot);
+          career.player = null;
+          career.career = null;
+          onNavigate('creation');
         });
       };
     }
@@ -271,6 +276,11 @@ export class HeaderView {
           if (hasLoadedNew) {
             window.dispatchEvent(new CustomEvent('career-data-updated'));
           }
+        }, (newSlot) => {
+          career.setActiveSlot(newSlot);
+          career.player = null;
+          career.career = null;
+          onNavigate('creation');
         });
       };
     }
