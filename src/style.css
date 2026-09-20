@@ -11688,4 +11688,56 @@ body {
   }
 }
 
+/* ==========================================================================
+   VIRTUAL SAFETY CAR & STATUS BAR ENHANCEMENTS
+   ========================================================================== */
+.f1-broadcast-top-bar.vsc-active {
+  background: linear-gradient(90deg, rgba(234, 179, 8, 0.22), rgba(15, 23, 42, 0.85));
+  border-color: rgba(234, 179, 8, 0.5);
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.25);
+}
+
+.track-status-pill.vsc {
+  background: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.5);
+  animation: pulse-border 1.5s infinite alternate;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 4px rgba(234, 179, 8, 0.2); }
+  100% { box-shadow: 0 0 12px rgba(234, 179, 8, 0.6); }
+}
+
+/* ==========================================================================
+   DASHBOARD REFINEMENTS (Rival, Board Expectation, Progression Graph)
+   ========================================================================== */
+.driver-progression-card {
+  overflow: hidden;
+}
+
+.driver-progression-card .chart-container-box {
+  padding: 8px 4px;
+}
+
+.chart-point-node:hover circle {
+  r: 6;
+  fill: #38bdf8;
+  stroke: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.rival-card .h2h-vs-badge {
+  font-weight: 900;
+  font-family: var(--font-digital);
+  letter-spacing: 1px;
+}
+
+.save-manager-btn:hover {
+  background: rgba(14, 165, 233, 0.3) !important;
+  border-color: rgba(14, 165, 233, 0.8) !important;
+  box-shadow: 0 0 16px rgba(14, 165, 233, 0.35);
+}
+
+
 

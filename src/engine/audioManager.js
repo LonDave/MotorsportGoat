@@ -2,12 +2,12 @@
 class AudioManager {
   constructor() {
     this.ctx = null;
-    this.muted = localStorage.getItem('il_nuovo_goat_muted') === 'true';
+    this.muted = typeof localStorage !== 'undefined' ? localStorage.getItem('il_nuovo_goat_muted') === 'true' : false;
   }
 
   init() {
     if (!this.ctx) {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const AudioCtx = typeof window !== 'undefined' ? (window.AudioContext || window.webkitAudioContext) : null;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }
@@ -19,7 +19,9 @@ class AudioManager {
 
   toggleMute() {
     this.muted = !this.muted;
-    localStorage.setItem('il_nuovo_goat_muted', this.muted ? 'true' : 'false');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('il_nuovo_goat_muted', this.muted ? 'true' : 'false');
+    }
     return this.muted;
   }
 

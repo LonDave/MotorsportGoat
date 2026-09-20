@@ -225,8 +225,8 @@ export class MarketView {
                     const tColor = t.color || '#e10600';
                     const devInfo = careerData.teamDevelopment?.[t.id];
                     const carRating = isPlayerTeam 
-                      ? Math.round(career.getPlayerTeam()?.performance || 75) 
-                      : Math.round(devInfo?.currentPace || t.carPerformance || t.bikePerformance || 75);
+                      ? Math.round(career.getPlayerTeam()?.carPace || career.getPlayerTeam()?.performance || 75) 
+                      : Math.round(devInfo?.carPace || devInfo?.bikePace || t.carPace || t.bikePace || 75);
 
                     // Costruisce la lista piloti attivi rispettando le modifiche di mercato e il giocatore
                     let driversList = [];
@@ -257,6 +257,7 @@ export class MarketView {
                     } else {
                       const roster = (catData.roster || []).filter(r => {
                         const effTeam = (careerData.teamDriverOverrides && careerData.teamDriverOverrides[r.id]) || r.teamId;
+                        if (effTeam === 'retired' || (careerData.retiredDriverIds && careerData.retiredDriverIds.includes(r.id))) return false;
                         return effTeam === t.id;
                       });
                       roster.forEach((r, rIdx) => {

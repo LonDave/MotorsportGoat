@@ -4,6 +4,7 @@ import { sound } from '../engine/audioManager.js';
 import { HelmetRenderer } from './helmetEditorView.js';
 import { ToastNotification } from './toastNotification.js';
 import { DriverSkillsModal } from './driverSkillsModal.js';
+import { SaveManagerModal } from './saveManagerModal.js';
 
 export class HeaderView {
   static render(container, currentRoute, onNavigate, onOpenModManager) {
@@ -21,6 +22,7 @@ export class HeaderView {
           </div>
 
           <div class="nav-controls">
+            <button id="btn-header-save-manager" class="nav-icon-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Audio On/Off">
               ${sound.muted ? '🔇' : '🔊'}
@@ -104,8 +106,9 @@ export class HeaderView {
             </div>
           </div>
 
-          <!-- Blocco 4: Controlli Globali (Settings, Audio, Reset) -->
+          <!-- Blocco 4: Controlli Globali (Settings, Audio, Reset, Save Manager) -->
           <div class="nav-controls">
+            <button id="btn-header-save-manager" class="nav-icon-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni di Gioco & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Disattiva/Attiva Suoni">
               ${sound.muted ? '🔇' : '🔊'}
@@ -182,6 +185,16 @@ export class HeaderView {
       };
     }
 
+    const saveBtn = container.querySelector('#btn-header-save-manager');
+    if (saveBtn) {
+      saveBtn.onclick = () => {
+        sound.playClick();
+        SaveManagerModal.open(() => {
+          window.location.reload();
+        });
+      };
+    }
+
     const modBtn = container.querySelector('#btn-mod-manager');
     if (modBtn) {
       modBtn.onclick = () => {
@@ -247,6 +260,16 @@ export class HeaderView {
         onNavigate(route);
       };
     });
+
+    const saveBtn = container.querySelector('#btn-header-save-manager');
+    if (saveBtn) {
+      saveBtn.onclick = () => {
+        sound.playClick();
+        SaveManagerModal.open(() => {
+          window.location.reload();
+        });
+      };
+    }
 
     const modBtn = container.querySelector('#btn-mod-manager');
     if (modBtn) {

@@ -3,13 +3,9 @@ import { db } from '../data/databaseManager.js';
 export class RaceEngine {
   // Helper per generare il codice a 3 lettere F1/MotoGP (es. VER, HAM, NOR, BOT, PER, VEL)
   static getDriverCode(driverName, isPlayer = false) {
-    if (isPlayer) {
-      const parts = driverName.split(' ');
-      const last = parts[parts.length - 1] || "PIL";
-      return last.substring(0, 3).toUpperCase();
-    }
-    const parts = driverName.split(' ');
-    const last = parts[parts.length - 1] || parts[0];
+    if (!driverName || typeof driverName !== 'string') return isPlayer ? "YOU" : "PIL";
+    const parts = driverName.trim().split(/\s+/);
+    const last = parts[parts.length - 1] || parts[0] || (isPlayer ? "YOU" : "PIL");
     return last.substring(0, 3).toUpperCase();
   }
 
@@ -289,14 +285,17 @@ export class RaceEngine {
     const q1DurationSec = isMultiStage ? 18 * 60 : 15 * 60;
 
     const drivers = [];
+    const pName = playerDriver.name || `${playerDriver.firstName || 'Pilota'} ${playerDriver.lastName || ''}`.trim();
     drivers.push({
       driverId: "player",
       isPlayer: true,
-      name: `${playerDriver.firstName} ${playerDriver.lastName}`,
-      code: this.getDriverCode(playerDriver.lastName || playerDriver.firstName, true),
+      name: pName,
+      code: this.getDriverCode(playerDriver.lastName || pName, true),
       teamId: playerCar.id,
       teamName: db.getTeamName(playerCar.id, discipline),
       color: playerCar.color || "#e10600",
+      carPace: playerCar.carPace || playerCar.bikePace || 75,
+      reliability: playerCar.reliability || 88,
       lapTimeSec: null,
       formattedTime: "--:--.---",
       gap: "-",
@@ -372,7 +371,7 @@ export class RaceEngine {
         const carWeight = qualyState.isMultiStage ? 0.65 : 0.45;
         const driverWeight = 1.0 - carWeight;
         const rating = ((ai.pace || ai.ovr || 78) * driverWeight + (aiTeam.carPace || aiTeam.bikePace || 78) * carWeight);
-        const variance = (Math.random() - 0.5) * 0.45;
+        const variance = (Math.random() - 0.5) * 0.28;
         let weatherPenalty = 0;
         if (qualyState.isWet && d.compound !== "WET" && d.compound !== "INTER") {
           weatherPenalty = 9.0;
@@ -401,15 +400,18 @@ export class RaceEngine {
 
         const carWeight = qualyState.isMultiStage ? 0.65 : 0.45;
         const driverWeight = 1.0 - carWeight;
-        const rating = ((playerDriver.attributes.pace || 75) * driverWeight + (playerCar.carPace || playerCar.bikePace || 75) * carWeight);
-        const variance = (Math.random() - 0.5) * 0.45;
+        const pPace = (playerDriver?.attributes?.pace) || playerDriver?.pace || 75;
+        const pCar = (playerCar?.carPace || playerCar?.bikePace || p.carPace || 75);
+        const rating = (pPace * driverWeight + pCar * carWeight);
+        const variance = (Math.random() - 0.5) * 0.14;
         let weatherPenalty = 0;
         if (qualyState.isWet && p.compound !== "WET" && p.compound !== "INTER") {
           weatherPenalty = 9.0;
           qualyState.log.unshift("⚠️ ATTENZIONE: Gomme slick su pista bagnata! Tempo sul giro compromesso dall'aquaplaning!");
         }
 
-        const pLapSec = baseCircuitSec + (95 - rating) * 0.08 - qualyState.setupBonusSec + variance + weatherPenalty;
+        const setupBonus = qualyState.setupBonusSec || 0;
+        const pLapSec = baseCircuitSec + (95 - rating) * 0.08 - setupBonus + variance + weatherPenalty;
 
         if (p.lapTimeSec === null || pLapSec < p.lapTimeSec) {
           p.lapTimeSec = pLapSec;
@@ -446,9 +448,10 @@ export class RaceEngine {
     // Controllo fine tempo della fase
     if (qualyState.phaseTimeRemainingSec <= 0) {
       if (qualyState.isMultiStage && qualyState.phaseIndex === 1) {
-        // Fine Q1: elimina gli ultimi (es. P17-P22 in F1)
+        // Fine Q1: elimina equamente in base alla dimensione del roster
         qualyState.log.unshift("🏁 BANDIERA A SCACCHI Q1: Verdetto della prima sessione!");
-        const cutIndex = Math.min(16, qualyState.grid.length - 4);
+        const toEliminate = Math.max(3, Math.min(5, Math.round(qualyState.grid.length * 0.22)));
+        const cutIndex = Math.max(10, qualyState.grid.length - toEliminate);
         qualyState.grid.slice(cutIndex).forEach(d => {
           d.eliminated = true;
           d.stageReached = "Q1";
@@ -457,13 +460,14 @@ export class RaceEngine {
         qualyState.currentPhase = "Q2";
         qualyState.phaseTimeTotalSec = 15 * 60;
         qualyState.phaseTimeRemainingSec = 15 * 60;
-        // Reset tempi della fase corrente per i piloti passati
+        // Reset tempi della fase corrente e azzeramento lapsRun per permettere la spinta in Q2
         qualyState.grid.filter(d => !d.eliminated).forEach(d => {
           d.lapTimeSec = null;
+          d.lapsRun = 0;
           d.status = "IN PIT";
         });
       } else if (qualyState.isMultiStage && qualyState.phaseIndex === 2) {
-        // Fine Q2: elimina da P11 a P16
+        // Fine Q2: qualifica i primi 10 per la Pole Shootout Q3
         qualyState.log.unshift("🏁 BANDIERA A SCACCHI Q2: Determinata la Top 10 per la Pole!");
         const cutIndex = 10;
         qualyState.grid.slice(cutIndex).forEach(d => {
@@ -474,8 +478,10 @@ export class RaceEngine {
         qualyState.currentPhase = "Q3";
         qualyState.phaseTimeTotalSec = 12 * 60;
         qualyState.phaseTimeRemainingSec = 12 * 60;
+        // Reset tempi e lapsRun per la fase finale Q3
         qualyState.grid.filter(d => !d.eliminated).forEach(d => {
           d.lapTimeSec = null;
+          d.lapsRun = 0;
           d.status = "IN PIT";
         });
       } else {
@@ -494,24 +500,24 @@ export class RaceEngine {
   static fastForwardQualifyingToEnd(qualyState, playerDriver, playerCar, circuit, discipline = 'auto') {
     while (!qualyState.isFinished) {
       const p = qualyState.grid.find(d => d.isPlayer);
-      // In simulazione rapida, il giocatore effettua 2 tentativi realistici per sessione (es. inizio e finale)
-      const shouldPush = p && !p.eliminated && (p.lapsRun < 4 || qualyState.phaseTimeRemainingSec <= 180);
-      this.stepQualifyingTime(qualyState, 300, shouldPush, playerDriver, playerCar, circuit, discipline);
+      // In simulazione rapida, il giocatore effettua tentativi mirati all'inizio e verso il finale
+      const shouldPush = p && !p.eliminated && (p.lapsRun < 4 || qualyState.phaseTimeRemainingSec <= 240);
+      this.stepQualifyingTime(qualyState, 180, shouldPush, playerDriver, playerCar, circuit, discipline);
     }
     return qualyState;
   }
 
   // Fallback per griglia istantanea
-  static simulateQualifying(playerDriver, playerCar, roster, circuit, setupBonusSec = 0, discipline = 'auto') {
-    const state = this.initQualifyingState(circuit, { id: 'auto_f1' }, roster, playerDriver, playerCar, setupBonusSec, discipline);
+  static simulateQualifying(playerDriver, playerCar, roster, circuit, setupBonusSec = 0, discipline = 'auto', category = null) {
+    const cat = category || { id: discipline === 'auto' ? 'auto_f1' : 'moto_gp' };
+    const state = this.initQualifyingState(circuit, cat, roster, playerDriver, playerCar, setupBonusSec, discipline);
     this.fastForwardQualifyingToEnd(state, playerDriver, playerCar, circuit, discipline);
     return state.grid;
   }
 
   // =========================================================================
   // GARA / SPRINT: GRIGLIA A ZERO, GIRI REALI, METEO DINAMICO & PIT STOP
-  // =========================================================================
-  static initRaceState(grid, circuit, category, isSprint = false, discipline = 'auto', setupSettings = null, playerDriver = null) {
+  static initRaceState(grid, circuit, category, isSprint = false, discipline = 'auto', setupSettings = null, playerDriver = null, playerCar = null) {
     const baseCircuitLaps = (discipline === 'auto')
       ? (circuit.lapsF1 || circuit.laps || circuit.lapsMoto || 50)
       : (circuit.lapsMoto || circuit.laps || circuit.lapsF1 || 24);
@@ -574,10 +580,10 @@ export class RaceEngine {
         paceSkill = playerDriver?.attributes?.pace || 75;
         wetSkill = playerDriver?.attributes?.wetSkill || 75;
         racecraft = playerDriver?.attributes?.racecraft || 75;
-        reliability = 90;
+        reliability = playerCar?.reliability || g.reliability || 90;
         setupWearMult = playerSetupInfo.wearMultiplier;
         const pTeam = db.getTeam(g.teamId, discipline) || {};
-        carPace = pTeam.carPace || pTeam.bikePace || 75;
+        carPace = playerCar?.carPace || playerCar?.bikePace || g.carPace || pTeam.carPace || pTeam.bikePace || 75;
       } else {
         const ai = db.getDriver(g.driverId, discipline) || {};
         tyreSkill = ai.tyreMgmt || ai.ovr || 75;
@@ -657,6 +663,7 @@ export class RaceEngine {
     });
 
     return {
+      circuit,
       totalLaps,
       currentLap: 0,
       gridPhase: true,
@@ -670,11 +677,14 @@ export class RaceEngine {
       weather: {
         condition: weatherCondition,
         rainChance: circuit.rainChance || 0.15,
-        lapsUntilChange: Math.floor(Math.random() * 20) + 12
+        lapsUntilChange: Math.floor(Math.random() * 20) + 12,
+        forecast: initialRain ? "Diluvio in corso" : "Condizioni stabili, asfalto asciutto"
       },
       safetyCar: false,
       safetyCarLapsLeft: 0,
-      weatherText: initialRain ? "🌧️ Pioggia Battente (Bagnato)" : "☀️ Pista Asciutta",
+      virtualSafetyCar: false,
+      vscLapsLeft: 0,
+      weatherText: initialRain ? "🌧️ Diluvio (Bagnato Estremo)" : "☀️ Pista Asciutta",
       airTemp: initialRain ? "20°C" : "28°C",
       trackTemp: initialRain ? "23°C" : "42°C",
       drivers,
@@ -704,43 +714,91 @@ export class RaceEngine {
     const lap = raceState.currentLap;
     const events = [];
 
-    // 1. Meteo Dinamico
+    // 1. Meteo Dinamico a 3 Fasi con Previsioni Radar Live
     raceState.weather.lapsUntilChange--;
-    if (raceState.weather.lapsUntilChange <= 0 && Math.random() < 0.45) {
+    if (raceState.weather.lapsUntilChange <= 0 && Math.random() < 0.50) {
       if (raceState.weather.condition === "DRY") {
-        raceState.weather.condition = "HEAVY_RAIN";
-        raceState.weatherText = "🌧️ ALLERTA METEO: Pioggia Torrenziale in Pista!";
-        events.push("🌧️ DILUVIO IN PISTA! L'asfalto è allagato: le gomme slick perdono aderenza!");
+        raceState.weather.condition = "LIGHT_RAIN";
+        raceState.weatherText = "🌦️ Pioggia Leggera / Asfalto Umido";
+        events.push("🌦️ PIOGGIA INIZIA A CADERE: L'asfalto si inumidisce, finestra ideale per gomme INTERMEDIE!");
         if (raceState.isMotoGP) {
-          events.push("🏳️ BANDIERA BIANCA: Flag-to-Flag attivo! Rientro ai box per cambio moto autorizzato!");
+          events.push("🏳️ BANDIERA BIANCA: Flag-to-Flag autorizzato! Cambio moto consentito ai box.");
+        }
+      } else if (raceState.weather.condition === "LIGHT_RAIN") {
+        if (Math.random() < 0.60) {
+          raceState.weather.condition = "HEAVY_RAIN";
+          raceState.weatherText = "🌧️ Diluvio / Asfalto Allagato";
+          events.push("🌧️ TEMPORALE IN INTENSIFICAZIONE: Asfalto allagato, gomme FULL WET obbligatorie per evitare aquaplaning!");
+        } else {
+          raceState.weather.condition = "DRY";
+          raceState.weatherText = "☀️ Pista in Rapida Asciugatura";
+          events.push("☀️ LA PIOGGIA È CESSATA: Si forma la traiettoria ideale asciutta, gomme da bagnato a rischio surriscaldamento!");
         }
       } else {
-        raceState.weather.condition = "DRY";
-        raceState.weatherText = "☀️ METEO: La pioggia è cessata, pista in rapida asciugatura!";
-        events.push("☀️ LA PIOGGIA È CESSATA: Si forma la traiettoria asciutta, gomme da bagnato a rischio surriscaldamento!");
+        raceState.weather.condition = "LIGHT_RAIN";
+        raceState.weatherText = "🌦️ Pioggia in Diminuzione (Umido)";
+        events.push("🌦️ PRECIPITAZIONI IN CALO: La pista inizia a drenare l'acqua, passaggio a condizioni umide.");
       }
-      raceState.weather.lapsUntilChange = Math.floor(Math.random() * 25) + 15;
+      raceState.weather.lapsUntilChange = Math.floor(Math.random() * 22) + 12;
     }
 
-    // 2. Safety Car
+    // Aggiornamento Radar Live nel cockpit
+    if (raceState.weather.condition === "DRY") {
+      if (raceState.weather.lapsUntilChange <= 4 && raceState.weather.rainChance > 0.20) {
+        raceState.weather.forecast = `🌦️ Pioggia prevista tra ${raceState.weather.lapsUntilChange} giri (${Math.round(raceState.weather.rainChance * 100)}% probabilità)`;
+      } else {
+        raceState.weather.forecast = "☀️ Pista asciutta, precipitazioni non imminenti";
+      }
+    } else if (raceState.weather.condition === "LIGHT_RAIN") {
+      raceState.weather.forecast = raceState.weather.lapsUntilChange <= 3 ? "🌧️ Peggioramento: rischio diluvio tra 2-3 giri" : "🌦️ Asfalto umido costante";
+    } else {
+      raceState.weather.forecast = raceState.weather.lapsUntilChange <= 3 ? "🌦️ Schiarita imminente in arrivo" : "🌧️ Pioggia torrenziale costante";
+    }
+
+    // 2. Neutralizzazioni: Virtual Safety Car (VSC) vs Full Safety Car
     if (raceState.safetyCar) {
       raceState.safetyCarLapsLeft--;
       if (raceState.safetyCarLapsLeft <= 0) {
         raceState.safetyCar = false;
-        events.push("🟢 SAFETY CAR RIENTRA: Bandiera verde, riparte la bagarre!");
+        events.push("🟢 SAFETY CAR RIENTRA AI BOX: Bandiera verde, riparte la bagarre!");
+        // Restart Roll su riflessi e racecraft
+        raceState.drivers.forEach(d => {
+          if (d.status === "RUNNING") {
+            const restartBonus = ((d.racecraftSkill || 75) - 75) * 0.015 + (Math.random() - 0.5) * 0.35;
+            d.gapToLeaderSec = Math.max(0, d.gapToLeaderSec - restartBonus);
+          }
+        });
+      }
+    } else if (raceState.virtualSafetyCar) {
+      raceState.vscLapsLeft--;
+      if (raceState.vscLapsLeft <= 0) {
+        raceState.virtualSafetyCar = false;
+        events.push("🟢 VIRTUAL SAFETY CAR TERMINATA: Bandiera verde, velocità libera!");
       }
     } else {
-      if (Math.random() < 0.03 && lap > 2 && lap < raceState.totalLaps - 2) {
-        raceState.safetyCar = true;
-        raceState.safetyCarLapsLeft = Math.floor(Math.random() * 2) + 2;
-        events.push(discipline === 'auto' 
-          ? "🟡 SAFETY CAR IN PISTA: Detriti sul tracciato! Gruppo ricompattato."
-          : "🟡 BANDIERA GIALLA: Caduta a centro gruppo! Distacchi congelati.");
+      // Evento casuale di neutralizzazione
+      if (lap > 2 && lap < raceState.totalLaps - 1) {
+        const incidentRoll = Math.random();
+        if (incidentRoll < 0.045) {
+          if (incidentRoll < 0.028) {
+            raceState.virtualSafetyCar = true;
+            raceState.vscLapsLeft = 1;
+            events.push("🟡 VIRTUAL SAFETY CAR: Detriti nel settore 2! Delta time obbligatorio, sosta ai box a costo ridotto (14s)!");
+          } else {
+            raceState.safetyCar = true;
+            raceState.safetyCarLapsLeft = Math.floor(Math.random() * 2) + 2;
+            events.push(discipline === 'auto' 
+              ? "🟡 SAFETY CAR IN PISTA: Incidente grave! Il gruppo si ricompatta dietro la vettura di sicurezza."
+              : "🟡 BANDIERA GIALLA: Caduta a centro gruppo! Distacchi congelati e velocità neutralizzata.");
+          }
+        }
       }
     }
 
     // 3. Simulazione per ciascun pilota
     const isWet = raceState.weather.condition === "HEAVY_RAIN" || raceState.weather.condition === "LIGHT_RAIN";
+    const isLightRain = raceState.weather.condition === "LIGHT_RAIN";
+    const isHeavyRain = raceState.weather.condition === "HEAVY_RAIN";
 
     raceState.drivers.forEach(driver => {
       if (driver.status !== "RUNNING" && driver.status !== "PITTING") return;
@@ -761,39 +819,44 @@ export class RaceEngine {
           driver.status = "PITTING";
           driver.pitStops++;
           driver.tyreLife = 100;
-          driver.tyreCompound = playerTactics.newCompound || (isWet ? "WET" : "HARD");
+          driver.tyreCompound = playerTactics.newCompound || (isHeavyRain ? "WET" : (isLightRain ? "INTER" : "HARD"));
           driver.compoundsUsed.push(driver.tyreCompound);
           playerTactics.boxThisLap = false;
-          const pitLoss = raceState.safetyCar ? 12 : (discipline === 'auto' ? 22 : 28);
+          const pitLoss = raceState.safetyCar ? 11 : (raceState.virtualSafetyCar ? 14 : (discipline === 'auto' ? 22 : 28));
           driver.gapToLeaderSec += pitLoss;
           events.push(`🛠️ SOSTA AI BOX per ${driver.name}: Montate gomme nuove ${driver.tyreCompound}! (${pitLoss}s fermo)`);
           return;
         }
       }
 
-      // Usura gomme calcolata su: mescola + assetto + statistiche pilota + stile di guida
+      // Usura gomme calcolata su mescola e condizioni meteo
       let compoundMultiplier = 1.0;
       if (driver.tyreCompound === 'SOFT') compoundMultiplier = 1.60;
       if (driver.tyreCompound === 'MEDIUM') compoundMultiplier = 1.05;
       if (driver.tyreCompound === 'HARD') compoundMultiplier = 0.70;
-      if (!isWet && (driver.tyreCompound === 'WET' || driver.tyreCompound === 'INTER')) compoundMultiplier = 3.50; // distruzione termica su asciutto
-      if (isWet && ['SOFT', 'MEDIUM', 'HARD'].includes(driver.tyreCompound)) compoundMultiplier = 1.80; // slittamento
+      if (driver.tyreCompound === 'INTER') compoundMultiplier = isLightRain ? 1.0 : (isHeavyRain ? 1.4 : 3.0);
+      if (driver.tyreCompound === 'WET') compoundMultiplier = isHeavyRain ? 1.0 : (isLightRain ? 1.8 : 3.5);
+      if (!isWet && (driver.tyreCompound === 'WET' || driver.tyreCompound === 'INTER')) compoundMultiplier = 3.50;
 
       let paceMultiplier = driver.paceMode === 'PUSH' ? 1.45 : (driver.paceMode === 'SAVE' ? 0.70 : 1.0);
       if (raceState.safetyCar) paceMultiplier = 0.20;
+      if (raceState.virtualSafetyCar) paceMultiplier = 0.50;
 
       const lapWear = driver.baseWearRate * compoundMultiplier * driver.setupWearMultiplier * driver.driverStatsMultiplier * paceMultiplier;
       driver.tyreLife = Math.max(0, driver.tyreLife - lapWear);
 
-      // AI PIT STOP STRATEGY (Attiva su tutte le categorie!)
+      // AI PIT STOP STRATEGY EVOLUTA (Con Undercut e supporto VSC)
       if (!driver.isPlayer && !raceState.isSprint) {
         let aiNeedsPit = false;
         let aiTargetCompound = "HARD";
 
-        // 1. Allerta Meteo: pioggia improvvisa con slick o pista asciugata con wet
-        if (isWet && !['WET', 'INTER'].includes(driver.tyreCompound)) {
+        // 1. Allerta Meteo
+        if (isHeavyRain && driver.tyreCompound !== 'WET') {
           aiNeedsPit = true;
           aiTargetCompound = "WET";
+        } else if (isLightRain && !['INTER', 'WET'].includes(driver.tyreCompound)) {
+          aiNeedsPit = true;
+          aiTargetCompound = "INTER";
         } else if (!isWet && ['WET', 'INTER'].includes(driver.tyreCompound)) {
           aiNeedsPit = true;
           aiTargetCompound = "HARD";
@@ -806,18 +869,25 @@ export class RaceEngine {
         else if (driver.plannedPitLaps.includes(lap)) {
           aiNeedsPit = true;
         }
-        // 4. Opportunità Safety Car (pit stop scontato se la finestra è vicina)
-        else if (raceState.safetyCar && driver.plannedPitLaps.some(l => Math.abs(l - lap) <= 3)) {
+        // 4. Opportunità Safety Car / VSC (pit stop scontato)
+        else if ((raceState.safetyCar || raceState.virtualSafetyCar) && driver.plannedPitLaps.some(l => Math.abs(l - lap) <= 3)) {
           aiNeedsPit = true;
+        }
+        // 5. Tentativo di UNDERCUT per piloti in Top 8
+        else if (driver.currentPos <= 8 && driver.intervalAheadSec > 0 && driver.intervalAheadSec < 1.3 && driver.plannedPitLaps.some(l => Math.abs(l - lap) <= 2) && Math.random() < 0.35) {
+          aiNeedsPit = true;
+          const aheadDriver = raceState.drivers.find(d => d.currentPos === driver.currentPos - 1);
+          events.push(`⚡ STRATEGIA AI: ${driver.name} anticipa la sosta per tentare l'UNDERCUT su ${aheadDriver ? aheadDriver.name : 'chi precede'}!`);
         }
 
         if (aiNeedsPit) {
           // Selezione mescola ottimale
-          if (isWet) {
+          if (isHeavyRain) {
             aiTargetCompound = "WET";
+          } else if (isLightRain) {
+            aiTargetCompound = "INTER";
           } else {
             const remainingLaps = raceState.totalLaps - lap;
-            // Se F1, assicurati di usare la 2ª mescola da asciutto obbligatoria
             if (raceState.mandatoryTwoDryCompounds) {
               const unusedDry = ['SOFT', 'MEDIUM', 'HARD'].filter(c => !driver.compoundsUsed.includes(c));
               aiTargetCompound = unusedDry[0] || (remainingLaps <= 6 ? "SOFT" : "HARD");
@@ -833,7 +903,7 @@ export class RaceEngine {
           driver.compoundsUsed.push(aiTargetCompound);
           driver.plannedPitLaps = driver.plannedPitLaps.filter(l => l !== lap);
 
-          const pitLoss = raceState.safetyCar ? 12 : (discipline === 'auto' ? 22 : 28);
+          const pitLoss = raceState.safetyCar ? 11 : (raceState.virtualSafetyCar ? 14 : (discipline === 'auto' ? 22 : 28));
           driver.gapToLeaderSec += pitLoss;
           events.push(`🛠️ PIT STOP AI: ${driver.name} rientra ai box al giro ${lap} e monta gomme ${aiTargetCompound}! (${pitLoss}s fermo)`);
           return;
@@ -885,31 +955,46 @@ export class RaceEngine {
       if (driver.tyreCompound === 'SOFT') performanceDelta -= 0.25;
       if (driver.tyreCompound === 'HARD') performanceDelta += 0.20;
 
-      // Penalità mescole errate sul bagnato / asciutto
+      // Penalità mescole errate sul bagnato / asciutto a 3 fasi
       let spinChance = 0.0008;
       const driverWetSkill = driver.wetSkill || 75;
       const driverConsistency = driver.consistency || 75;
       const wetSkillFactor = Math.max(0.35, Math.min(1.65, 1.0 - ((driverWetSkill - 75) / 100)));
       const consFactor = Math.max(0.55, Math.min(1.45, 1.0 - ((driverConsistency - 75) / 150)));
 
-      if (isWet && ['SOFT', 'MEDIUM', 'HARD'].includes(driver.tyreCompound)) {
-        performanceDelta += 9.5;
-        // Rischio instabilità/sbandata realistico: ~2.5% per giro, mitigato dal talento sul bagnato
-        spinChance = 0.024 * wetSkillFactor * consFactor;
-        if (driver.isPlayer) {
-          events.push("⚠️ AQUAPLANING GRAVE: Le gomme slick galleggiano sull'acqua! Sosta necessaria.");
+      if (isHeavyRain) {
+        if (['SOFT', 'MEDIUM', 'HARD'].includes(driver.tyreCompound)) {
+          performanceDelta += 9.5;
+          spinChance = 0.026 * wetSkillFactor * consFactor;
+          if (driver.isPlayer) events.push("⚠️ AQUAPLANING TOTALE: Le slick non drenano l'acqua!");
+        } else if (driver.tyreCompound === 'INTER') {
+          performanceDelta += 4.2;
+          spinChance = 0.010 * wetSkillFactor;
+        } else {
+          // Full Wet: perfetta
+          spinChance = 0.002 * wetSkillFactor;
         }
-      } else if (!isWet && ['WET', 'INTER'].includes(driver.tyreCompound)) {
-        performanceDelta += 4.5;
-        spinChance = 0.002 * consFactor;
-      } else if (isWet) {
-        // Gomme adatte (WET / INTER) su pista bagnata
-        spinChance = 0.0025 * wetSkillFactor;
+      } else if (isLightRain) {
+        if (['SOFT', 'MEDIUM', 'HARD'].includes(driver.tyreCompound)) {
+          performanceDelta += 3.8;
+          spinChance = 0.007 * wetSkillFactor * consFactor;
+        } else if (driver.tyreCompound === 'WET') {
+          performanceDelta += 2.2; // Surriscaldamento per troppa gomma su asfalto umido
+          spinChance = 0.0018;
+        } else {
+          // Intermedie: perfetta
+          spinChance = 0.001 * wetSkillFactor;
+        }
       } else {
-        // Asciutto normale: probabilità calibrata su affidabilità scuderia e costanza senza favoritismi
-        const teamReliability = driver.reliability || 85;
-        const relFactor = Math.max(0.5, 1.0 - ((teamReliability - 80) / 100));
-        spinChance = 0.0006 * consFactor * relFactor;
+        // Asciutto
+        if (['WET', 'INTER'].includes(driver.tyreCompound)) {
+          performanceDelta += 4.5;
+          spinChance = 0.0025 * consFactor;
+        } else {
+          const teamReliability = driver.reliability || 85;
+          const relFactor = Math.max(0.5, 1.0 - ((teamReliability - 80) / 100));
+          spinChance = 0.0006 * consFactor * relFactor;
+        }
       }
 
       // Penalità degrado battistrada ("the cliff")
@@ -917,12 +1002,12 @@ export class RaceEngine {
         performanceDelta += (25 - driver.tyreLife) * 0.18;
       }
       if (driver.tyreLife < 10) {
-        performanceDelta += (10 - driver.tyreLife) * 0.35; // Usura estrema
+        performanceDelta += (10 - driver.tyreLife) * 0.35;
       }
 
-      // Se il battistrada è completamente esaurito (<= 0%)
+      // Battistrada esaurito (<= 0%)
       if (driver.tyreLife <= 0) {
-        performanceDelta += 12.0; // Limp mode verso i box
+        performanceDelta += 12.0;
         if (driver.isPlayer) {
           events.push("⚠️ FORATURA / DEGRADO TOTALE: Battistrada distrutto! La vettura perde oltre 12s al giro.");
           if (playerTactics && !playerTactics.boxThisLap) {
@@ -933,12 +1018,17 @@ export class RaceEngine {
         spinChance = Math.max(spinChance, 0.015);
       }
 
-      // Controllo Evento di Instabilità (Testacoda vs Ritiro Definitivo)
-      if (Math.random() < spinChance && !raceState.safetyCar) {
-        // Nell'85% dei casi è un TESTACODA con perdita di tempo (+6-9s) da cui il pilota riparte
-        // Solo nel 15% dei casi critici si verifica un DNF fatale a muro
-        const isFatalCrash = Math.random() < 0.15;
+      // Manovra aggressiva / contatto ruota a ruota e penalità (Bug 17)
+      if (driver.powerMode === 'ATTACK' && driver.paceMode === 'PUSH' && driver.intervalAheadSec > 0 && driver.intervalAheadSec < 0.4) {
+        if (Math.random() < 0.04 && !raceState.safetyCar && !raceState.virtualSafetyCar) {
+          driver.stopGoPenaltySec = (driver.stopGoPenaltySec || 0) + 5;
+          events.push(`⚠️ COMMISSIONARI: 5s di penalità per ${driver.name} (Contatto / Manovra scorretta)!`);
+        }
+      }
 
+      // Controllo Evento di Instabilità (Testacoda vs Ritiro Definitivo)
+      if (Math.random() < spinChance && !raceState.safetyCar && !raceState.virtualSafetyCar) {
+        const isFatalCrash = Math.random() < 0.15;
         if (isFatalCrash) {
           driver.status = "DNF";
           driver.dnfReason = isWet 
@@ -947,14 +1037,41 @@ export class RaceEngine {
           events.push(`💥 RITIRO: ${driver.name} fuori gara! (${driver.dnfReason})`);
           return;
         } else {
-          const spinLoss = Math.floor(Math.random() * 4) + 6; // 6 - 9 secondi persi
+          const spinLoss = Math.floor(Math.random() * 4) + 6;
           driver.gapToLeaderSec += spinLoss;
           events.push(`🔄 TESTACODA: ${driver.name} si gira ma controlla il mezzo e riparte! (+${spinLoss}s persi)`);
         }
       }
 
-      if (!raceState.safetyCar) {
+      // Calcolo distacchi e compressione sotto Safety Car (Bug 12)
+      if (raceState.safetyCar) {
+        const activeRunners = raceState.drivers.filter(d => d.status === "RUNNING");
+        const myRank = activeRunners.findIndex(d => d.driverId === driver.driverId);
+        if (myRank > 0) {
+          const targetGap = myRank * 0.75;
+          driver.gapToLeaderSec = (driver.gapToLeaderSec * 0.35) + (targetGap * 0.65);
+        } else if (myRank === 0) {
+          driver.gapToLeaderSec = 0;
+        }
+      } else if (raceState.virtualSafetyCar) {
+        // Sotto VSC delta time ridotto
+        driver.gapToLeaderSec = Math.max(0, driver.gapToLeaderSec + (paceDeltaSec + performanceDelta) * 0.15);
+      } else {
         driver.gapToLeaderSec = Math.max(0, driver.gapToLeaderSec + paceDeltaSec + performanceDelta);
+      }
+
+      if (driver.status === "RUNNING") {
+        const baseLap = (raceState.circuit?.baseLapSec || 80);
+        const thisLapSec = baseLap + paceDeltaSec + performanceDelta;
+        if (!driver.bestLapSec || thisLapSec < driver.bestLapSec) {
+          driver.bestLapSec = thisLapSec;
+        }
+        if (!raceState.fastestLapSec || thisLapSec < raceState.fastestLapSec) {
+          raceState.fastestLapSec = thisLapSec;
+          raceState.fastestLapDriverId = driver.isPlayer ? 'player' : driver.driverId;
+          raceState.fastestLapHolder = driver.name;
+          raceState.fastestLapTime = this.formatLapTime(thisLapSec);
+        }
       }
     });
 
@@ -972,7 +1089,9 @@ export class RaceEngine {
         d.intervalAheadSec = Math.max(0, interval);
         d.hasDrs = idx > 0 && d.intervalAheadSec < 1.0 && !isWet && !raceState.safetyCar && d.status === 'RUNNING';
       });
-      raceState.fastestLapHolder = activeDrivers[0].name;
+      if (!raceState.fastestLapHolder) {
+        raceState.fastestLapHolder = activeDrivers[0].name;
+      }
     }
 
     let dnfPos = activeDrivers.length + 1;

@@ -22,9 +22,11 @@ export class RdFacilityView {
     const allTeams = catData.teams.map(t => {
       const isPlayerTeam = t.id === careerData.currentTeamId;
       const resolved = db.getTeam(t.id, player.discipline);
+      const dev = careerData.teamDevelopment?.[t.id];
+      const devPace = dev ? (player.discipline === 'auto' ? dev.carPace : (dev.bikePace || dev.carPace)) : null;
       const pace = isPlayerTeam 
         ? (player.discipline === 'auto' ? team.carPace : team.bikePace)
-        : (player.discipline === 'auto' ? resolved.carPace : resolved.bikePace);
+        : (devPace !== null && devPace !== undefined ? devPace : (player.discipline === 'auto' ? resolved.carPace : resolved.bikePace));
       return { ...resolved, pace, isPlayerTeam };
     }).sort((a, b) => b.pace - a.pace);
 

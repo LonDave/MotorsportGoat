@@ -90,9 +90,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 30000,
     basePoints: 85,
     pointsMult: 55,
-    paceGain: 0.15,
+    paceGain: 0.45,
     reliabilityGain: 0,
-    spec: '+0.15 Passo • Inserimento in Curva & Bilanciamento'
+    spec: '+0.45 Passo • Inserimento in Curva & Bilanciamento'
   },
   aero_floor_venturi: {
     id: 'aero_floor_venturi',
@@ -106,9 +106,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 45000,
     basePoints: 110,
     pointsMult: 70,
-    paceGain: 0.20,
+    paceGain: 0.60,
     reliabilityGain: 0,
-    spec: '+0.20 Passo • Carico Globale & Efficienza ad Alta Velocità'
+    spec: '+0.60 Passo • Carico Globale & Efficienza ad Alta Velocità'
   },
   aero_rear_wing_drs: {
     id: 'aero_rear_wing_drs',
@@ -122,9 +122,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 35000,
     basePoints: 90,
     pointsMult: 60,
-    paceGain: 0.15,
+    paceGain: 0.45,
     reliabilityGain: 0,
-    spec: '+0.15 Passo • Velocità di Punta & Efficacia DRS'
+    spec: '+0.45 Passo • Velocità di Punta & Efficacia DRS'
   },
 
   // 🔥 POWER UNIT & MOTORE
@@ -140,9 +140,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 50000,
     basePoints: 120,
     pointsMult: 75,
-    paceGain: 0.20,
+    paceGain: 0.60,
     reliabilityGain: 0,
-    spec: '+0.20 Passo • Cavalli Vapore & Allungo'
+    spec: '+0.60 Passo • Cavalli Vapore & Allungo'
   },
   engine_ers_hybrid: {
     id: 'engine_ers_hybrid',
@@ -156,9 +156,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 40000,
     basePoints: 100,
     pointsMult: 65,
-    paceGain: 0.18,
+    paceGain: 0.50,
     reliabilityGain: 0,
-    spec: '+0.18 Passo • Trazione Ibrida & Erogazione Coppia'
+    spec: '+0.50 Passo • Trazione Ibrida & Erogazione Coppia'
   },
   engine_ecu_exhaust: {
     id: 'engine_ecu_exhaust',
@@ -172,9 +172,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 28000,
     basePoints: 75,
     pointsMult: 45,
-    paceGain: 0.12,
+    paceGain: 0.35,
     reliabilityGain: 2,
-    spec: '+0.12 Passo • +2% Affidabilità Termica'
+    spec: '+0.35 Passo • +2% Affidabilità Termica'
   },
 
   // ⚙️ TELAIO & SOSPENSIONI
@@ -190,9 +190,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 35000,
     basePoints: 90,
     pointsMult: 60,
-    paceGain: 0.15,
+    paceGain: 0.45,
     reliabilityGain: 0,
-    spec: '+0.15 Passo • Grip Meccanico & Gestione Gomme'
+    spec: '+0.45 Passo • Grip Meccanico & Gestione Gomme'
   },
   chassis_monocoque: {
     id: 'chassis_monocoque',
@@ -206,9 +206,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 42000,
     basePoints: 105,
     pointsMult: 68,
-    paceGain: 0.18,
+    paceGain: 0.50,
     reliabilityGain: 0,
-    spec: '+0.18 Passo • Agilità & Reattività nei Settori Lenti'
+    spec: '+0.50 Passo • Agilità & Reattività nei Settori Lenti'
   },
   chassis_brakes: {
     id: 'chassis_brakes',
@@ -222,9 +222,9 @@ export const RD_SUBCOMPONENTS_CONFIG = {
     costMult: 28000,
     basePoints: 75,
     pointsMult: 45,
-    paceGain: 0.12,
+    paceGain: 0.35,
     reliabilityGain: 2,
-    spec: '+0.12 Passo • +2% Affidabilità in Staccata'
+    spec: '+0.35 Passo • +2% Affidabilità in Staccata'
   },
 
   // 🛡️ AFFIDABILITÀ & CONTROLLO QUALITÀ (Riducono anche il rischio di fallimento R&D)
@@ -1104,7 +1104,7 @@ export class CareerEngine {
         byCategory: {}
       },
       carUpgrades: { aero: 0, engine: 0, chassis: 0, reliability: 0 },
-      hqUpgrades: { simulatorLevel: 0, gymLevel: 0, prAgencyLevel: 0, telemetryCoachLevel: 0 },
+      hqUpgrades: { simulatorLevel: 0, gymLevel: 0, prAgencyLevel: 0, telemetryCoachLevel: 0, biohackingLevel: 0 },
       lifestyleItems: [],
       history: [],
       chosenTeammateId: null,
@@ -1154,15 +1154,39 @@ export class CareerEngine {
     return true;
   }
 
-  calculateOvr(attrs) {
+  calculateOvr(attrsOrPace, maybeRacecraft, maybeTyreMgmt, maybeConsistency, maybeWetSkill, maybeTechnicalFeedback) {
+    let attrs = {};
+    if (typeof attrsOrPace === 'object' && attrsOrPace !== null) {
+      attrs = attrsOrPace;
+    } else if (typeof attrsOrPace === 'number') {
+      attrs = {
+        pace: attrsOrPace,
+        racecraft: maybeRacecraft !== undefined ? maybeRacecraft : attrsOrPace,
+        tyreMgmt: maybeTyreMgmt !== undefined ? maybeTyreMgmt : attrsOrPace,
+        consistency: maybeConsistency !== undefined ? maybeConsistency : attrsOrPace,
+        wetSkill: maybeWetSkill !== undefined ? maybeWetSkill : 70,
+        technicalFeedback: maybeTechnicalFeedback !== undefined ? maybeTechnicalFeedback : 70
+      };
+    } else {
+      return 70;
+    }
+
     const total = 
-      (attrs.pace * 0.28) +
-      (attrs.racecraft * 0.22) +
-      (attrs.tyreMgmt * 0.16) +
-      (attrs.consistency * 0.14) +
-      (attrs.wetSkill * 0.10) +
-      (attrs.technicalFeedback * 0.10);
-    return Math.min(99, Math.round(total));
+      ((attrs.pace || 70) * 0.30) +
+      ((attrs.racecraft || 70) * 0.25) +
+      ((attrs.tyreMgmt || 70) * 0.18) +
+      ((attrs.consistency || 70) * 0.17) +
+      ((attrs.wetSkill || 70) * 0.05) +
+      ((attrs.technicalFeedback || 70) * 0.05);
+
+    let ovr = total;
+    const peakDriverScore = (attrs.pace || 70) + (attrs.racecraft || 70);
+    if (peakDriverScore >= 185) {
+      ovr += 2;
+    } else if (peakDriverScore >= 175) {
+      ovr += 1;
+    }
+    return Math.min(99, Math.round(ovr));
   }
 
   // Ottiene o inizializza le statistiche suddivise per categoria
@@ -1335,10 +1359,29 @@ export class CareerEngine {
       const isPlayerTeam = (team.id === playerTeamId);
       const capacity = isPlayerTeam ? Math.max(1, maxDrivers - 1) : maxDrivers;
 
-      let candidates = cat.roster.filter(d => {
+      // Unisci il roster di base, i regens creati per questa categoria e i piloti trasferiti tramite override
+      const pool = [...cat.roster];
+      if (this.career?.regens) {
+        for (const [rId, rData] of Object.entries(this.career.regens)) {
+          if (rData.category === key && !pool.some(c => c.id === rId)) {
+            pool.push(rData);
+          }
+        }
+      }
+      if (this.career?.teamDriverOverrides) {
+        for (const [dId, ovrTeam] of Object.entries(this.career.teamDriverOverrides)) {
+          if (ovrTeam === team.id && !pool.some(c => c.id === dId)) {
+            const drv = db.getDriver(dId, this.player?.discipline || 'auto');
+            if (drv) pool.push(drv);
+          }
+        }
+      }
+
+      let candidates = pool.filter(d => {
         const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
         if (effTeam !== team.id) return false;
         if (effTeam === 'free_agent' || effTeam === 'retired') return false;
+        if (this.career?.retiredDriverIds && this.career.retiredDriverIds.includes(d.id)) return false;
         if (isPlayerTeam && (d.id === benchedId || (Array.isArray(benchedId) && benchedId.includes(d.id)))) return false;
         if (freeAgentIds.has(d.id)) return false;
         return true;
@@ -1349,14 +1392,16 @@ export class CareerEngine {
         candidates.sort((a, b) => (a.id === this.career.chosenTeammateId ? -1 : 1));
       }
 
-      // Se ci sono meno piloti del necessario per rispettare il regolamento, genera regens di sicurezza
+      // Se ci sono meno piloti del necessario per rispettare il regolamento, usa un collaudatore di riserva per la visualizzazione
       while (candidates.length < capacity) {
-        const regen = this.createRegenDriver(team.id, key, this.player?.discipline || 'auto');
-        if (regen) {
-          candidates.push(regen);
-        } else {
-          break;
-        }
+        candidates.push({
+          id: `reserve_${team.id}_${candidates.length + 1}`,
+          name: "Collaudatore Ufficiale",
+          ovr: 72,
+          pace: 72,
+          teamId: team.id,
+          isReserve: true
+        });
       }
 
       // Prendi esattamente fino a capacity piloti
@@ -1883,6 +1928,10 @@ export class CareerEngine {
           const finalTeamName = effTeam && effTeam !== 'free_agent' ? db.getTeamName(effTeam, discipline, category) : 'Svincolato';
 
           this.career.teamDriverOverrides[dId] = 'retired';
+          if (!this.career.retiredDriverIds) this.career.retiredDriverIds = [];
+          if (!this.career.retiredDriverIds.includes(dId)) {
+            this.career.retiredDriverIds.push(dId);
+          }
           if (this.career.freeAgents) {
             this.career.freeAgents = this.career.freeAgents.filter(fa => fa.driverId !== dId);
           }
@@ -1984,11 +2033,19 @@ export class CareerEngine {
       } else {
         // 3. Selezione dal pool di mostri sacri e leggende storiche
         const legendPool = discipline === 'auto' ? AUTO_LEGENDS_REGEN_POOL : MOTO_LEGENDS_REGEN_POOL;
-        const usedLegendIds = new Set(Object.values(this.career.regens || {}).map(r => r.legendId));
-        const unusedLegends = legendPool.filter(l => !usedLegendIds.has(l.id));
+        if (!this.career.usedRegenLegendIds) this.career.usedRegenLegendIds = [];
+        const usedLegendIds = new Set([
+          ...Object.values(this.career.regens || {}).map(r => r.legendId).filter(Boolean),
+          ...this.career.usedRegenLegendIds
+        ]);
+        const unusedLegends = legendPool.filter(l => l && !usedLegendIds.has(l.id));
         const pickedLegend = (unusedLegends.length > 0)
           ? unusedLegends[Math.floor(Math.random() * unusedLegends.length)]
           : legendPool[Math.floor(Math.random() * legendPool.length)];
+
+        if (pickedLegend && !this.career.usedRegenLegendIds.includes(pickedLegend.id)) {
+          this.career.usedRegenLegendIds.push(pickedLegend.id);
+        }
 
         // Estrazione nomi di fantasia evocativi e tratti distintivi
         const realNames = pickedLegend.regenRealNames || [pickedLegend.realName];
@@ -2034,6 +2091,7 @@ export class CareerEngine {
     const tyreMgmt = Math.min(99, Math.max(60, baseOvr + tyreMgmtBias + Math.floor(Math.random() * 3 - 1)));
     const consistency = Math.min(99, Math.max(60, baseOvr + consistencyBias + Math.floor(Math.random() * 3 - 1)));
     const wetSkill = Math.min(99, Math.max(60, baseOvr + wetSkillBias + Math.floor(Math.random() * 3 - 1)));
+    const calculatedOvr = this.calculateOvr(pace, racecraft, tyreMgmt, consistency, wetSkill, 70);
 
     const realName = inspiration.realName;
     const fictionalName = inspiration.fictionalName || inspiration.realName;
@@ -2047,7 +2105,7 @@ export class CareerEngine {
       nationality: inspiration.nationality || 'ITA',
       number: inspiration.number || Math.floor(Math.random() * 88 + 11),
       age,
-      ovr: baseOvr,
+      ovr: calculatedOvr,
       pace,
       racecraft,
       tyreMgmt,
@@ -2068,7 +2126,7 @@ export class CareerEngine {
     db.registerCustomDriver(regenData);
 
     this.career.aiDriverAttributes[regenId] = {
-      ovr: baseOvr,
+      ovr: calculatedOvr,
       pace,
       racecraft,
       tyreMgmt,
@@ -2279,11 +2337,11 @@ export class CareerEngine {
   getPlayerTeam() {
     const catData = this.getCurrentCategoryData();
     if (!catData || !catData.teams) {
-      return { id: 'default_team', displayName: 'Scuderia', color: '#e10600', carPace: 75, bikePace: 75, reliability: 75 };
+      return { id: 'default_team', displayName: 'Scuderia', color: '#e10600', carPace: 75, bikePace: 75, performance: 75, carPerformance: 75, reliability: 75 };
     }
     const team = catData.teams.find(t => t.id === this.career?.currentTeamId) || catData.teams[0];
     const upgrades = this.career?.carUpgrades || { aero: 0, engine: 0, chassis: 0, reliability: 0 };
-    const bonusPace = (upgrades.aero * 0.25) + (upgrades.engine * 0.25) + (upgrades.chassis * 0.20);
+    const bonusPace = (upgrades.aero * 0.40) + (upgrades.engine * 0.40) + (upgrades.chassis * 0.30);
     const bonusReliability = upgrades.reliability * 1.5;
 
     // Bonus derivanti dai sottocomponenti R&D specialistici
@@ -2302,11 +2360,11 @@ export class CareerEngine {
     const basePace = (dev && dev.carPace !== undefined) ? dev.carPace : (team.carPace || team.bikePace || 75);
     const baseReliability = (dev && dev.reliability !== undefined) ? dev.reliability : (team.reliability || 85);
 
-    // Curva di sviluppo e compressione asintotica sopra 90 per evitare di raggiungere 99 OVR troppo rapidamente
+    // Curva di sviluppo progressivo: cap morbido a 97 per permettere a team dominanti con R&D completo di raggiungere 98-99
     const rawPace = basePace + bonusPace + subPaceGain;
     let finalPace = rawPace;
-    if (rawPace > 90) {
-      finalPace = 90 + ((rawPace - 90) * 0.5);
+    if (rawPace > 97) {
+      finalPace = 97 + ((rawPace - 97) * 0.65);
     }
     finalPace = Math.min(99, Math.round(finalPace));
 
@@ -2316,6 +2374,9 @@ export class CareerEngine {
       ...team,
       carPace: finalPace,
       bikePace: finalPace,
+      performance: finalPace,
+      carPerformance: finalPace,
+      bikePerformance: finalPace,
       reliability: Math.min(99, Math.round(baseReliability + bonusReliability + subRelGain)),
       displayName: resolvedName || team.realName || team.fictionalName || team.name || 'Scuderia',
       color: team.color || '#e10600'
@@ -2594,10 +2655,10 @@ export class CareerEngine {
 
     // 4. Componenti di Controllo Qualità & Durabilità installati
     const subComps = this.career.rdSubComponents || {};
-    const sensorLvl = subComps.rel_sensor_telemetry || 0;
-    const dynoLvl = subComps.rel_dyno_stress_test || 0;
-    risk -= sensorLvl * 1.5; // fino a -7.5%
-    risk -= dynoLvl * 2.0;   // fino a -10%
+    const gearboxLvl = subComps.rel_gearbox || 0;
+    const hydLvl = subComps.rel_hydraulics || 0;
+    risk -= gearboxLvl * 1.5; // fino a -7.5%
+    risk -= hydLvl * 2.0;     // fino a -10%
 
     // Clamp tra 8% (minimo fisiologico in F1) e 65% (massimo rischio consentito)
     risk = Math.max(8, Math.min(65, Math.round(risk)));
@@ -2622,15 +2683,15 @@ export class CareerEngine {
     this.career.money += sponsorMoney;
 
     // 2. Dati e Punti Telemetrici R&D (PT) generati dal lavoro in pista e al simulatore
-    // Ribilanciato: generazione mirata e misurata (~15-20 PT per weekend)
-    const tmTelemetry = Math.round(2 + (tmFeedback * 0.08));
+    // Generazione efficace per consentire sviluppi realistici ogni 2-3 gare
+    const tmTelemetry = Math.round(8 + (tmFeedback * 0.15));
     const playerFeedback = this.player?.attributes?.technicalFeedback || 60;
-    const playerTelemetry = Math.round(3 + (playerFeedback * 0.10) + (finishPos <= 10 ? 3 : 0));
+    const playerTelemetry = Math.round(10 + (playerFeedback * 0.16) + (finishPos <= 10 ? 5 : 0));
     const totalTelemetry = tmTelemetry + playerTelemetry;
 
     this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + totalTelemetry;
 
-    // 3. Breakthrough del Compagno: probabilità più rara (~8-12%) e soggetto a rischio fallimento
+    // 3. Breakthrough del Compagno: probabilità ~8-12% con rischio di flop dimezzato
     let breakthrough = null;
     const breakthroughChance = 0.05 + (tmFeedback / 1200);
     if (Math.random() < breakthroughChance) {
@@ -2640,10 +2701,11 @@ export class CareerEngine {
       const currentLvl = this.career.rdSubComponents[chosenCompKey] || 0;
 
       if (currentLvl < (compCfg.maxLevel || 5)) {
-        // Roll di affidabilità e correlazione sul test del compagno
+        // Rischio fallimento dimezzato per i test controllati del compagno
         const { risk } = this.calculateSubComponentRisk(chosenCompKey);
+        const compRisk = Math.round(risk * 0.5);
         const compRoll = Math.random() * 100;
-        if (compRoll < risk) {
+        if (compRoll < compRisk) {
           breakthrough = {
             type: 'failed_breakthrough',
             componentName: compCfg.name,
@@ -2679,6 +2741,23 @@ export class CareerEngine {
         if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
         this.career.aiTransferNews.unshift(
           `🤝 COLLABORAZIONE REPARTO CORSE: ${breakthrough.message}`
+        );
+      }
+    }
+
+    // 3b. Sviluppo Tecnico Diretto della Scuderia ad opera del Compagno
+    if (!this.career.teammateDevRaces) this.career.teammateDevRaces = 0;
+    this.career.teammateDevRaces++;
+    if (this.career.teammateDevRaces >= 4 && tmFeedback >= 68) {
+      this.career.teammateDevRaces = 0;
+      const playerTeamId = this.career.currentTeamId;
+      if (this.career.teamDevelopment && this.career.teamDevelopment[playerTeamId]) {
+        const teamDev = this.career.teamDevelopment[playerTeamId];
+        const gain = 0.25;
+        teamDev.carPace = Math.min(98, Math.round((teamDev.carPace + gain) * 100) / 100);
+        if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+        this.career.aiTransferNews.unshift(
+          `🔧 SVILUPPO IN GALLERIA DEL VENTO: Il feedback tecnico di ${tmName} ha permesso al team di affinare il bilanciamento (+${gain} Passo vettura)!`
         );
       }
     }
@@ -2832,12 +2911,32 @@ export class CareerEngine {
       });
     }
 
+    // Assegnazione punto addizionale per il Giro Veloce della gara (se conclusa in Top 10)
+    const flDriverId = raceResults?.fastestLapDriverId;
+    if (flDriverId && !raceResults.isSprint && raceResults.drivers) {
+      const flDriver = raceResults.drivers.find(d => d.driverId === flDriverId || (d.isPlayer && flDriverId === 'player'));
+      if (flDriver && flDriver.currentPos <= 10) {
+        const isPlayerFl = !!(flDriver.isPlayer || flDriverId === 'player');
+        this.addDriverPoints(isPlayerFl ? "player" : flDriverId, 1, false, false);
+        this.addTeamPoints(flDriver.teamId, 1);
+        if (isPlayerFl) {
+          stats.fastestLaps = (stats.fastestLaps || 0) + 1;
+        }
+      }
+    }
+
     // Ordina classifica aggiornata
     this.career.standings.drivers.sort((a, b) => b.points - a.points || b.wins - a.wins);
     this.career.standings.teams.sort((a, b) => b.points - a.points);
 
     // Sviluppo progressivo delle vetture AI durante la stagione
     this.developAiCars();
+
+    // Aggiornamento statistiche del Rival stagionale e fiducia dirigenza
+    this.updateRivalStats(qualifyingGrid, raceResults);
+    if (playerResult) {
+      this.updateBoardTrust(playerResult.currentPos);
+    }
 
     // Crescita organica e calcolo Punti Abilità Pilota guadagnati nel weekend
     this.progressPlayerAttributes(playerResult ? playerResult.currentPos : 10);
@@ -3238,6 +3337,7 @@ export class CareerEngine {
       playerPos: this.career.standings.drivers.findIndex(d => d.isPlayer) + 1,
       playerPoints: playerStanding ? playerStanding.points : 0,
       wins: playerStanding ? playerStanding.wins : 0,
+      ovr: this.player?.ovr || 60,
       championName: isPlayerChampion ? `${this.player.firstName} ${this.player.lastName}` : db.getDriverName(champion?.driverId, this.player.discipline)
     });
 
@@ -3278,6 +3378,17 @@ export class CareerEngine {
 
     // Reset upgrade vettura standard
     this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
+
+    // Decadimento invernale paritetico per le scuderie AI in anni non regolamentari (evita che l'AI scappi via all'infinito)
+    if (!isRegYear && this.career.teamDevelopment) {
+      Object.values(this.career.teamDevelopment).forEach(td => {
+        const winterDecay = 1.0 + Math.random() * 0.8;
+        td.carPace = Math.max(65, Math.round((td.carPace - winterDecay) * 10) / 10);
+        td.seasonPaceGain = 0;
+        td.devPoints = 0;
+      });
+      db.setTeamDevelopment(this.career.teamDevelopment);
+    }
 
     // Esegui la crescita e il declino organico degli attributi di tutti i piloti AI
     const aiEvolutionReport = this.growAiDriverAttributes();
@@ -3559,8 +3670,8 @@ export class CareerEngine {
     // Pulisce offerte pendenti memorizzate dopo la firma
     this.career.contractOffers = null;
 
-    // Se ha cambiato categoria, azzera gli upgrade della vettura precedente
-    if (previousCategory !== offer.category) {
+    // Se ha cambiato scuderia o categoria, azzera gli upgrade della vettura precedente
+    if (isChangingTeam || previousCategory !== offer.category) {
       this.career.carUpgrades = { aero: 0, engine: 0, chassis: 0, reliability: 0 };
       if (this.career.rdSubComponents) {
         for (const k in this.career.rdSubComponents) {
@@ -3614,13 +3725,13 @@ export class CareerEngine {
     const hasSprint = catData.weekendFormat?.hasSprint || (catData.sprintCircuits && catData.sprintCircuits.includes(circuit.id));
     let sprintResults = null;
     if (hasSprint) {
-      const sprintState = RaceEngine.initRaceState(qualyGrid, circuit, catData, true, player.discipline, null, player);
+      const sprintState = RaceEngine.initRaceState(qualyGrid, circuit, catData, true, player.discipline, null, player, team);
       RaceEngine.fastForwardToEnd(sprintState, defaultTactics, player.discipline);
       sprintResults = sprintState;
     }
 
     // 3. Gara Principale
-    const raceState = RaceEngine.initRaceState(qualyGrid, circuit, catData, false, player.discipline, null, player);
+    const raceState = RaceEngine.initRaceState(qualyGrid, circuit, catData, false, player.discipline, null, player, team);
     RaceEngine.fastForwardToEnd(raceState, defaultTactics, player.discipline);
 
     // 4. Registra risultati ufficiali
@@ -4474,6 +4585,193 @@ export class CareerEngine {
     } catch (e) {
       console.warn("Nessun salvataggio valido trovato o errore di lettura:", e);
     }
+  }
+
+  // === SISTEMA RIVALI DINAMICO (HEAD-TO-HEAD) ===
+  assignSeasonRival(force = false) {
+    if (!this.career) return null;
+    if (this.career.seasonRival && !force) return this.career.seasonRival;
+
+    const roster = this.getActiveRoster(this.career.currentCategory);
+    const tm = this.getCurrentTeammate();
+    const playerOvr = this.player?.ovr || 75;
+    const discipline = this.player?.discipline || 'auto';
+
+    // Filtra piloti rivali (escludi te stesso e il tuo compagno)
+    const rivals = roster.filter(d => !d.isPlayer && d.id !== tm?.id && d.teamId !== this.career.currentTeamId);
+    if (rivals.length === 0) return null;
+
+    // Ordina per vicinanza di OVR rispetto al giocatore
+    rivals.sort((a, b) => {
+      const aOvr = this.career.aiDriverAttributes?.[a.id]?.ovr || a.ovr || 75;
+      const bOvr = this.career.aiDriverAttributes?.[b.id]?.ovr || b.ovr || 75;
+      return Math.abs(aOvr - playerOvr) - Math.abs(bOvr - playerOvr);
+    });
+
+    const chosen = rivals[0];
+    const teamName = db.getTeamName(chosen.teamId, discipline, this.career.currentCategory);
+    const driverName = chosen.name || db.getDriverName(chosen.id, discipline);
+
+    this.career.seasonRival = {
+      driverId: chosen.id,
+      name: driverName,
+      teamId: chosen.teamId,
+      teamName,
+      ovr: this.career.aiDriverAttributes?.[chosen.id]?.ovr || chosen.ovr || 75,
+      playerWins: 0,
+      rivalWins: 0,
+      playerPoles: 0,
+      rivalPoles: 0,
+      playerPoints: 0,
+      rivalPoints: 0,
+      headToHeadWins: 0,
+      headToHeadLosses: 0
+    };
+    return this.career.seasonRival;
+  }
+
+  getSeasonRival() {
+    if (!this.career) return null;
+    if (!this.career.seasonRival) {
+      this.assignSeasonRival();
+    }
+    const r = this.career.seasonRival;
+    if (!r) return null;
+    r.playerScore = r.headToHeadWins || 0;
+    r.rivalScore = r.headToHeadLosses || 0;
+    r.status = (r.playerScore > r.rivalScore) ? 'leading' : ((r.rivalScore > r.playerScore) ? 'trailing' : 'tied');
+    return r;
+  }
+
+  updateRivalStats(qualifyingGrid, raceResults) {
+    if (!this.career) return;
+    const rival = this.getSeasonRival();
+    if (!rival) return;
+
+    // Check Qualy
+    if (qualifyingGrid && qualifyingGrid.length > 0) {
+      const playerQPos = qualifyingGrid.findIndex(d => d.isPlayer) + 1;
+      const rivalQPos = qualifyingGrid.findIndex(d => d.driverId === rival.driverId || d.id === rival.driverId) + 1;
+      if (qualifyingGrid[0]?.isPlayer) rival.playerPoles++;
+      else if (qualifyingGrid[0]?.driverId === rival.driverId || qualifyingGrid[0]?.id === rival.driverId) rival.rivalPoles++;
+    }
+
+    // Check Gara
+    if (raceResults && raceResults.drivers) {
+      const playerD = raceResults.drivers.find(d => d.isPlayer);
+      const rivalD = raceResults.drivers.find(d => d.driverId === rival.driverId || d.id === rival.driverId);
+      if (playerD && rivalD) {
+        if (playerD.currentPos < rivalD.currentPos) {
+          rival.headToHeadWins = (rival.headToHeadWins || 0) + 1;
+        } else if (playerD.currentPos > rivalD.currentPos) {
+          rival.headToHeadLosses = (rival.headToHeadLosses || 0) + 1;
+        }
+        if (playerD.currentPos === 1) rival.playerWins = (rival.playerWins || 0) + 1;
+        if (rivalD.currentPos === 1) rival.rivalWins = (rival.rivalWins || 0) + 1;
+      }
+    }
+
+    const pStanding = this.career.standings?.drivers?.find(d => d.isPlayer);
+    const rStanding = this.career.standings?.drivers?.find(d => d.driverId === rival.driverId);
+    if (pStanding) rival.playerPoints = pStanding.points;
+    if (rStanding) rival.rivalPoints = rStanding.points;
+  }
+
+  // === OBIETTIVO DIRIGENZA & FIDUCIA TEAM PRINCIPAL ===
+  getBoardExpectation() {
+    if (!this.career) return { targetText: "Top 10", targetDesc: "Top 10", targetPos: 10, currentPos: 10, trust: 75, trustPercent: 75, status: "Saldo" };
+    if (this.career.boardTrust === undefined) this.career.boardTrust = 75;
+
+    const team = this.getPlayerTeam();
+    const pace = team?.carPace || 75;
+    let targetPos = 10;
+    let targetText = "Punti Regolari (Top 10)";
+    if (pace >= 90) {
+      targetPos = 3;
+      targetText = "Vittorie & Podi Costanti (Top 3)";
+    } else if (pace >= 84) {
+      targetPos = 6;
+      targetText = "Zona Punti Alta (Top 6)";
+    } else if (pace >= 78) {
+      targetPos = 10;
+      targetText = "Zona Punti (Top 10)";
+    } else {
+      targetPos = 14;
+      targetText = "Lotta a Centro Gruppo (Top 14)";
+    }
+
+    const trustPercent = Math.max(0, Math.min(100, Math.round(this.career.boardTrust)));
+    const standings = this.career.standings?.drivers || [];
+    const pIdx = standings.findIndex(d => d.isPlayer);
+    const currentPos = pIdx >= 0 ? pIdx + 1 : (targetPos || 10);
+    let status = "Saldo";
+    if (trustPercent >= 75) status = "Massima Fiducia";
+    else if (trustPercent >= 55) status = "Saldo";
+    else if (trustPercent >= 40) status = "Sotto Osservazione";
+    else status = "A Rischio Esonero";
+
+    let warning = null;
+    if (trustPercent < 40) {
+      warning = "La dirigenza è insoddisfatta dei risultati. Rischio rescissione anticipata!";
+    }
+
+    return {
+      targetText,
+      targetDesc: targetText,
+      targetPos,
+      currentPos,
+      trust: trustPercent,
+      trustPercent,
+      status,
+      warning
+    };
+  }
+
+  updateBoardTrust(finishPos) {
+    if (!this.career) return;
+    const { targetPos } = this.getBoardExpectation();
+    const delta = targetPos - finishPos;
+    let trustDelta = 0;
+    if (delta >= 4) trustDelta = +4;
+    else if (delta >= 1) trustDelta = +2;
+    else if (delta === 0) trustDelta = +1;
+    else if (delta >= -3) trustDelta = -2;
+    else trustDelta = -5;
+
+    this.career.boardTrust = Math.max(10, Math.min(100, (this.career.boardTrust || 75) + trustDelta));
+  }
+
+  // === INTERVISTE MEDIA & DICHIARAZIONI POST-GARA ===
+  applyMediaInterviewOutcome(choice) {
+    if (!this.career) return { success: false };
+    if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+
+    const pName = `${this.player?.firstName || 'Pilota'} ${this.player?.lastName || ''}`.trim();
+    let result = { type: choice, message: "", bonusText: "" };
+
+    if (choice === 'team') {
+      this.career.rdTelemetryPoints = (this.career.rdTelemetryPoints || 0) + 18;
+      this.career.boardTrust = Math.min(100, (this.career.boardTrust || 75) + 4);
+      result.message = "Hai elogiato pubblicamente il lavoro della scuderia e dei meccanici!";
+      result.bonusText = "+18 Punti Telemetria R&D • +4% Fiducia Dirigenza";
+      this.career.aiTransferNews.unshift(`🎙️ INTERVISTA: ${pName} ringrazia la scuderia: 'Macchina impeccabile, merito dello straordinario lavoro dei ragazzi ai box!'`);
+    } else if (choice === 'critical') {
+      const sponsorBonus = 12000;
+      this.career.money += sponsorBonus;
+      this.career.boardTrust = Math.max(15, (this.career.boardTrust || 75) - 3);
+      result.message = "Hai espresso ambizione pretendendo aggiornamenti rapidi dal reparto corse!";
+      result.bonusText = `+€${sponsorBonus.toLocaleString()} Attenzione Sponsor • -3% Pressione sui Tecnici`;
+      this.career.aiTransferNews.unshift(`🎙️ INTERVISTA: ${pName} pungola il team: 'Serve più carico e velocità di punta se vogliamo vincere. Il muretto deve osare di più!'`);
+    } else if (choice === 'rival') {
+      const rival = this.getSeasonRival();
+      const rivalName = rival ? rival.name : "gli avversari";
+      result.message = `Hai lanciato il guanto di sfida a ${rivalName}!`;
+      result.bonusText = "+15 Punti Notorietà GOAT • Accesa la rivalità diretta!";
+      this.career.aiTransferNews.unshift(`🔥 SCINTILLE PADDOCK: ${pName} lancia la sfida a ${rivalName}: 'In pista non si fanno prigionieri, ci vediamo alla staccata della prossima gara!'`);
+    }
+
+    this.saveToStorage();
+    return result;
   }
 
   resetCareer() {

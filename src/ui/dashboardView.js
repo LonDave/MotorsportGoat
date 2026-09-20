@@ -4,6 +4,7 @@ import { sound } from '../engine/audioManager.js';
 import { ToastNotification } from './toastNotification.js';
 import { DriverSkillsModal } from './driverSkillsModal.js';
 import { SeasonEndModal } from './seasonEndModal.js';
+import { SaveManagerModal } from './saveManagerModal.js';
 
 export class DashboardView {
   static render(container, onNavigate) {
@@ -16,6 +17,8 @@ export class DashboardView {
     const isSeasonEnd = careerData.currentRaceIndex >= catData.calendar.length;
     const seriesName = db.getSeriesName(careerData.currentCategory, player.discipline);
     const catStats = career.getCategoryStats(careerData.currentCategory);
+    const rival = career.getSeasonRival();
+    const board = career.getBoardExpectation();
 
     // Leader della classifica per il mini-widget riassuntivo
     const driverStandings = careerData.standings.drivers || [];
@@ -69,6 +72,9 @@ export class DashboardView {
                 <button id="btn-sim-season" class="hero-sim-btn season-sim-btn" title="Simula l'intera stagione e fai crescere il pilota automaticamente">
                   <span>⚡ ${careerData.currentRaceIndex === 0 ? 'Simula Intera Stagione' : 'Simula Resto Stagione'}</span>
                 </button>
+                <button id="btn-open-save-manager" class="hero-sim-btn save-manager-btn" style="background: rgba(14, 165, 233, 0.18); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8;" title="Gestisci i 3 slot di salvataggio ed esporta/importa file JSON">
+                  <span>💾 Salvataggi (3 Slot)</span>
+                </button>
               </div>
             ` : `
               <button id="btn-conclude-season" class="hero-action-btn gold-glow">
@@ -112,6 +118,43 @@ export class DashboardView {
               </div>
               <p class="h2h-desc">Nel motorsport la prima regola è battere chi guida il tuo stesso mezzo. Mantieni il vantaggio per conservare la priorità tecnica negli sviluppi!</p>
             </div>
+
+            <!-- Scheda Rivalità Stagionale (Head to Head) -->
+            ${rival ? `
+              <div class="dash-card rival-card" style="border-left: 3px solid #f59e0b;">
+                <div class="card-title-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h3 class="card-title" style="margin: 0;">🔥 Rivalità Stagionale del Paddock</h3>
+                  <span style="font-size: 11px; font-weight: 700; background: rgba(245, 158, 11, 0.18); color: #f59e0b; padding: 3px 8px; border-radius: 6px;">
+                    ${rival.status === 'leading' ? '🟢 IN VANTAGGIO' : (rival.status === 'trailing' ? '🔴 IN SVANTAGGIO' : '⚪ IN PARITÀ')}
+                  </span>
+                </div>
+
+                <div class="h2h-comparison-box" style="margin-bottom: 10px;">
+                  <div class="h2h-driver-side you">
+                    <span class="h2h-label">TU (${player.ovr} OVR)</span>
+                    <strong class="h2h-name">${player.firstName} ${player.lastName}</strong>
+                    <span class="h2h-ovr" style="color: #10b981; font-weight: bold;">${rival.playerScore} H2H</span>
+                  </div>
+
+                  <div class="h2h-vs-badge" style="background: rgba(245, 158, 11, 0.25); color: #f59e0b; border: 1px solid #f59e0b;">VS</div>
+
+                  <div class="h2h-driver-side opponent">
+                    <span class="h2h-label">RIVALE (${rival.ovr} OVR)</span>
+                    <strong class="h2h-name">${rival.name}</strong>
+                    <span class="h2h-ovr" style="color: #f59e0b; font-weight: bold;">${rival.rivalScore} H2H</span>
+                    <span class="h2h-role">${rival.teamName}</span>
+                  </div>
+                </div>
+
+                <p class="h2h-desc" style="margin: 0; font-size: 12px; color: #94a3b8;">
+                  ${rival.status === 'leading' 
+                    ? `Sei in vantaggio psicologico (+${rival.playerScore - rival.rivalScore} duelli vinti). Mantieni alta la concentrazione!` 
+                    : (rival.status === 'trailing' 
+                      ? `${rival.name} è in vantaggio (+${rival.rivalScore - rival.playerScore}). La dirigenza si aspetta una risposta nel prossimo weekend!` 
+                      : 'Equilibrio perfetto sul filo del millesimo. Ogni punto e sorpasso fa la differenza!')}
+                </p>
+              </div>
+            ` : ''}
 
             <!-- Scheda Notizie dal Paddock & Rassegna Stampa -->
             <div class="dash-card paddock-news-card">
@@ -219,6 +262,46 @@ export class DashboardView {
                   <span class="cat-pill" title="Pole Position">⏱️ ${catStats.poles} Pole</span>
                   <span class="cat-pill" title="Gran Premi disputati">🏁 ${catStats.racesStarted} GP</span>
                 </div>
+              </div>
+            </div>
+
+            <!-- Scheda Fiducia della Dirigenza & Obiettivo Stagionale -->
+            ${board ? `
+              <div class="dash-card board-card" style="border-left: 3px solid ${board.trustPercent >= 60 ? '#10b981' : (board.trustPercent >= 35 ? '#f59e0b' : '#ef4444')};">
+                <div class="card-title-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h3 class="card-title" style="margin: 0;">👔 Obiettivo & Fiducia Dirigenza</h3>
+                  <span style="font-size: 11px; font-weight: 700; background: rgba(255, 255, 255, 0.08); color: ${board.trustPercent >= 60 ? '#10b981' : (board.trustPercent >= 35 ? '#f59e0b' : '#ef4444')}; padding: 3px 8px; border-radius: 6px;">
+                    ${board.status} (${board.trustPercent}%)
+                  </span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                    <span style="color: #94a3b8;">Obiettivo Minimo di Stagione:</span>
+                    <strong style="color: #f8fafc;">${board.targetDesc}</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                    <span style="color: #94a3b8;">Posizione Attuale nel Mondiale:</span>
+                    <strong style="color: ${board.currentPos <= board.targetPos ? '#10b981' : '#f59e0b'};">P${board.currentPos}</strong>
+                  </div>
+                  <div style="margin-top: 4px;">
+                    <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+                      <div style="height: 100%; width: ${board.trustPercent}%; background: ${board.trustPercent >= 60 ? '#10b981' : (board.trustPercent >= 35 ? '#f59e0b' : '#ef4444')}; transition: width 0.4s ease;"></div>
+                    </div>
+                  </div>
+                  ${board.warning ? `<small style="color: #ef4444; font-weight: 600; font-size: 11px; margin-top: 2px;">⚠️ ${board.warning}</small>` : ''}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Scheda Grafico di Evoluzione Storica OVR Pilota -->
+            <div class="dash-card driver-progression-card">
+              <div class="card-title-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 class="card-title" style="margin: 0;">📈 Evoluzione OVR nel Tempo</h3>
+                <span style="font-size: 11px; color: #38bdf8; font-weight: 600;">Picco: ${careerData.stats?.peakOvr || player.ovr} OVR</span>
+              </div>
+              <div class="chart-container-box">
+                ${this.renderDriverProgressionSvg(careerData.history, careerData.currentYear, player.ovr, playerPoints)}
               </div>
             </div>
 
@@ -426,5 +509,91 @@ export class DashboardView {
         DriverSkillsModal.open();
       };
     }
+
+    const saveManagerBtn = container.querySelector('#btn-open-save-manager');
+    if (saveManagerBtn) {
+      saveManagerBtn.onclick = () => {
+        sound.playClick();
+        SaveManagerModal.open(() => {
+          DashboardView.render(container, onNavigate);
+        });
+      };
+    }
+  }
+
+  static renderDriverProgressionSvg(history = [], currentYear = 2026, currentOvr = 60, currentPoints = 0) {
+    const data = [];
+    if (history && history.length > 0) {
+      history.forEach((h, idx) => {
+        data.push({
+          label: `'${String(h.year || 2026).slice(-2)}`,
+          ovr: h.ovr || 60,
+          points: h.playerPoints || 0
+        });
+      });
+    } else {
+      data.push({
+        label: `'${String(currentYear - 1).slice(-2)}`,
+        ovr: Math.max(55, currentOvr - 4),
+        points: 0
+      });
+    }
+
+    data.push({
+      label: `'${String(currentYear).slice(-2)} (Ora)`,
+      ovr: currentOvr,
+      points: currentPoints
+    });
+
+    const width = 420;
+    const height = 135;
+    const padding = { top: 22, right: 30, bottom: 25, left: 35 };
+    const innerW = width - padding.left - padding.right;
+    const innerH = height - padding.top - padding.bottom;
+
+    const ovrValues = data.map(d => d.ovr);
+    const minOvr = Math.max(50, Math.min(...ovrValues) - 3);
+    const maxOvr = Math.min(99, Math.max(...ovrValues) + 4);
+
+    const getX = (idx) => padding.left + (idx / Math.max(1, data.length - 1)) * innerW;
+    const getY = (val) => padding.top + innerH - ((val - minOvr) / Math.max(1, maxOvr - minOvr)) * innerH;
+
+    const pointsStr = data.map((d, i) => `${getX(i).toFixed(1)},${getY(d.ovr).toFixed(1)}`).join(' ');
+    const areaPoints = `${getX(0).toFixed(1)},${(padding.top + innerH).toFixed(1)} ${pointsStr} ${getX(data.length - 1).toFixed(1)},${(padding.top + innerH).toFixed(1)}`;
+
+    return `
+      <svg class="driver-progression-chart" viewBox="0 0 ${width} ${height}" style="width: 100%; height: auto; display: block; overflow: visible;">
+        <defs>
+          <linearGradient id="ovrProgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.32"/>
+            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Griglia orizzontale guida -->
+        <line x1="${padding.left}" y1="${getY(minOvr).toFixed(1)}" x2="${width - padding.right}" y2="${getY(minOvr).toFixed(1)}" stroke="rgba(255,255,255,0.07)" stroke-dasharray="3,3" />
+        <line x1="${padding.left}" y1="${getY(Math.round((minOvr + maxOvr) / 2)).toFixed(1)}" x2="${width - padding.right}" y2="${getY(Math.round((minOvr + maxOvr) / 2)).toFixed(1)}" stroke="rgba(255,255,255,0.07)" stroke-dasharray="3,3" />
+        <line x1="${padding.left}" y1="${getY(maxOvr).toFixed(1)}" x2="${width - padding.right}" y2="${getY(maxOvr).toFixed(1)}" stroke="rgba(255,255,255,0.07)" stroke-dasharray="3,3" />
+
+        <!-- Area gradiente -->
+        <polygon points="${areaPoints}" fill="url(#ovrProgGrad)" />
+
+        <!-- Polyline evoluzione -->
+        <polyline points="${pointsStr}" fill="none" stroke="#38bdf8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />
+
+        <!-- Punti e OVR -->
+        ${data.map((d, i) => {
+          const x = getX(i).toFixed(1);
+          const y = getY(d.ovr).toFixed(1);
+          return `
+            <g class="chart-point-node">
+              <circle cx="${x}" cy="${y}" r="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5" />
+              <text x="${x}" y="${(y - 7)}" fill="#38bdf8" font-size="10" font-weight="700" text-anchor="middle">${d.ovr}</text>
+              <text x="${x}" y="${height - 6}" fill="#94a3b8" font-size="9" text-anchor="middle">${d.label}</text>
+            </g>
+          `;
+        }).join('')}
+      </svg>
+    `;
   }
 }

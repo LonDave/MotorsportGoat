@@ -4,6 +4,7 @@ import { sound } from '../engine/audioManager.js';
 import { RaceEngine } from '../engine/raceEngine.js';
 import { ToastNotification } from './toastNotification.js';
 import { DriverSkillsModal } from './driverSkillsModal.js';
+import { MediaInterviewModal } from './mediaInterviewModal.js';
 
 export class WeekendView {
   static render(container, onFinishWeekend) {
@@ -753,7 +754,7 @@ export class WeekendView {
         sound.playEngineRev();
         const isSprint = session.type === 'sprint';
         state.raceState = RaceEngine.initRaceState(
-          qualy.grid, circuit, catData, isSprint, player.discipline, state.setupSettings, player
+          qualy.grid, circuit, catData, isSprint, player.discipline, state.setupSettings, player, team
         );
         state.currentSessionIndex++;
         nextPhase();
@@ -794,7 +795,7 @@ export class WeekendView {
         || state.qualifyingState?.grid
         || state.qualifyingGrid;
       const isSprint = session.type === 'sprint';
-      state.raceState = RaceEngine.initRaceState(grid, circuit, catData, isSprint, player.discipline, state.setupSettings, player);
+      state.raceState = RaceEngine.initRaceState(grid, circuit, catData, isSprint, player.discipline, state.setupSettings, player, team);
     }
 
     const race = state.raceState;
@@ -931,7 +932,7 @@ export class WeekendView {
     container.innerHTML = `
       <div class="weekend-stage-wrapper race-stage-wrapper">
         <!-- BARRA SUPERIORE TELEVISIVA F1 STYLE -->
-        <div class="f1-broadcast-top-bar ${race.safetyCar ? 'sc-active' : ''}">
+        <div class="f1-broadcast-top-bar ${race.safetyCar ? 'sc-active' : (race.virtualSafetyCar ? 'vsc-active' : '')}">
           <div class="broadcast-left">
             <div class="f1-badge-logo">${player.discipline === 'auto' ? 'F1 TV LIVE' : 'MOTOGP LIVE'}</div>
             <span class="live-dot-pulse"></span>
@@ -939,11 +940,12 @@ export class WeekendView {
               <span class="lap-title">GIRO</span>
               <strong class="lap-num">${race.currentLap} / ${race.totalLaps}</strong>
             </div>
-            <div class="track-status-pill ${race.safetyCar ? 'sc' : 'green'}">
-              ${race.safetyCar ? '🟡 SAFETY CAR IN PISTA' : '🟢 TRACK CLEAR • BANDIERA VERDE'}
+            <div class="track-status-pill ${race.safetyCar ? 'sc' : (race.virtualSafetyCar ? 'vsc' : 'green')}">
+              ${race.safetyCar ? '🟡 SAFETY CAR IN PISTA' : (race.virtualSafetyCar ? '🟡 VIRTUAL SAFETY CAR (VSC)' : '🟢 TRACK CLEAR • BANDIERA VERDE')}
             </div>
             <div class="weather-pill">
               <span>${race.weatherText} • Aria ${race.airTemp} / Asfalto ${race.trackTemp}</span>
+              ${race.weather?.forecast ? `<span class="radar-forecast" style="margin-left: 8px; color: #38bdf8; font-weight: 600;">📡 ${race.weather.forecast}</span>` : ''}
             </div>
           </div>
 
@@ -1307,9 +1309,15 @@ export class WeekendView {
         sound.playChequeredFlag();
         if (session.type === 'sprint') {
           state.sprintResults = state.raceState;
+          state.currentSessionIndex++;
+          nextPhase();
+        } else {
+          const finishPos = playerDriver?.status === 'DNF' ? 99 : (playerDriver?.currentPos || 10);
+          MediaInterviewModal.open(finishPos, () => {
+            state.currentSessionIndex++;
+            nextPhase();
+          });
         }
-        state.currentSessionIndex++;
-        nextPhase();
       };
     }
   }
