@@ -8,7 +8,7 @@ Un simulatore di carriera motorsport completo, giocabile nel browser, ispirato a
 
 ## 🏁 Caratteristiche
 
-- **10 campionati** — F4, F3, F2, F1 (11 team 2026 con Cadillac e Audi), WEC Hypercar, IndyCar, Moto3, Moto2, MotoGP, WorldSBK
+- **10 campionati** — F4, F3, F2, F1, WEC Hypercar, IndyCar, Moto3, Moto2, MotoGP, WorldSBK
 - **Weekend realistici** — Format specifico per campionato: FP1/FP2/FP3, Sprint weekends F1, Sprint MotoGP, Superpole WorldSBK, Hyperpole WEC
 - **Gare in tempo reale** — Telemetria giro per giro, degrado gomme, meteo dinamico, safety car, pit stop
 - **Carriera completa** — OVR pilota, R&D scuderia, mercato piloti, contratti, lifestyle, indice GOAT
