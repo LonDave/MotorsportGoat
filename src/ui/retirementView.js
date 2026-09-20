@@ -3,6 +3,7 @@ import { GoatScorer } from '../engine/goatScorer.js';
 import { sound } from '../engine/audioManager.js';
 import { ToastNotification } from './toastNotification.js';
 import { db } from '../data/databaseManager.js';
+import { HeaderView } from './headerView.js';
 
 export class RetirementView {
   static render(container, onNavigate) {
@@ -59,7 +60,7 @@ export class RetirementView {
                 <small class="retirement-nickname">"${player.nickname || 'Leggenda'}"</small>
               </h1>
               <div class="retirement-meta-chips">
-                <span class="meta-chip">🇮🇹 ${player.nationality || 'ITA'}</span>
+                <span class="meta-chip">${HeaderView.getFlagEmoji(player.nationality)} ${player.nationality || 'ITA'}</span>
                 <span class="meta-chip">📅 Anni di Attività: ${startYear} – ${endYear} (${totalSeasons} ${totalSeasons === 1 ? 'Stagione' : 'Stagioni'})</span>
                 <span class="meta-chip">⭐ Età al Ritiro: ${player.age} Anni</span>
                 <span class="meta-chip">🏆 Peak OVR: ${stats.peakOvr || player.ovr} OVR</span>

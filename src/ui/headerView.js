@@ -22,7 +22,7 @@ export class HeaderView {
           </div>
 
           <div class="nav-controls">
-            <button id="btn-header-save-manager" class="nav-icon-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
+            <button id="btn-header-save-manager" class="nav-icon-btn save-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Audio On/Off">
               ${sound.muted ? '🔇' : '🔊'}
@@ -108,7 +108,7 @@ export class HeaderView {
 
           <!-- Blocco 4: Controlli Globali (Settings, Audio, Reset, Save Manager) -->
           <div class="nav-controls">
-            <button id="btn-header-save-manager" class="nav-icon-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
+            <button id="btn-header-save-manager" class="nav-icon-btn save-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni di Gioco & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Disattiva/Attiva Suoni">
               ${sound.muted ? '🔇' : '🔊'}
@@ -189,8 +189,10 @@ export class HeaderView {
     if (saveBtn) {
       saveBtn.onclick = () => {
         sound.playClick();
-        SaveManagerModal.open(() => {
-          window.location.reload();
+        SaveManagerModal.open((hasLoadedNew) => {
+          if (hasLoadedNew) {
+            onNavigate('dashboard');
+          }
         });
       };
     }
@@ -265,8 +267,10 @@ export class HeaderView {
     if (saveBtn) {
       saveBtn.onclick = () => {
         sound.playClick();
-        SaveManagerModal.open(() => {
-          window.location.reload();
+        SaveManagerModal.open((hasLoadedNew) => {
+          if (hasLoadedNew) {
+            window.dispatchEvent(new CustomEvent('career-data-updated'));
+          }
         });
       };
     }

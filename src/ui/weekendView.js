@@ -1351,12 +1351,19 @@ export class WeekendView {
     const pos = playerDriver ? playerDriver.currentPos : 10;
     const isWin = pos === 1;
     const isPodium = pos <= 3;
-    const isPoints = pos <= 10;
+    const isPoints = player.discipline === 'moto' ? pos <= 15 : pos <= 10;
 
-    // Registra i risultati ufficiali nella carriera globale con sprint inclusa
-    const gpResult = career.recordGrandPrixResults(state.qualifyingState?.grid || state.qualifyingGrid, race, state.sprintResults);
+    // Registra i risultati ufficiali nella carriera globale con sprint inclusa (con protezione di idempotenza)
+    if (!state.gpResultRecorded) {
+      state.gpResultRecorded = true;
+      state.gpResult = career.recordGrandPrixResults(state.qualifyingState?.grid || state.qualifyingGrid, race, state.sprintResults);
+    }
+    const gpResult = state.gpResult;
     const earnedSkillPts = gpResult?.earnedSkillPoints || career.career.lastWeekendRecap?.earnedSkillPoints || 1;
     const tmCollab = gpResult?.teammateContribution || career.career.lastWeekendRecap?.teammateContribution;
+    const earnedWorldPts = gpResult?.earnedPoints !== undefined 
+      ? gpResult.earnedPoints 
+      : RaceEngine.calculatePoints(pos, false, player.discipline);
 
     const top3 = race.drivers.filter(d => d.status !== 'DNF').slice(0, 3);
 
@@ -1408,7 +1415,7 @@ export class WeekendView {
           <div class="podium-points-award-card">
             <div class="points-bubble">
               <span class="lbl">PUNTI MONDIALE</span>
-              <strong class="val">+${RaceEngine.calculatePoints(pos, false)} pts</strong>
+              <strong class="val">+${earnedWorldPts} pts ${gpResult?.fastestLapBonus ? '<small style="color: #c084fc; font-size: 11px;">(+1 FL)</small>' : ''}</strong>
             </div>
             <div class="points-bubble">
               <span class="lbl">PREMIO GARA & STIPENDIO</span>

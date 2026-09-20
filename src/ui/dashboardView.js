@@ -4,7 +4,6 @@ import { sound } from '../engine/audioManager.js';
 import { ToastNotification } from './toastNotification.js';
 import { DriverSkillsModal } from './driverSkillsModal.js';
 import { SeasonEndModal } from './seasonEndModal.js';
-import { SaveManagerModal } from './saveManagerModal.js';
 
 export class DashboardView {
   static render(container, onNavigate) {
@@ -71,9 +70,6 @@ export class DashboardView {
                 </button>
                 <button id="btn-sim-season" class="hero-sim-btn season-sim-btn" title="Simula l'intera stagione e fai crescere il pilota automaticamente">
                   <span>⚡ ${careerData.currentRaceIndex === 0 ? 'Simula Intera Stagione' : 'Simula Resto Stagione'}</span>
-                </button>
-                <button id="btn-open-save-manager" class="hero-sim-btn save-manager-btn" style="background: rgba(14, 165, 233, 0.18); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8;" title="Gestisci i 3 slot di salvataggio ed esporta/importa file JSON">
-                  <span>💾 Salvataggi (3 Slot)</span>
                 </button>
               </div>
             ` : `
@@ -507,16 +503,6 @@ export class DashboardView {
       openSkillsModalBtn.onclick = () => {
         sound.playClick();
         DriverSkillsModal.open();
-      };
-    }
-
-    const saveManagerBtn = container.querySelector('#btn-open-save-manager');
-    if (saveManagerBtn) {
-      saveManagerBtn.onclick = () => {
-        sound.playClick();
-        SaveManagerModal.open(() => {
-          DashboardView.render(container, onNavigate);
-        });
       };
     }
   }

@@ -866,15 +866,15 @@ export class RaceEngine {
           aiNeedsPit = true;
         }
         // 3. Finestra programmata raggiunta
-        else if (driver.plannedPitLaps.includes(lap)) {
+        else if (driver.plannedPitLaps?.includes(lap)) {
           aiNeedsPit = true;
         }
         // 4. Opportunità Safety Car / VSC (pit stop scontato)
-        else if ((raceState.safetyCar || raceState.virtualSafetyCar) && driver.plannedPitLaps.some(l => Math.abs(l - lap) <= 3)) {
+        else if ((raceState.safetyCar || raceState.virtualSafetyCar) && driver.plannedPitLaps?.some(l => Math.abs(l - lap) <= 3)) {
           aiNeedsPit = true;
         }
         // 5. Tentativo di UNDERCUT per piloti in Top 8
-        else if (driver.currentPos <= 8 && driver.intervalAheadSec > 0 && driver.intervalAheadSec < 1.3 && driver.plannedPitLaps.some(l => Math.abs(l - lap) <= 2) && Math.random() < 0.35) {
+        else if (driver.currentPos <= 8 && driver.intervalAheadSec > 0 && driver.intervalAheadSec < 1.3 && driver.plannedPitLaps?.some(l => Math.abs(l - lap) <= 2) && Math.random() < 0.35) {
           aiNeedsPit = true;
           const aheadDriver = raceState.drivers.find(d => d.currentPos === driver.currentPos - 1);
           events.push(`⚡ STRATEGIA AI: ${driver.name} anticipa la sosta per tentare l'UNDERCUT su ${aheadDriver ? aheadDriver.name : 'chi precede'}!`);
@@ -1133,7 +1133,14 @@ export class RaceEngine {
           }
         });
         activeDrivers.sort((a, b) => a.gapToLeaderSec - b.gapToLeaderSec);
-        activeDrivers.forEach((d, idx) => { d.currentPos = idx + 1; });
+        if (activeDrivers.length > 0) {
+          const minGap = activeDrivers[0].gapToLeaderSec;
+          activeDrivers.forEach((d, idx) => {
+            d.gapToLeaderSec -= minGap;
+            d.currentPos = idx + 1;
+            d.intervalAheadSec = idx === 0 ? 0 : d.gapToLeaderSec - activeDrivers[idx - 1].gapToLeaderSec;
+          });
+        }
         raceState.drivers = [...activeDrivers, ...dnfDrivers];
       }
     }
@@ -1173,7 +1180,18 @@ export class RaceEngine {
     return raceState;
   }
 
-  static calculatePoints(position, isSprint = false) {
+  static calculatePoints(position, isSprint = false, discipline = 'auto') {
+    if (discipline === 'moto') {
+      if (isSprint) {
+        // Tabella Ufficiale FIM MotoGP Sprint: Top 9 a punti
+        const sprintMoto = [12, 9, 7, 6, 5, 4, 3, 2, 1];
+        return sprintMoto[position - 1] || 0;
+      } else {
+        // Tabella Ufficiale FIM MotoGP: Top 15 a punti
+        const raceMoto = [25, 20, 16, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+        return raceMoto[position - 1] || 0;
+      }
+    }
     if (isSprint) {
       const sprintTable = [8, 7, 6, 5, 4, 3, 2, 1];
       return sprintTable[position - 1] || 0;

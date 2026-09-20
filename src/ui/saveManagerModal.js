@@ -8,6 +8,7 @@ export class SaveManagerModal {
     if (existing) existing.remove();
 
     const activeSlotKey = localStorage.getItem('il_nuovo_goat_active_slot') || 'slot_1';
+    const hasActiveCareer = career.hasActiveCareer() || (career.hasSavedCareer() && career.career?.isRetired);
 
     const getSlotData = (slotNum) => {
       const key = slotNum === 1 
@@ -37,14 +38,14 @@ export class SaveManagerModal {
         <div class="in-game-modal-card save-manager-card">
           <div class="modal-header-row">
             <div>
-              <span class="session-badge">CLOUD & MEMORIA LOCALE</span>
-              <h2 class="modal-title">💾 Gestione Multi-Salvataggio & Backup</h2>
-              <p class="modal-subtitle">Gestisci fino a 3 carriere simultanee indipendenti o esporta il tuo file di salvataggio per non perdere mai la tua leggenda.</p>
+              <span class="session-badge">💾 CLOUD & MEMORIA LOCALE</span>
+              <h2 class="modal-title">Gestione Multi-Salvataggio & Backup</h2>
+              <p class="modal-subtitle">Gestisci fino a 3 carriere indipendenti o esporta il tuo file di salvataggio per non perdere mai i tuoi progressi.</p>
             </div>
-            <button class="modal-close-btn" id="btn-close-save-modal">✕</button>
+            <button class="modal-close-btn" id="btn-close-save-modal" title="Chiudi finestra">✕</button>
           </div>
 
-          <!-- GRIGLIA DEGLI SLOT -->
+          <!-- GRIGLIA DEI 3 SLOT -->
           <div class="save-slots-grid">
             ${slots.map(s => {
               const d = s.data;
@@ -53,9 +54,9 @@ export class SaveManagerModal {
               const c = d?.career;
 
               return `
-                <div class="save-slot-card ${s.isActive ? 'active-slot' : ''} ${!hasData ? 'empty-slot' : ''}">
+                <div class="save-slot-card ${s.isActive && hasData ? 'active-slot' : ''} ${!hasData ? 'empty-slot' : ''}">
                   <div class="slot-card-header">
-                    <span class="slot-badge">${s.isActive ? '⭐ SLOT ATTIVO' : `SLOT ${s.num}`}</span>
+                    <span class="slot-badge ${s.isActive && hasData ? 'active' : ''}">${s.isActive && hasData ? '⭐ SLOT ATTIVO' : `SLOT ${s.num}`}</span>
                     ${hasData ? `<span class="slot-date">Anno ${c.currentYear || 2026} • St. ${c.seasonNumber || 1}</span>` : ''}
                   </div>
 
@@ -64,8 +65,8 @@ export class SaveManagerModal {
                       <strong class="slot-driver-name">${p.firstName} ${p.lastName}</strong>
                       <div class="slot-pills-row">
                         <span class="meta-pill disc">${p.discipline === 'auto' ? '🏎️ Auto' : '🏍️ Moto'}</span>
-                        <span class="meta-pill cat">${c.currentCategory?.toUpperCase()}</span>
-                        <span class="meta-pill ovr">OVR ${p.ovr}</span>
+                        <span class="meta-pill cat">${c.currentCategory ? c.currentCategory.toUpperCase() : 'SERIE'}</span>
+                        <span class="meta-pill ovr">OVR ${p.ovr || 60}</span>
                       </div>
                       <div class="slot-finances">
                         Liquidità: <strong style="color:#4ade80;">€${(c.money || 0).toLocaleString()}</strong>
@@ -75,11 +76,11 @@ export class SaveManagerModal {
                     <div class="slot-actions-row">
                       ${!s.isActive ? `
                         <button class="btn-slot-action load-btn" data-slot="${s.num}">
-                          <span>📂 Carica Carriera</span>
+                          <span>📂 Carica</span>
                         </button>
                       ` : `
-                        <button class="btn-slot-action save-here-btn" data-slot="${s.num}">
-                          <span>💾 Salva Stato Attuale</span>
+                        <button class="btn-slot-action save-here-btn" data-slot="${s.num}" title="Aggiorna salvataggio attuale">
+                          <span>💾 Salva</span>
                         </button>
                       `}
                       <button class="btn-slot-action delete-btn" data-slot="${s.num}" title="Cancella questo slot">
@@ -88,12 +89,16 @@ export class SaveManagerModal {
                     </div>
                   ` : `
                     <div class="empty-slot-content">
-                      <span class="empty-icon">📂</span>
-                      <strong>Slot Libero</strong>
-                      <p>Nessuna carriera salvata in questa posizione.</p>
-                      <button class="btn-slot-action save-here-btn" data-slot="${s.num}">
-                        <span>💾 Salva Carriera Qui</span>
-                      </button>
+                      <span class="empty-icon">📁</span>
+                      <strong style="color: #cbd5e1; font-size: 14px;">Slot ${s.num} Libero</strong>
+                      <p style="font-size: 12px; color: #64748b; margin: 4px 0 12px;">Nessuna carriera salvata in questa posizione.</p>
+                      ${hasActiveCareer ? `
+                        <button class="btn-slot-action save-here-btn" data-slot="${s.num}">
+                          <span>💾 Salva Carriera Qui</span>
+                        </button>
+                      ` : `
+                        <span class="slot-empty-hint" style="font-size: 11px; color: #475569;">Avvia una carriera per salvare</span>
+                      `}
                     </div>
                   `}
                 </div>
@@ -108,7 +113,7 @@ export class SaveManagerModal {
               <p class="backup-desc">Scarica il file della tua carriera per giocarlo su un altro computer o browser, oppure ripristina un backup precedente.</p>
             </div>
             <div class="backup-actions">
-              <button id="btn-export-save-json" class="btn-export pulse-glow">
+              <button id="btn-export-save-json" class="btn-export" ${!hasActiveCareer ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
                 <span>⬇️ Esporta Salvataggio (.json)</span>
               </button>
               <label class="btn-import" for="input-import-save-file">
@@ -120,11 +125,22 @@ export class SaveManagerModal {
         </div>
       `;
 
-      // Event listeners
-      modal.querySelector('#btn-close-save-modal').onclick = () => {
-        sound.playClick();
-        modal.remove();
-        onComplete();
+      // Chiudi modal
+      const closeBtn = modal.querySelector('#btn-close-save-modal');
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          sound.playClick();
+          modal.remove();
+          onComplete(false);
+        };
+      }
+
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          sound.playClick();
+          modal.remove();
+          onComplete(false);
+        }
       };
 
       // Carica Slot
@@ -135,14 +151,23 @@ export class SaveManagerModal {
           const key = slotNum === 1 ? 'il_nuovo_goat_motorsport_save' : `il_nuovo_goat_save_slot_${slotNum}`;
           const raw = localStorage.getItem(key);
           if (raw) {
-            localStorage.setItem('il_nuovo_goat_motorsport_save', raw);
-            localStorage.setItem('il_nuovo_goat_active_slot', `slot_${slotNum}`);
-            career.loadFromStorage();
-            sound.playChequeredFlag();
-            ToastNotification.show(`Carriera caricata dallo Slot ${slotNum}!`, "success");
-            modal.remove();
-            window.dispatchEvent(new CustomEvent('career-data-updated'));
-            onComplete();
+            try {
+              const parsed = JSON.parse(raw);
+              if (parsed.player && parsed.career) {
+                localStorage.setItem('il_nuovo_goat_motorsport_save', raw);
+                localStorage.setItem('il_nuovo_goat_active_slot', `slot_${slotNum}`);
+                career.loadFromStorage();
+                sound.playChequeredFlag();
+                ToastNotification.show(`Carriera di ${parsed.player.firstName} ${parsed.player.lastName} caricata dallo Slot ${slotNum}!`, "success");
+                modal.remove();
+                window.dispatchEvent(new CustomEvent('career-data-updated'));
+                onComplete(true);
+              } else {
+                ToastNotification.show("Salvataggio non valido.", "danger");
+              }
+            } catch (e) {
+              ToastNotification.show("Errore nel caricamento del file.", "danger");
+            }
           }
         };
       });
@@ -152,12 +177,17 @@ export class SaveManagerModal {
         btn.onclick = () => {
           sound.playClick();
           const slotNum = parseInt(btn.dataset.slot, 10);
-          const currentData = { player: career.player, career: career.career };
+          if (!career.player || !career.career) {
+            ToastNotification.show("Nessuna carriera attiva da salvare!", "warning");
+            return;
+          }
+          career.syncAndReconcileStats();
+          const currentData = { player: career.player, career: career.career, savedAt: new Date().toISOString() };
           const key = slotNum === 1 ? 'il_nuovo_goat_motorsport_save' : `il_nuovo_goat_save_slot_${slotNum}`;
           localStorage.setItem(key, JSON.stringify(currentData));
           localStorage.setItem('il_nuovo_goat_active_slot', `slot_${slotNum}`);
           sound.playRadioBeep();
-          ToastNotification.show(`Stato salvato nello Slot ${slotNum}!`, "success");
+          ToastNotification.show(`Carriera salvata con successo nello Slot ${slotNum}!`, "success");
           render();
         };
       });
@@ -175,6 +205,9 @@ export class SaveManagerModal {
             onConfirm: () => {
               const key = slotNum === 1 ? 'il_nuovo_goat_motorsport_save' : `il_nuovo_goat_save_slot_${slotNum}`;
               localStorage.removeItem(key);
+              if (activeSlotKey === `slot_${slotNum}`) {
+                localStorage.removeItem('il_nuovo_goat_active_slot');
+              }
               ToastNotification.show(`Slot ${slotNum} svuotato.`, "warning");
               render();
             }
@@ -186,7 +219,12 @@ export class SaveManagerModal {
       const exportBtn = modal.querySelector('#btn-export-save-json');
       if (exportBtn) {
         exportBtn.onclick = () => {
+          if (!career.player || !career.career) {
+            ToastNotification.show("Nessuna carriera attiva da esportare!", "warning");
+            return;
+          }
           sound.playClick();
+          career.syncAndReconcileStats();
           const currentData = { player: career.player, career: career.career, exportDate: new Date().toISOString() };
           const jsonStr = JSON.stringify(currentData, null, 2);
           const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -197,7 +235,7 @@ export class SaveManagerModal {
           a.download = `il_nuovo_goat_${pName}_${new Date().toISOString().slice(0, 10)}.json`;
           a.click();
           URL.revokeObjectURL(url);
-          ToastNotification.show("File di salvataggio scaricato con successo!", "success");
+          ToastNotification.show("File di salvataggio esportato con successo!", "success");
         };
       }
 
@@ -213,12 +251,13 @@ export class SaveManagerModal {
               const parsed = JSON.parse(event.target.result);
               if (parsed.player && parsed.career) {
                 localStorage.setItem('il_nuovo_goat_motorsport_save', JSON.stringify(parsed));
+                localStorage.setItem('il_nuovo_goat_active_slot', 'slot_1');
                 career.loadFromStorage();
                 sound.playChequeredFlag();
                 ToastNotification.show(`Salvataggio di ${parsed.player.firstName} ${parsed.player.lastName} importato con successo!`, "success");
                 modal.remove();
                 window.dispatchEvent(new CustomEvent('career-data-updated'));
-                onComplete();
+                onComplete(true);
               } else {
                 ToastNotification.show("File JSON non valido per Il Nuovo GOAT.", "danger");
               }

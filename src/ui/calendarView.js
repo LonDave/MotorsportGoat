@@ -30,7 +30,19 @@ export class CalendarView {
         <!-- GRIGLIA SCHEDE CIRCUITI -->
         <div class="calendar-grid">
           ${calendarIds.map((circuitId, index) => {
-            const circuit = db.getCircuit(circuitId);
+            const circuit = db.getCircuit(circuitId) || {
+              displayName: circuitId,
+              country: 'Mondo',
+              flag: '🏁',
+              description: 'Circuito ufficiale da competizione.',
+              lengthKm: 5.0,
+              lapsF1: 50,
+              lapsMoto: 24,
+              tyreStress: 3,
+              downforceLevel: 'Medio',
+              overtakeEase: 3,
+              rainChance: 0.15
+            };
             const isPast = index < currentIndex;
             const isCurrent = index === currentIndex;
             const isFuture = index > currentIndex;

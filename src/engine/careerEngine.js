@@ -2847,6 +2847,8 @@ export class CareerEngine {
       }
     }
 
+    const discipline = this.career?.player?.discipline || this.player?.discipline || 'auto';
+
     // Risultato gara principale
     const playerResult = raceResults.drivers.find(d => d.isPlayer);
     if (playerResult) {
@@ -2860,6 +2862,7 @@ export class CareerEngine {
         catStats.wins = (catStats.wins || 0) + 1;
         this.recordDriverWin('player', currentCatKey);
         if (currentCircuit) {
+          if (!stats.specialWins) stats.specialWins = {};
           stats.specialWins[currentCircuit.id] = (stats.specialWins[currentCircuit.id] || 0) + 1;
         }
       }
@@ -2870,7 +2873,7 @@ export class CareerEngine {
       }
 
       // Punti gara
-      const racePts = raceResults.isSprint ? 0 : this.getPointsForPosition(pos);
+      const racePts = raceResults.isSprint ? 0 : this.getPointsForPosition(pos, discipline);
       this.addDriverPoints("player", racePts, pos === 1, pos <= 3);
 
       // Punti scuderia
@@ -2888,7 +2891,7 @@ export class CareerEngine {
     // Risultati degli altri piloti AI
     raceResults.drivers.forEach(d => {
       if (!d.isPlayer) {
-        const pts = this.getPointsForPosition(d.currentPos);
+        const pts = this.getPointsForPosition(d.currentPos, discipline);
         this.addDriverPoints(d.driverId, pts, d.currentPos === 1, d.currentPos <= 3);
         this.addTeamPoints(d.teamId, pts);
 
@@ -2905,15 +2908,16 @@ export class CareerEngine {
     // Se c'è stata una Sprint race, assegna anche i punti sprint
     if (sprintResults) {
       sprintResults.drivers.forEach(d => {
-        const pts = this.getSprintPointsForPosition(d.currentPos);
+        const pts = this.getSprintPointsForPosition(d.currentPos, discipline);
         this.addDriverPoints(d.isPlayer ? "player" : d.driverId, pts, false, false);
         this.addTeamPoints(d.teamId, pts);
       });
     }
 
-    // Assegnazione punto addizionale per il Giro Veloce della gara (se conclusa in Top 10)
+    // Assegnazione punto addizionale per il Giro Veloce della gara (se conclusa in Top 10 e SOLO per discipline 'auto' FIA)
+    let playerFlPointAwarded = false;
     const flDriverId = raceResults?.fastestLapDriverId;
-    if (flDriverId && !raceResults.isSprint && raceResults.drivers) {
+    if (flDriverId && !raceResults.isSprint && raceResults.drivers && discipline !== 'moto') {
       const flDriver = raceResults.drivers.find(d => d.driverId === flDriverId || (d.isPlayer && flDriverId === 'player'));
       if (flDriver && flDriver.currentPos <= 10) {
         const isPlayerFl = !!(flDriver.isPlayer || flDriverId === 'player');
@@ -2921,6 +2925,7 @@ export class CareerEngine {
         this.addTeamPoints(flDriver.teamId, 1);
         if (isPlayerFl) {
           stats.fastestLaps = (stats.fastestLaps || 0) + 1;
+          playerFlPointAwarded = true;
         }
       }
     }
@@ -2942,12 +2947,7 @@ export class CareerEngine {
     this.progressPlayerAttributes(playerResult ? playerResult.currentPos : 10);
 
     // Calcolo punti abilità:
-    // Base garantita: 2 punti (esperienza giro in pista, telemetria, setup)
-    // +1 se a punti (Top 10)
-    // Calcolo punti abilità:
     // Progressione bilanciata in base alla maturità/OVR del pilota:
-    // A basso OVR (rookie) si cresce più rapidamente, mentre ai vertici (85-90+ OVR)
-    // i punti abilità sono rari e richiedono grandi risultati.
     let earnedSkillPoints = 0;
     const currentOvr = this.player.ovr || 60;
     if (currentOvr < 99) {
@@ -2970,13 +2970,16 @@ export class CareerEngine {
           if (playerResult.currentPos <= 3) earnedSkillPoints += 1;
         }
       } else {
-        // Sopra 92 OVR (livello superstar F1: Verstappen/Hamilton/Leclerc):
-        // I punti si guadagnano unicamente con podi e vittorie
         earnedSkillPoints = 0;
         if (playerResult) {
           if (playerResult.currentPos <= 3) earnedSkillPoints += 1;
         }
       }
+    }
+
+    // Bonus Qualifica per la Pole
+    if (qualifyingGrid && qualifyingGrid[0]?.isPlayer && currentOvr < 99) {
+      earnedSkillPoints += 1;
     }
 
     if ((this.player.ovr || 60) >= 99) {
@@ -3006,24 +3009,40 @@ export class CareerEngine {
     const isSeasonEnd = this.career.currentRaceIndex >= (catData?.calendar?.length || 1);
 
     this.saveToStorage();
-    const racePts = playerResult ? (raceResults.isSprint ? 0 : this.getPointsForPosition(playerResult.currentPos)) : 0;
+    const basePts = playerResult ? (raceResults.isSprint ? 0 : this.getPointsForPosition(playerResult.currentPos, discipline)) : 0;
+    const totalEarnedPts = basePts + (playerFlPointAwarded ? 1 : 0);
     return {
       isSeasonEnd,
       nextRaceIndex: this.career.currentRaceIndex,
       earnedSkillPoints,
-      earnedPoints: racePts,
+      earnedPoints: totalEarnedPts,
+      fastestLapBonus: playerFlPointAwarded,
       teammateContribution
     };
   }
 
-  getPointsForPosition(pos) {
-    const table = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
-    return table[pos - 1] || 0;
+  getPointsForPosition(pos, discipline = null) {
+    const disc = discipline || this.career?.player?.discipline || this.player?.discipline || 'auto';
+    if (disc === 'moto') {
+      // Tabella Ufficiale FIM MotoGP: Top 15 a punti
+      const tableMoto = [25, 20, 16, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+      return tableMoto[pos - 1] || 0;
+    }
+    // Tabella Ufficiale FIA Formula 1: Top 10 a punti
+    const tableAuto = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+    return tableAuto[pos - 1] || 0;
   }
 
-  getSprintPointsForPosition(pos) {
-    const table = [8, 7, 6, 5, 4, 3, 2, 1];
-    return table[pos - 1] || 0;
+  getSprintPointsForPosition(pos, discipline = null) {
+    const disc = discipline || this.career?.player?.discipline || this.player?.discipline || 'auto';
+    if (disc === 'moto') {
+      // Tabella Ufficiale FIM MotoGP Sprint: Top 9 a punti
+      const tableMotoSprint = [12, 9, 7, 6, 5, 4, 3, 2, 1];
+      return tableMotoSprint[pos - 1] || 0;
+    }
+    // Tabella Ufficiale FIA Formula 1 Sprint: Top 8 a punti
+    const tableAutoSprint = [8, 7, 6, 5, 4, 3, 2, 1];
+    return tableAutoSprint[pos - 1] || 0;
   }
 
   addDriverPoints(driverId, pts, isWin, isPodium) {
@@ -4184,7 +4203,7 @@ export class CareerEngine {
 
       // Collaborazione Piloti AI: il feedback tecnico e gli sponsor dei piloti accelerano lo sviluppo vettura
       const teamDrivers = cat.roster.filter(d => {
-        const effTeam = this.career.teamDriverOverrides[d.id] || d.teamId;
+        const effTeam = (this.career.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
         return effTeam === team.id;
       });
 

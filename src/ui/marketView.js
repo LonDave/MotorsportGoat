@@ -255,7 +255,8 @@ export class MarketView {
                         });
                       }
                     } else {
-                      const roster = (catData.roster || []).filter(r => {
+                      const activeRoster = career.getActiveRoster(catData.id) || [];
+                      const roster = activeRoster.filter(r => {
                         const effTeam = (careerData.teamDriverOverrides && careerData.teamDriverOverrides[r.id]) || r.teamId;
                         if (effTeam === 'retired' || (careerData.retiredDriverIds && careerData.retiredDriverIds.includes(r.id))) return false;
                         return effTeam === t.id;

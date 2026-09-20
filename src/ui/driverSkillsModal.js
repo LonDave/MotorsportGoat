@@ -34,12 +34,12 @@ export class DriverSkillsModal {
     modalOverlay.id = 'driver-skills-modal';
 
     const attributeDefinitions = [
-      { key: 'pace', name: 'Giro Secco & Qualifica', icon: '⚡', weight: '28%', desc: 'Velocità pura sul giro singolo, staccata al limite e caccia alla Pole Position.' },
-      { key: 'racecraft', name: 'Staccata & Sorpasso', icon: '⚔️', weight: '22%', desc: 'Efficacia nei duelli corpo a corpo, difesa della traiettoria e attacco in curva.' },
-      { key: 'tyreMgmt', name: 'Gestione Gomme', icon: '🛞', weight: '16%', desc: 'Capacità di preservare la mescola evitando surriscaldamenti e blistering sui long run.' },
-      { key: 'consistency', name: 'Costanza di Passo', icon: '⏱️', weight: '14%', desc: 'Ripetitività dei tempi su ogni giro e riduzione del rischio di errori o sbavature.' },
-      { key: 'wetSkill', name: 'Abilità sul Bagnato', icon: '🌧️', weight: '10%', desc: 'Sensibilità sull\'asfalto allagato, galleggiamento e controllo dell\'aquaplaning.' },
-      { key: 'technicalFeedback', name: 'Feedback Telemetrico', icon: '📡', weight: '10%', desc: 'Qualità dei dati telemetrici trasmessi agli ingegneri per il bilanciamento dell\'assetto.' },
+      { key: 'pace', name: 'Giro Secco & Qualifica', icon: '⚡', weight: '30%', desc: 'Velocità pura sul giro singolo, staccata al limite e caccia alla Pole Position.' },
+      { key: 'racecraft', name: 'Staccata & Sorpasso', icon: '⚔️', weight: '25%', desc: 'Efficacia nei duelli corpo a corpo, difesa della traiettoria e attacco in curva.' },
+      { key: 'tyreMgmt', name: 'Gestione Gomme', icon: '🛞', weight: '18%', desc: 'Capacità di preservare la mescola evitando surriscaldamenti e blistering sui long run.' },
+      { key: 'consistency', name: 'Costanza di Passo', icon: '⏱️', weight: '17%', desc: 'Ripetitività dei tempi su ogni giro e riduzione del rischio di errori o sbavature.' },
+      { key: 'wetSkill', name: 'Abilità sul Bagnato', icon: '🌧️', weight: '5%', desc: 'Sensibilità sull\'asfalto allagato, galleggiamento e controllo dell\'aquaplaning.' },
+      { key: 'technicalFeedback', name: 'Feedback Telemetrico', icon: '📡', weight: '5%', desc: 'Qualità dei dati telemetrici trasmessi agli ingegneri per il bilanciamento dell\'assetto.' },
       { key: 'fitness', name: 'Forma Fisica & Riflessi', icon: '🏃', weight: 'Atletica', desc: 'Resistenza al carico gravitazionale G e mantenimento della lucidità sotto sforzo.' }
     ];
 
@@ -92,7 +92,7 @@ export class DriverSkillsModal {
             <!-- RIEPILOGO PONDERAZIONE OVR -->
             <div class="ovr-weights-summary-pill">
               <span class="formula-tag">FORMULA OVR:</span>
-              <span>28% Passo • 22% Duelli • 16% Gomme • 14% Costanza • 10% Bagnato • 10% Telemetria</span>
+              <span>30% Passo • 25% Duelli • 18% Gomme • 17% Costanza • 5% Bagnato • 5% Telemetria</span>
             </div>
 
             <!-- GRIGLIA INTERATTIVA ATTRIBUTI -->

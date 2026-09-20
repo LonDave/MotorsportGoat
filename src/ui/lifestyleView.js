@@ -280,6 +280,7 @@ export class LifestyleView {
           if (res.success) {
             sound.playClick();
             ToastNotification.show(`🏛️ ${res.message}`, "success");
+            window.dispatchEvent(new CustomEvent('career-data-updated'));
             renderView();
           } else {
             ToastNotification.show(`⚠️ ${res.message}`, "warning");
@@ -298,6 +299,7 @@ export class LifestyleView {
           if (res.success) {
             sound.playChequeredFlag();
             ToastNotification.show(`🎉 ${res.message}`, "success");
+            window.dispatchEvent(new CustomEvent('career-data-updated'));
             renderView();
           } else {
             ToastNotification.show(`⚠️ ${res.message}`, "warning");
@@ -313,6 +315,7 @@ export class LifestyleView {
           if (res.success) {
             sound.playClick();
             ToastNotification.show(`⚡ ${res.message}`, "success");
+            window.dispatchEvent(new CustomEvent('career-data-updated'));
             renderView();
           } else {
             ToastNotification.show(`⚠️ ${res.message}`, "warning");

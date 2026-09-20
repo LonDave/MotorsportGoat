@@ -92,7 +92,7 @@ export class StandingsView {
                     </td>
                     <td class="driver-cell col-driver">
                       <div class="driver-cell-flex">
-                        <span class="team-color-strip" style="background:${teamInfo.color || '#888'}"></span>
+                        <span class="team-color-strip" style="background:${teamInfo?.color || '#888'}"></span>
                         <div class="driver-names-box">
                           <strong class="pilot-name">${driverName}</strong>
                           ${isPlayer ? '<span class="you-badge">IL TUO PILOTA</span>' : ''}
@@ -100,7 +100,7 @@ export class StandingsView {
                       </div>
                     </td>
                     <td class="team-cell col-team">
-                      <span class="team-bullet-small" style="background:${teamInfo.color || '#888'}"></span>
+                      <span class="team-bullet-small" style="background:${teamInfo?.color || '#888'}"></span>
                       ${teamInfo?.displayName || teamInfo?.realName || teamInfo?.fictionalName || teamInfo?.name || 'Scuderia'}
                     </td>
                     <td class="stat-cell text-center col-wins"><strong>${entry.wins || 0}</strong></td>
@@ -163,7 +163,7 @@ export class StandingsView {
                     </td>
                     <td class="team-cell col-team">
                       <div class="team-cell-flex">
-                        <span class="team-color-strip" style="background:${teamInfo.color || '#888'}"></span>
+                        <span class="team-color-strip" style="background:${teamInfo?.color || '#888'}"></span>
                         <div>
                           <strong class="team-title">${teamInfo?.displayName || teamInfo?.realName || teamInfo?.fictionalName || teamInfo?.name || 'Scuderia'}</strong>
                           ${isPlayerTeam ? '<span class="you-badge">LA TUA SCUDERIA</span>' : ''}
@@ -174,7 +174,7 @@ export class StandingsView {
                       <small>${teamDrivers.join(' • ')}</small>
                     </td>
                     <td class="stat-cell text-center col-pace">
-                      <span class="car-pace-tag">${player.discipline === 'auto' ? teamInfo.carPace : teamInfo.bikePace}/99</span>
+                      <span class="car-pace-tag">${player.discipline === 'auto' ? (teamInfo?.carPace || 75) : (teamInfo?.bikePace || 75)}/99</span>
                     </td>
                     <td class="gap-cell text-right col-gap"><small>${gap}</small></td>
                     <td class="points-cell text-right col-points">
