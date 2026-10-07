@@ -32,6 +32,9 @@ class DatabaseManager {
 
   onModeChange(callback) {
     this.listeners.push(callback);
+    return () => {
+      this.listeners = this.listeners.filter(cb => cb !== callback);
+    };
   }
 
   notifyChange() {
@@ -105,7 +108,7 @@ class DatabaseManager {
     const override = this.customOverrides[discipline]?.teams?.[teamId];
     if (override && this.isRealNames) return override.name || override.displayName || teamId || 'Scuderia';
 
-    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    let categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     for (const catKey in categories) {
       const cat = categories[catKey];
       const team = cat.teams.find(t => t.id === teamId);
@@ -114,6 +117,22 @@ class DatabaseManager {
         return n || team.name || team.realName || team.fictionalName || teamId || 'Scuderia';
       }
     }
+
+    // Fallback: ricerca nell'altra disciplina (es. team moto richiesto senza specificare disciplina)
+    const otherDisc = discipline === 'auto' ? 'moto' : 'auto';
+    const otherOverride = this.customOverrides[otherDisc]?.teams?.[teamId];
+    if (otherOverride && this.isRealNames) return otherOverride.name || otherOverride.displayName || teamId || 'Scuderia';
+
+    categories = otherDisc === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    for (const catKey in categories) {
+      const cat = categories[catKey];
+      const team = cat.teams.find(t => t.id === teamId);
+      if (team) {
+        const n = this.isRealNames ? team.realName : team.fictionalName;
+        return n || team.name || team.realName || team.fictionalName || teamId || 'Scuderia';
+      }
+    }
+
     return teamId || 'Scuderia';
   }
 
@@ -143,7 +162,7 @@ class DatabaseManager {
       };
     }
 
-    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    let categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     for (const catKey in categories) {
       const cat = categories[catKey];
       const team = cat.teams.find(t => t.id === teamId);
@@ -163,6 +182,46 @@ class DatabaseManager {
         };
       }
     }
+
+    // Fallback: ricerca nell'altra disciplina
+    const otherDisc = discipline === 'auto' ? 'moto' : 'auto';
+    const otherOverride = this.customOverrides[otherDisc]?.teams?.[teamId];
+    if (otherOverride && this.isRealNames) {
+      const dev = this.teamDevelopment[teamId];
+      const carPace = dev?.carPace !== undefined ? dev.carPace : (otherOverride.carPace || 75);
+      const bikePace = dev?.bikePace !== undefined ? dev.bikePace : (otherOverride.bikePace || 75);
+      const reliability = dev?.reliability !== undefined ? dev.reliability : (otherOverride.reliability || 75);
+      return {
+        ...otherOverride,
+        carPace,
+        bikePace,
+        reliability,
+        displayName: otherOverride.name || otherOverride.displayName || teamId || 'Scuderia',
+        color: otherOverride.color || '#e10600'
+      };
+    }
+
+    categories = otherDisc === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    for (const catKey in categories) {
+      const cat = categories[catKey];
+      const team = cat.teams.find(t => t.id === teamId);
+      if (team) {
+        const name = this.getTeamName(teamId, otherDisc, catKey);
+        const dev = this.teamDevelopment[teamId];
+        const carPace = dev?.carPace !== undefined ? dev.carPace : (team.carPace || team.bikePace || 75);
+        const bikePace = dev?.bikePace !== undefined ? dev.bikePace : (team.bikePace || team.carPace || 75);
+        const reliability = dev?.reliability !== undefined ? dev.reliability : (team.reliability || 75);
+        return {
+          ...team,
+          carPace,
+          bikePace,
+          reliability,
+          displayName: name || team.realName || team.fictionalName || team.name || teamId || 'Scuderia',
+          color: team.color || '#e10600'
+        };
+      }
+    }
+
     return { id: teamId, displayName: teamId || 'Scuderia', color: "#888888", carPace: 75, bikePace: 75, reliability: 75 };
   }
 
@@ -175,6 +234,7 @@ class DatabaseManager {
   // Risolve il nome di un pilota avversario o regen
   getDriverName(driverId, discipline = 'auto') {
     if (!driverId) return 'Pilota';
+    if (driverId === 'player' || driverId === 'player_custom') return 'Il Tuo Pilota';
 
     if (this.customDrivers[driverId]) {
       const cd = this.customDrivers[driverId];

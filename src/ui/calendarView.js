@@ -38,6 +38,7 @@ export class CalendarView {
               lengthKm: 5.0,
               lapsF1: 50,
               lapsMoto: 24,
+              tyreWear: 3,
               tyreStress: 3,
               downforceLevel: 'Medio',
               overtakeEase: 3,
@@ -81,7 +82,7 @@ export class CalendarView {
                   </div>
                   <div class="spec-item">
                     <span class="spec-lbl">🛞 Usura Gomme</span>
-                    <strong class="spec-val">${'★'.repeat(circuit.tyreStress || 3)}${'☆'.repeat(5 - (circuit.tyreStress || 3))}</strong>
+                    <strong class="spec-val">${'★'.repeat(circuit.tyreWear || circuit.tyreStress || 3)}${'☆'.repeat(5 - (circuit.tyreWear || circuit.tyreStress || 3))}</strong>
                   </div>
                   <div class="spec-item">
                     <span class="spec-lbl">🌬️ Carico Aero</span>

@@ -1723,12 +1723,19 @@ export class CareerEngine {
     const evolvedDrivers = [];
     const processedDriverIds = new Set();
 
-    // Raccoglie tutti i piloti da tutte le categorie
+    // Raccoglie tutti i piloti da tutte le categorie e dai regens generati
+    const allDriversToSimulate = [];
     for (const catKey in categories) {
       const cat = categories[catKey];
-      if (!cat || !cat.roster) continue;
+      if (cat && cat.roster) {
+        allDriversToSimulate.push(...cat.roster);
+      }
+    }
+    if (this.career?.regens) {
+      allDriversToSimulate.push(...Object.values(this.career.regens));
+    }
 
-      cat.roster.forEach(driver => {
+    allDriversToSimulate.forEach(driver => {
         const dId = driver.id;
         if (processedDriverIds.has(dId)) return;
         processedDriverIds.add(dId);
@@ -1815,7 +1822,6 @@ export class CareerEngine {
           delta
         });
       });
-    }
 
     // Sincronizza subito al database
     db.setAiDriverAttributes(this.career.aiDriverAttributes);
@@ -1940,6 +1946,13 @@ export class CareerEngine {
       cat.roster.forEach(d => {
         if (!allDriversMap.has(d.id)) {
           allDriversMap.set(d.id, { driver: d, category: catKey });
+        }
+      });
+    }
+    if (this.career?.regens) {
+      Object.values(this.career.regens).forEach(d => {
+        if (!allDriversMap.has(d.id)) {
+          allDriversMap.set(d.id, { driver: d, category: d.category });
         }
       });
     }
@@ -2183,11 +2196,6 @@ export class CareerEngine {
     // Assegna al team
     this.career.teamDriverOverrides[regenId] = assignedTeamId;
 
-    // Aggiungi al roster della categoria se non già presente
-    if (!cat.roster.some(d => d.id === regenId)) {
-      cat.roster.push(regenData);
-    }
-
     const assignedTeamName = db.getTeamName(assignedTeamId, discipline, categoryKey);
     this.career.aiTransferNews.unshift(
       `⭐ DEBUTTO PRODIGIO: ${assignedTeamName} promuove la giovane promessa ${realName} (${age} anni, OVR ${baseOvr}), ispirato a ${legendSource}! Stile: ${regenData.traitNote}.`
@@ -2236,8 +2244,38 @@ export class CareerEngine {
         const isPlayerTeam = isPlayerCat && (team.id === playerTeamId);
         const capacity = isPlayerTeam ? Math.max(1, maxDrivers - 1) : maxDrivers;
 
-        // Trova piloti attivi validi (non ritirati, non free agent)
-        let activeDrivers = cat.roster.filter(d => {
+        // Trova tutti i piloti attualmente assegnati a questo team (inclusi override e regens)
+        const teamDriverMap = new Map();
+
+        // 1. Piloti base della categoria assegnati a questo team
+        cat.roster.forEach(d => {
+          const effTeam = this.career.teamDriverOverrides?.[d.id] || d.teamId;
+          if (effTeam === team.id) {
+            teamDriverMap.set(d.id, d);
+          }
+        });
+
+        // 2. Piloti trasferiti tramite override (es. promozioni da feeder o FA)
+        if (this.career.teamDriverOverrides) {
+          for (const [dId, ovrTeam] of Object.entries(this.career.teamDriverOverrides)) {
+            if (ovrTeam === team.id && !teamDriverMap.has(dId)) {
+              const drv = db.getDriver(dId, discipline);
+              if (drv) teamDriverMap.set(dId, drv);
+            }
+          }
+        }
+
+        // 3. Regens appartenenti a questo team
+        if (this.career.regens) {
+          for (const [rId, rData] of Object.entries(this.career.regens)) {
+            const effTeam = this.career.teamDriverOverrides?.[rId] || rData.teamId;
+            if (effTeam === team.id && !teamDriverMap.has(rId)) {
+              teamDriverMap.set(rId, rData);
+            }
+          }
+        }
+
+        let activeDrivers = Array.from(teamDriverMap.values()).filter(d => {
           const effTeam = this.career.teamDriverOverrides?.[d.id] || d.teamId;
           if (effTeam !== team.id) return false;
           if (effTeam === 'retired' || effTeam === 'free_agent') return false;
@@ -2257,7 +2295,7 @@ export class CareerEngine {
             // Trova i migliori talenti della serie inferiore non ancora promossi o ritirati
             const feederCandidates = feederCat.roster.filter(fd => {
               const eff = this.career.teamDriverOverrides?.[fd.id] || fd.teamId;
-              return eff !== 'retired' && eff !== 'promoted';
+              return eff !== 'retired' && eff !== 'promoted' && eff === fd.teamId;
             }).sort((a, b) => {
               const ovrA = this.career.aiDriverAttributes?.[a.id]?.ovr || a.ovr || 70;
               const ovrB = this.career.aiDriverAttributes?.[b.id]?.ovr || b.ovr || 70;
@@ -2266,12 +2304,8 @@ export class CareerEngine {
 
             if (feederCandidates.length > 0) {
               const promotedDriver = feederCandidates[0];
-              // Rimuovi dalla serie precedente assegnando al nuovo team e nuova categoria
+              // Assegna alla nuova scuderia
               this.career.teamDriverOverrides[promotedDriver.id] = team.id;
-              // Rimuovi dal vecchio roster per evitare duplicati
-              feederCat.roster = feederCat.roster.filter(d => d.id !== promotedDriver.id);
-              // Aggiungi al roster della categoria superiore
-              cat.roster.push(promotedDriver);
               activeDrivers.push(promotedDriver);
 
               const pName = db.getDriverName(promotedDriver.id, discipline);
@@ -2297,9 +2331,6 @@ export class CareerEngine {
               const faObj = this.career.freeAgents.splice(validFAIdx, 1)[0];
               this.career.teamDriverOverrides[faObj.driverId] = team.id;
               const faDriver = db.getDriver(faObj.driverId, discipline);
-              if (faDriver && !cat.roster.some(d => d.id === faObj.driverId)) {
-                cat.roster.push(faDriver);
-              }
               activeDrivers.push(faDriver || { id: faObj.driverId });
               const faName = db.getDriverName(faObj.driverId, discipline);
               const tName = db.getTeamName(team.id, discipline, catKey);
@@ -2447,22 +2478,19 @@ export class CareerEngine {
       }
     }
 
-    if (catData && catData.roster) {
-      // Altrimenti cerca i piloti del team escludendo quello benched
-      const activeTeammates = catData.roster.filter(r => {
-        const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[r.id]) || r.teamId;
-        return effTeam === this.career.currentTeamId && r.id !== this.career.teamBenchedDriverId;
-      });
+    // Altrimenti cerca i piloti del team escludendo quello benched
+    const activeTeammates = this.getActiveRoster(this.career.currentCategory).filter(r => {
+      return r.teamId === this.career.currentTeamId && r.id !== this.career.teamBenchedDriverId;
+    });
 
-      if (activeTeammates.length > 0) {
-        const teammate = activeTeammates[0];
-        const dName = db.getDriverName(teammate.id, discipline);
-        return {
-          ...teammate,
-          name: dName,
-          displayName: dName
-        };
-      }
+    if (activeTeammates.length > 0) {
+      const teammate = activeTeammates[0];
+      const dName = db.getDriverName(teammate.id, discipline);
+      return {
+        ...teammate,
+        name: dName,
+        displayName: dName
+      };
     }
 
     return { name: "Rookie Collaudatore", displayName: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
@@ -4659,15 +4687,10 @@ export class CareerEngine {
           if (!this.career.retiredDrivers) this.career.retiredDrivers = [];
           if (!this.career.regens) this.career.regens = {};
 
-          // Ripristina e registra tutti i regens generati nel DatabaseManager e nelle roster delle categorie
+          // Ripristina e registra tutti i regens generati nel DatabaseManager
           if (this.career.regens) {
             for (const [rId, rData] of Object.entries(this.career.regens)) {
               db.registerCustomDriver(rData);
-              const categories = rData.discipline === 'moto' ? MOTO_CATEGORIES : AUTO_CATEGORIES;
-              const cat = categories[rData.category];
-              if (cat && cat.roster && !cat.roster.some(d => d.id === rId)) {
-                cat.roster.push(rData);
-              }
             }
           }
 

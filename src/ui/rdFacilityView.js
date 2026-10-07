@@ -104,7 +104,7 @@ export class RdFacilityView {
                     COLLABORAZIONE COMPAGNO DI SQUADRA • LINEUP UFFICIALE
                   </span>
                   <h3 class="collab-name">
-                    ${tmName} <small class="collab-ovr">(${teammate.ovr || 75} OVR)</small>
+                    ${tmName} <small class="collab-ovr">(${teammate?.ovr || 75} OVR)</small>
                   </h3>
                   <div class="collab-meta-row">
                     <span>Sensibilità Telemetrica: <strong style="color: #38bdf8;">${tmFeedback}/99</strong></span>

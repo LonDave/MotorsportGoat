@@ -760,7 +760,8 @@ export class WeekendView {
     if (startRaceBtn) {
       startRaceBtn.onclick = () => {
         sound.playEngineRev();
-        const isSprint = session.type === 'sprint';
+        const nextSession = state.sessionsList[state.currentSessionIndex + 1];
+        const isSprint = nextSession?.type === 'sprint';
         state.raceState = RaceEngine.initRaceState(
           qualy.grid, circuit, catData, isSprint, player.discipline, state.setupSettings, player, team
         );
@@ -1321,6 +1322,7 @@ export class WeekendView {
         sound.playChequeredFlag();
         if (session.type === 'sprint') {
           state.sprintResults = state.raceState;
+          state.raceState = null;
           state.currentSessionIndex++;
           nextPhase();
         } else {

@@ -52,7 +52,7 @@ export class DashboardView {
               <div class="gp-telemetry-badges">
                 <span class="telemetry-badge">📏 <strong>${circuit.lengthKm} km</strong></span>
                 <span class="telemetry-badge">🔄 <strong>${Math.round((player.discipline === 'auto' ? circuit.lapsF1 : circuit.lapsMoto) * (catData.weekendFormat.raceLapsMultiplier || 1))} Giri Previsti</strong></span>
-                <span class="telemetry-badge">🛞 Usura Gomme: <strong>${'★'.repeat(circuit.tyreStress || 3)}${'☆'.repeat(5 - (circuit.tyreStress || 3))}</strong></span>
+                <span class="telemetry-badge">🛞 Usura Gomme: <strong>${'★'.repeat(circuit.tyreWear || circuit.tyreStress || 3)}${'☆'.repeat(5 - (circuit.tyreWear || circuit.tyreStress || 3))}</strong></span>
                 <span class="telemetry-badge">🌧️ Meteo: <strong>${circuit.rainChance > 0.25 ? 'Rischio Pioggia (30%+)' : 'Asciutto / Sereno'}</strong></span>
                 <span class="telemetry-badge">🌬️ Carico: <strong class="upper">${circuit.downforceLevel || 'Medio'}</strong></span>
               </div>
