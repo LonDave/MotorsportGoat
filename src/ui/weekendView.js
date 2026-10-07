@@ -388,6 +388,10 @@ export class WeekendView {
                       if (p.compound === 'INTER') tyreBadge = '<span class="tyre-circle inter">I</span>';
                       if (p.compound === 'WET') tyreBadge = '<span class="tyre-circle wet">W</span>';
 
+                      const dName = p.isPlayer ? p.name : db.getDriverName(p.driverId, player.discipline);
+                      const dTeam = db.getTeamName(p.teamId, player.discipline, catData.id) || p.teamName;
+                      const dCode = p.isPlayer ? p.code : RaceEngine.getDriverCode(dName);
+
                       return `
                         <tr class="${p.isPlayer ? 'player-timing-row' : ''}">
                           <td class="pos-badge-cell text-center">
@@ -395,12 +399,12 @@ export class WeekendView {
                           </td>
                           <td class="pilot-cell">
                             <span class="team-bar" style="background:${p.color || '#888'}"></span>
-                            <strong>${p.name}</strong>
-                            <small class="driver-code-tag">${p.code}</small>
+                            <strong>${dName}</strong>
+                            <small class="driver-code-tag">${dCode}</small>
                             ${p.isPlayer ? '<span class="you-tag">TU</span>' : ''}
                             <small class="status-tag ${p.status === 'IN PISTA' ? 'on-track' : 'in-pit'}">${p.status}</small>
                           </td>
-                          <td class="team-name-cell">${p.teamName}</td>
+                          <td class="team-name-cell">${dTeam}</td>
                           <td class="text-center">${tyreBadge}</td>
                           <td class="sector-time text-center">${p.s1 !== '-' ? `${p.s1}s` : '-'}</td>
                           <td class="sector-time text-center">${p.s2 !== '-' ? `${p.s2}s` : '-'}</td>
@@ -660,6 +664,10 @@ export class WeekendView {
                     }
                   }
 
+                  const pName = p.isPlayer ? p.name : db.getDriverName(p.driverId, player.discipline);
+                  const pTeam = db.getTeamName(p.teamId, player.discipline, catData.id) || p.teamName;
+                  const pCode = p.isPlayer ? p.code : RaceEngine.getDriverCode(pName);
+
                   return `
                     ${cutOffRow}
                     <tr class="${p.isPlayer ? 'player-timing-row' : ''} ${p.eliminated ? 'eliminated-row' : ''}">
@@ -668,12 +676,12 @@ export class WeekendView {
                       </td>
                       <td class="pilot-cell">
                         <span class="team-bar" style="background:${p.color || '#888'}"></span>
-                        <strong>${p.name}</strong>
-                        <small class="driver-code-tag">${p.code}</small>
+                        <strong>${pName}</strong>
+                        <small class="driver-code-tag">${pCode}</small>
                         ${p.isPlayer ? '<span class="you-tag">TU</span>' : ''}
                         ${p.eliminated ? `<span class="eliminated-tag">OUT in ${p.stageReached}</span>` : `<small class="status-tag ${p.status === 'IN PISTA' ? 'on-track' : 'in-pit'}">${p.status}</small>`}
                       </td>
-                      <td class="team-name-cell">${p.teamName}</td>
+                      <td class="team-name-cell">${pTeam}</td>
                       <td class="sector-time text-center">${p.q1Time}</td>
                       <td class="sector-time text-center">${p.q2Time}</td>
                       <td class="sector-time text-center ${p.q3Time !== '-' ? 'q3-active' : ''}">${p.q3Time}</td>
@@ -1039,6 +1047,10 @@ export class WeekendView {
                 if (d.status === 'DNF') gapStr = 'OUT';
                 if (d.status === 'PITTING') gapStr = 'IN PIT';
 
+                const dName = d.isPlayer ? d.name : db.getDriverName(d.driverId, player.discipline);
+                const dCode = d.isPlayer ? d.code : RaceEngine.getDriverCode(dName);
+                const dLastName = dName.split(' ').slice(-1)[0];
+
                 return `
                   <div class="f1-tower-row ${d.isPlayer ? 'player-row' : ''} ${d.status === 'DNF' ? 'dnf' : ''} ${d.status === 'PITTING' ? 'pitting' : ''} ${lapDelta > 0 ? 'pos-up' : (lapDelta < 0 ? 'pos-down' : '')}">
                     <div class="tower-pos-box">
@@ -1049,11 +1061,11 @@ export class WeekendView {
                     <div class="team-stripe-bar" style="background: ${d.color || '#888'}"></div>
 
                     <div class="tower-driver-box">
-                      <strong class="driver-code">${d.code}</strong>
-                      <span class="driver-full-mini">${d.name.split(' ').slice(-1)[0]}</span>
+                      <strong class="driver-code">${dCode}</strong>
+                      <span class="driver-full-mini">${dLastName}</span>
                       ${d.isPlayer ? '<span class="tower-you-badge">TU</span>' : ''}
                       ${d.hasDrs && d.status === 'RUNNING' ? '<span class="drs-active-badge">DRS</span>' : ''}
-                      ${race.fastestLapHolder === d.name ? '<span class="fl-purple-badge" title="Giro più veloce">🟣 FL</span>' : ''}
+                      ${(race.fastestLapHolder === d.name || race.fastestLapHolder === dName) ? '<span class="fl-purple-badge" title="Giro più veloce">🟣 FL</span>' : ''}
                     </div>
 
                     <div class="tower-tyre-box" title="${d.tyreCompound} (${Math.round(d.tyreLife)}% vita)">
@@ -1366,6 +1378,16 @@ export class WeekendView {
       : RaceEngine.calculatePoints(pos, false, player.discipline);
 
     const top3 = race.drivers.filter(d => d.status !== 'DNF').slice(0, 3);
+    const formatTop3 = (idx, fallbackName) => {
+      const d = top3[idx];
+      if (!d) return { name: fallbackName, team: '' };
+      const dName = db.getDriverName(d.driverId, player.discipline) || d.name || fallbackName;
+      const tName = db.getTeamName(d.teamId, player.discipline, catData.id) || d.teamName || '';
+      return { name: dName, team: tName };
+    };
+    const p1 = formatTop3(0, 'Pilota P1');
+    const p2 = formatTop3(1, 'Pilota P2');
+    const p3 = formatTop3(2, 'Pilota P3');
 
     container.innerHTML = `
       <div class="weekend-stage-wrapper podium-stage">
@@ -1384,8 +1406,8 @@ export class WeekendView {
             <div class="podium-step-column p2">
               <div class="podium-pilot-info">
                 <span class="podium-pos-badge">P2</span>
-                <strong>${top3[1]?.name || 'Pilota P2'}</strong>
-                <small>${top3[1]?.teamName || ''}</small>
+                <strong>${p2.name}</strong>
+                <small>${p2.team}</small>
               </div>
               <div class="podium-pillar p2-pillar">2</div>
             </div>
@@ -1394,8 +1416,8 @@ export class WeekendView {
             <div class="podium-step-column p1">
               <div class="podium-pilot-info">
                 <span class="podium-pos-badge gold">P1 👑</span>
-                <strong>${top3[0]?.name || 'Pilota P1'}</strong>
-                <small>${top3[0]?.teamName || ''}</small>
+                <strong>${p1.name}</strong>
+                <small>${p1.team}</small>
               </div>
               <div class="podium-pillar p1-pillar">1</div>
             </div>
@@ -1404,8 +1426,8 @@ export class WeekendView {
             <div class="podium-step-column p3">
               <div class="podium-pilot-info">
                 <span class="podium-pos-badge bronze">P3</span>
-                <strong>${top3[2]?.name || 'Pilota P3'}</strong>
-                <small>${top3[2]?.teamName || ''}</small>
+                <strong>${p3.name}</strong>
+                <small>${p3.team}</small>
               </div>
               <div class="podium-pillar p3-pillar">3</div>
             </div>

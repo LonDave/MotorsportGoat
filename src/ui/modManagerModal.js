@@ -114,7 +114,9 @@ export class ModManagerModal {
     downloadBtn.onclick = async () => {
       sound.playClick();
       try {
-        const response = await fetch('/motorsport_real_names.json');
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const jsonUrl = `${baseUrl.endsWith('/') ? baseUrl : baseUrl + '/'}motorsport_real_names.json`;
+        const response = await fetch(jsonUrl);
         const text = await response.text();
         const blob = new Blob([text], { type: 'application/json' });
         const url = URL.createObjectURL(blob);

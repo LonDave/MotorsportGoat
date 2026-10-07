@@ -2430,36 +2430,42 @@ export class CareerEngine {
 
   // Ottiene il compagno di squadra attuale
   getCurrentTeammate() {
+    const discipline = this.player?.discipline || 'auto';
     const catData = this.getCurrentCategoryData();
-    if (!catData) return { name: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
     
     // Se c'è un compagno scelto esplicitamente
     if (this.career?.chosenTeammateId) {
       const chosenId = Array.isArray(this.career.chosenTeammateId) ? this.career.chosenTeammateId[0] : this.career.chosenTeammateId;
-      const driver = catData.roster.find(r => r.id === chosenId);
-      if (driver) {
+      const driver = (catData && catData.roster ? catData.roster.find(r => r.id === chosenId) : null) || db.getDriver(chosenId, discipline);
+      if (driver && driver.id && driver.id !== 'unknown') {
+        const dName = db.getDriverName(driver.id, discipline);
         return {
           ...driver,
-          name: db.getDriverName(driver.id, this.player.discipline)
+          name: dName,
+          displayName: dName
         };
       }
     }
 
-    // Altrimenti cerca i piloti del team escludendo quello benched
-    const activeTeammates = catData.roster.filter(r => {
-      const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[r.id]) || r.teamId;
-      return effTeam === this.career.currentTeamId && r.id !== this.career.teamBenchedDriverId;
-    });
+    if (catData && catData.roster) {
+      // Altrimenti cerca i piloti del team escludendo quello benched
+      const activeTeammates = catData.roster.filter(r => {
+        const effTeam = (this.career?.teamDriverOverrides && this.career.teamDriverOverrides[r.id]) || r.teamId;
+        return effTeam === this.career.currentTeamId && r.id !== this.career.teamBenchedDriverId;
+      });
 
-    if (activeTeammates.length > 0) {
-      const teammate = activeTeammates[0];
-      return {
-        ...teammate,
-        name: db.getDriverName(teammate.id, this.player.discipline)
-      };
+      if (activeTeammates.length > 0) {
+        const teammate = activeTeammates[0];
+        const dName = db.getDriverName(teammate.id, discipline);
+        return {
+          ...teammate,
+          name: dName,
+          displayName: dName
+        };
+      }
     }
 
-    return { name: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
+    return { name: "Rookie Collaudatore", displayName: "Rookie Collaudatore", ovr: 74, id: "test_driver" };
   }
 
   // Inizializza il sistema R&D avanzato, sottocomponenti e punti telemetria
@@ -3423,8 +3429,8 @@ export class CareerEngine {
     currentContract.yearsLeft = Math.max(0, prevYearsLeft - 1);
     const isUnderContract = currentContract.yearsLeft > 0;
 
-    // Reset annuale dei dati telemetrici per costringere a nuovo sviluppo in pista e dinamismo
-    this.career.rdTelemetryPoints = 0;
+    // Trasferimento del 50% dei dati telemetrici accumulate come base dati test invernali
+    this.career.rdTelemetryPoints = Math.round((this.career.rdTelemetryPoints || 0) * 0.5);
     if (this.career.teammateCollaborationStats) {
       this.career.teammateCollaborationStats.totalTelemetryContributed = 0;
     }
@@ -3445,8 +3451,11 @@ export class CareerEngine {
 
     // Decadimento invernale paritetico per le scuderie AI in anni non regolamentari (evita che l'AI scappi via all'infinito)
     if (!isRegYear && this.career.teamDevelopment) {
+      const currentPlayerTeamId = this.career.currentTeamId;
       Object.values(this.career.teamDevelopment).forEach(td => {
-        const winterDecay = 1.0 + Math.random() * 0.8;
+        const isPlayerTeam = (td.teamId === currentPlayerTeamId);
+        // I team AI subiscono decadimento invernale (0.8 - 1.4); per il team del giocatore il riallineamento è assorbito dai sottocomponenti
+        const winterDecay = isPlayerTeam ? 0.3 : (0.8 + Math.random() * 0.6);
         td.carPace = Math.max(65, Math.round((td.carPace - winterDecay) * 10) / 10);
         td.seasonPaceGain = 0;
         td.devPoints = 0;
@@ -3780,8 +3789,10 @@ export class CareerEngine {
 
     // 1. Simula Qualifiche
     const activeRoster = this.getActiveRoster(this.career.currentCategory);
-    const hqSetupBonus = (this.career?.hqUpgrades?.telemetryCoachLevel || 0) * 0.02;
-    const qualy = RaceEngine.initQualifyingState(circuit, catData, activeRoster, player, team, hqSetupBonus, player.discipline);
+    const pTf = player.attributes?.technicalFeedback || player.technicalFeedback || 60;
+    const hqSetupBonus = (this.career?.hqUpgrades?.telemetryCoachLevel || 0) * 0.03;
+    const simulatedSetupBonus = 0.05 + (pTf / 100) * 0.12 + hqSetupBonus;
+    const qualy = RaceEngine.initQualifyingState(circuit, catData, activeRoster, player, team, simulatedSetupBonus, player.discipline);
     RaceEngine.fastForwardQualifyingToEnd(qualy, player, team, circuit, player.discipline);
     const qualyGrid = qualy.grid;
 
@@ -4226,8 +4237,7 @@ export class CareerEngine {
     const playerTeamId = this.career.currentTeamId;
 
     cat.teams.forEach(team => {
-      // Non sviluppa automaticamente il team del giocatore (il giocatore usa R&D)
-      if (team.id === playerTeamId) return;
+      const isPlayerTeam = (team.id === playerTeamId);
 
       if (!this.career.teamDevelopment[team.id]) {
         this.career.teamDevelopment[team.id] = {
@@ -4242,24 +4252,40 @@ export class CareerEngine {
 
       const teamDev = this.career.teamDevelopment[team.id];
       const paceVal = teamDev.carPace || 75;
-      // Ribilanciato: sviluppo più graduale (circa 1 upgrade ogni 4-6 gare per team anziché ogni 2 gare)
+      // Sviluppo graduale ed equilibrato
       const baseGain = paceVal > 85 ? 0.12 : (paceVal > 78 ? 0.16 : 0.20);
       const randBonus = Math.random() * 0.08;
 
-      // Collaborazione Piloti AI: il feedback tecnico e gli sponsor dei piloti accelerano lo sviluppo vettura
-      const teamDrivers = cat.roster.filter(d => {
-        const effTeam = (this.career.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
-        return effTeam === team.id;
-      });
-
       let sumFeedback = 0;
       let sumMarket = 0;
-      teamDrivers.forEach(d => {
-        const aiAttrs = this.career.aiDriverAttributes?.[d.id] || {};
-        sumFeedback += (aiAttrs.technicalFeedback !== undefined ? aiAttrs.technicalFeedback : (d.technicalFeedback || 70));
-        sumMarket += (aiAttrs.marketability !== undefined ? aiAttrs.marketability : (d.marketability || 65));
-      });
-      const dCount = Math.max(1, teamDrivers.length);
+      let dCount = 1;
+      let dName = "collaudatori";
+
+      if (isPlayerTeam) {
+        const pFeedback = this.player?.attributes?.technicalFeedback || 60;
+        const pMarket = this.player?.attributes?.marketability || 60;
+        const tm = this.getCurrentTeammate();
+        const tmFeedback = tm?.technicalFeedback || tm?.attributes?.technicalFeedback || 60;
+        const tmMarket = tm?.marketability || tm?.attributes?.marketability || 60;
+        sumFeedback = pFeedback + tmFeedback;
+        sumMarket = pMarket + tmMarket;
+        dCount = 2;
+        dName = this.player?.lastName || "Pilota";
+      } else {
+        const teamDrivers = cat.roster.filter(d => {
+          const effTeam = (this.career.teamDriverOverrides && this.career.teamDriverOverrides[d.id]) || d.teamId;
+          return effTeam === team.id;
+        });
+        teamDrivers.forEach(d => {
+          const aiAttrs = this.career.aiDriverAttributes?.[d.id] || {};
+          sumFeedback += (aiAttrs.technicalFeedback !== undefined ? aiAttrs.technicalFeedback : (d.technicalFeedback || 70));
+          sumMarket += (aiAttrs.marketability !== undefined ? aiAttrs.marketability : (d.marketability || 65));
+        });
+        dCount = Math.max(1, teamDrivers.length);
+        const leadDriver = teamDrivers[0];
+        dName = leadDriver ? db.getDriverName(leadDriver.id, discipline) : "collaudatori";
+      }
+
       const avgFeedback = sumFeedback / dCount;
       const avgMarket = sumMarket / dCount;
 
@@ -4268,50 +4294,59 @@ export class CareerEngine {
       const totalGain = Math.max(0.08, baseGain + randBonus + technicalBonus + sponsorBonus);
 
       const teamName = db.getTeamName(team.id, discipline, currentCatKey);
-      const leadDriver = teamDrivers[0];
-      const dName = leadDriver ? db.getDriverName(leadDriver.id, discipline) : "collaudatori";
 
       teamDev.devPoints = (teamDev.devPoints || 0) + totalGain;
 
-      // Al raggiungimento di 1 punto sviluppo: delibera del pacchetto evolutivo con rischio fallimento
+      // Al raggiungimento di 1 punto sviluppo: delibera del pacchetto evolutivo
       if (teamDev.devPoints >= 1.0) {
         teamDev.devPoints -= 1.0;
 
-        // Calcolo probabilità di fallimento upgrade per l'AI (tra 10% e 45%)
-        let aiFailureRisk = paceVal >= 88 ? 32 : (paceVal >= 80 ? 25 : 20);
-        aiFailureRisk -= (avgFeedback - 70) * 0.35;
-        aiFailureRisk = Math.max(10, Math.min(45, Math.round(aiFailureRisk)));
-
-        const roll = Math.random() * 100;
-        const failed = roll < aiFailureRisk;
-
-        if (failed) {
-          teamDev.failedUpgrades = (teamDev.failedUpgrades || 0) + 1;
-          // In caso di flop, nessun incremento di passo vettura e potenziale piccolo difetto di affidabilità
-          if (Math.random() < 0.30 && teamDev.reliability > 70) {
-            teamDev.reliability -= 1;
-          }
-          if (Math.random() < 0.40) {
-            if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
-            this.career.aiTransferNews.unshift(
-              `⚠️ FLOP R&D: Il pacchetto evolutivo portato in pista da ${teamName} ha fallito la correlazione coi dati di ${dName} e non darà vantaggi cronometrici!`
-            );
-          }
-        } else {
-          // Upgrade AI promosso con successo
+        if (isPlayerTeam) {
+          // La fabbrica del team del giocatore produce miglioramenti costanti in parallelo agli investimenti R&D
           if (teamDev.carPace < 98) {
             teamDev.carPace += 1;
             teamDev.seasonPaceGain = (teamDev.seasonPaceGain || 0) + 1;
+            if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+            this.career.aiTransferNews.unshift(
+              `🛠️ REPARTO CORSE ${teamName.toUpperCase()}: La sede centrale delibera un nuovo step evolutivo (+1 Passo Mezzo)!`
+            );
+          }
+        } else {
+          // Calcolo probabilità di fallimento upgrade per l'AI (tra 10% e 45%)
+          let aiFailureRisk = paceVal >= 88 ? 32 : (paceVal >= 80 ? 25 : 20);
+          aiFailureRisk -= (avgFeedback - 70) * 0.35;
+          aiFailureRisk = Math.max(10, Math.min(45, Math.round(aiFailureRisk)));
 
-            if (Math.random() < 0.30 && teamDrivers.length > 0) {
+          const roll = Math.random() * 100;
+          const failed = roll < aiFailureRisk;
+
+          if (failed) {
+            teamDev.failedUpgrades = (teamDev.failedUpgrades || 0) + 1;
+            if (Math.random() < 0.30 && teamDev.reliability > 70) {
+              teamDev.reliability -= 1;
+            }
+            if (Math.random() < 0.40) {
               if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
               this.career.aiTransferNews.unshift(
-                `🛠️ R&D PADDOCK: ${teamName} promuove con successo il nuovo pacchetto evolutivo grazie ai collaudi di ${dName}!`
+                `⚠️ FLOP R&D: Il pacchetto evolutivo portato in pista da ${teamName} ha fallito la correlazione coi dati di ${dName} e non darà vantaggi cronometrici!`
               );
             }
-          }
-          if (Math.random() < 0.25 && teamDev.reliability < 98) {
-            teamDev.reliability += 1;
+          } else {
+            // Upgrade AI promosso con successo
+            if (teamDev.carPace < 98) {
+              teamDev.carPace += 1;
+              teamDev.seasonPaceGain = (teamDev.seasonPaceGain || 0) + 1;
+
+              if (Math.random() < 0.30) {
+                if (!this.career.aiTransferNews) this.career.aiTransferNews = [];
+                this.career.aiTransferNews.unshift(
+                  `🛠️ R&D PADDOCK: ${teamName} promuove con successo il nuovo pacchetto evolutivo grazie ai collaudi di ${dName}!`
+                );
+              }
+            }
+            if (Math.random() < 0.25 && teamDev.reliability < 98) {
+              teamDev.reliability += 1;
+            }
           }
         }
       }
@@ -4598,6 +4633,20 @@ export class CareerEngine {
           if (this.player.unspentSkillPoints === undefined) {
             this.player.unspentSkillPoints = 0;
           }
+          db.registerCustomDriver({
+            id: 'player',
+            name: this.player.name,
+            displayName: this.player.displayName,
+            realName: this.player.name,
+            fictionalName: this.player.name
+          });
+          db.registerCustomDriver({
+            id: 'player_custom',
+            name: this.player.name,
+            displayName: this.player.displayName,
+            realName: this.player.name,
+            fictionalName: this.player.name
+          });
         }
         if (this.career) {
           if (!this.career.stats) this.career.stats = {};
@@ -4634,6 +4683,7 @@ export class CareerEngine {
             }
           }
           if (!this.career.aiDriverAttributes) this.career.aiDriverAttributes = {};
+          db.setAiDriverAttributes(this.career.aiDriverAttributes);
           if (!this.career.teamDevelopment) {
             this.initTeamDevelopment();
           } else {
@@ -4714,6 +4764,9 @@ export class CareerEngine {
     }
     const r = this.career.seasonRival;
     if (!r) return null;
+    const discipline = this.player?.discipline || 'auto';
+    r.name = db.getDriverName(r.driverId, discipline) || r.name;
+    r.teamName = db.getTeamName(r.teamId, discipline, this.career.currentCategory) || r.teamName;
     r.playerScore = r.headToHeadWins || 0;
     r.rivalScore = r.headToHeadLosses || 0;
     r.status = (r.playerScore > r.rivalScore) ? 'leading' : ((r.rivalScore > r.playerScore) ? 'trailing' : 'tied');

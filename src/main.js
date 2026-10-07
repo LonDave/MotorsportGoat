@@ -189,7 +189,13 @@ class AppRouter {
 }
 
 // Avvio applicazione al caricamento del DOM
-document.addEventListener('DOMContentLoaded', () => {
+function bootApp() {
   const router = new AppRouter();
   router.init();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}

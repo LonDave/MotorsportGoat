@@ -101,7 +101,7 @@ export class StandingsView {
                     </td>
                     <td class="team-cell col-team">
                       <span class="team-bullet-small" style="background:${teamInfo?.color || '#888'}"></span>
-                      ${teamInfo?.displayName || teamInfo?.realName || teamInfo?.fictionalName || teamInfo?.name || 'Scuderia'}
+                      ${db.getTeamName(driverTeamId, player.discipline, catData.id) || teamInfo?.displayName || teamInfo?.realName || teamInfo?.name || 'Scuderia'}
                     </td>
                     <td class="stat-cell text-center col-wins"><strong>${entry.wins || 0}</strong></td>
                     <td class="stat-cell text-center col-podiums">${entry.podiums || 0}</td>
@@ -165,7 +165,7 @@ export class StandingsView {
                       <div class="team-cell-flex">
                         <span class="team-color-strip" style="background:${teamInfo?.color || '#888'}"></span>
                         <div>
-                          <strong class="team-title">${teamInfo?.displayName || teamInfo?.realName || teamInfo?.fictionalName || teamInfo?.name || 'Scuderia'}</strong>
+                          <strong class="team-title">${db.getTeamName(entry.teamId, player.discipline, catData.id) || teamInfo?.displayName || teamInfo?.realName || teamInfo?.name || 'Scuderia'}</strong>
                           ${isPlayerTeam ? '<span class="you-badge">LA TUA SCUDERIA</span>' : ''}
                         </div>
                       </div>

@@ -368,10 +368,10 @@ export class RaceEngine {
 
         const ai = db.getDriver(d.driverId, discipline) || {};
         const aiTeam = db.getTeam(d.teamId, discipline) || {};
-        const carWeight = qualyState.isMultiStage ? 0.65 : 0.45;
+        const carWeight = qualyState.isMultiStage ? 0.52 : 0.45;
         const driverWeight = 1.0 - carWeight;
         const rating = ((ai.pace || ai.ovr || 78) * driverWeight + (aiTeam.carPace || aiTeam.bikePace || 78) * carWeight);
-        const variance = (Math.random() - 0.5) * 0.28;
+        const variance = (Math.random() - 0.5) * 0.22;
         let weatherPenalty = 0;
         if (qualyState.isWet && d.compound !== "WET" && d.compound !== "INTER") {
           weatherPenalty = 9.0;
@@ -398,20 +398,23 @@ export class RaceEngine {
         p.lapsRun += 2;
         p.status = "IN PISTA";
 
-        const carWeight = qualyState.isMultiStage ? 0.65 : 0.45;
+        const carWeight = qualyState.isMultiStage ? 0.52 : 0.45;
         const driverWeight = 1.0 - carWeight;
         const pPace = (playerDriver?.attributes?.pace) || playerDriver?.pace || 75;
         const pCar = (playerCar?.carPace || playerCar?.bikePace || p.carPace || 75);
         const rating = (pPace * driverWeight + pCar * carWeight);
-        const variance = (Math.random() - 0.5) * 0.14;
+        // Varianza perfettamente simmetrica rispetto all'AI per equità statistica
+        const variance = (Math.random() - 0.5) * 0.22;
         let weatherPenalty = 0;
         if (qualyState.isWet && p.compound !== "WET" && p.compound !== "INTER") {
           weatherPenalty = 9.0;
           qualyState.log.unshift("⚠️ ATTENZIONE: Gomme slick su pista bagnata! Tempo sul giro compromesso dall'aquaplaning!");
         }
 
+        // Bonus giro da qualifica pura: piloti con ritmo e velocità estraggono il decimo in più nel giro secco
+        const poleAttackBonus = (pPace >= 78) ? ((pPace - 78) * 0.015) : 0;
         const setupBonus = qualyState.setupBonusSec || 0;
-        const pLapSec = baseCircuitSec + (95 - rating) * 0.08 - setupBonus + variance + weatherPenalty;
+        const pLapSec = baseCircuitSec + (95 - rating) * 0.08 - setupBonus - poleAttackBonus + variance + weatherPenalty;
 
         if (p.lapTimeSec === null || pLapSec < p.lapTimeSec) {
           p.lapTimeSec = pLapSec;
@@ -501,7 +504,7 @@ export class RaceEngine {
     while (!qualyState.isFinished) {
       const p = qualyState.grid.find(d => d.isPlayer);
       // In simulazione rapida, il giocatore effettua tentativi mirati all'inizio e verso il finale
-      const shouldPush = p && !p.eliminated && (p.lapsRun < 4 || qualyState.phaseTimeRemainingSec <= 240);
+      const shouldPush = p && !p.eliminated && (p.lapsRun < 6 || qualyState.phaseTimeRemainingSec <= 360);
       this.stepQualifyingTime(qualyState, 180, shouldPush, playerDriver, playerCar, circuit, discipline);
     }
     return qualyState;

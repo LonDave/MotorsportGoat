@@ -11,6 +11,7 @@ export class DashboardView {
     const careerData = career.career;
     const circuit = career.getNextCircuit();
     const team = career.getPlayerTeam();
+    const teamDisplayName = db.getTeamName(team.id, player.discipline, careerData.currentCategory) || team.displayName || team.realName || team.name || 'Scuderia';
     const teammate = career.getCurrentTeammate();
     const catData = career.getCurrentCategoryData();
     const isSeasonEnd = careerData.currentRaceIndex >= catData.calendar.length;
@@ -91,7 +92,7 @@ export class DashboardView {
                 <h3 class="card-title">⚔️ Sfida Interna: Tu vs Compagno di Scuderia</h3>
                 <div class="team-identity-badge">
                   <span class="team-badge-bullet" style="background:${team.color || '#e10600'}; box-shadow: 0 0 8px ${team.color || '#e10600'}"></span>
-                  <span class="team-badge-name">${team.displayName || team.realName || team.fictionalName || team.name || 'Scuderia'}</span>
+                  <span class="team-badge-name">${teamDisplayName}</span>
                 </div>
               </div>
 
@@ -167,7 +168,7 @@ export class DashboardView {
                   <span class="news-tag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">UFFICIALE</span>
                   <div class="news-text">
                     <strong>Tutto pronto per il Round ${careerData.currentRaceIndex + 1}:</strong>
-                    Gli ingegneri di ${team.displayName || team.realName || team.fictionalName || team.name || 'Scuderia'} stanno ultimando i controlli telemetrici e le simulazioni di assetto per il Gran Premio.
+                    Gli ingegneri di ${teamDisplayName} stanno ultimando i controlli telemetrici e le simulazioni di assetto per il Gran Premio.
                   </div>
                 </div>
 

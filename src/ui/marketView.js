@@ -407,14 +407,17 @@ export class MarketView {
                     </div>
                   ` : `
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px;">
-                      ${careerData.retiredDrivers.map(rd => `
+                      ${careerData.retiredDrivers.map(rd => {
+                        const rdName = db.getDriverName(rd.driverId || rd.id, player.discipline) || rd.name;
+                        const finalTeam = rd.finalTeamId ? db.getTeamName(rd.finalTeamId, player.discipline, rd.category) : (rd.finalTeamName || 'Ufficiale');
+                        return `
                         <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
                           <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong style="color: #fca5a5; font-size: 15px;">${rd.name}</strong>
+                            <strong style="color: #fca5a5; font-size: 15px;">${rdName}</strong>
                             <span style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-weight: 800; font-size: 11px; padding: 2px 6px; border-radius: 4px;">RITIRATO</span>
                           </div>
                           <div style="font-size: 12px; color: #cbd5e1;">
-                            Ultimo Team: <strong>${rd.finalTeamName || 'Ufficiale'}</strong>
+                            Ultimo Team: <strong>${finalTeam}</strong>
                           </div>
                           <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05);">
                             <span>Ritiro nel: <strong>${rd.retiredYear || 2026}</strong></span>
@@ -422,7 +425,8 @@ export class MarketView {
                             <span>OVR finale: <strong>${rd.ovr}</strong></span>
                           </div>
                         </div>
-                      `).join('')}
+                      `;
+                      }).join('')}
                     </div>
                   `}
                 </div>

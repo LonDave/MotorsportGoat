@@ -291,19 +291,23 @@ export class SeasonEndModal {
                       </div>
                     ` : `
                       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 10px;">
-                        ${seasonResult.retirementReport.retired.map(rd => `
+                        ${seasonResult.retirementReport.retired.map(rd => {
+                          const rdName = db.getDriverName(rd.driverId || rd.id, player.discipline) || rd.name;
+                          const finalTeam = rd.finalTeamId ? db.getTeamName(rd.finalTeamId, player.discipline, rd.category) : (rd.finalTeamName || 'Ufficiale');
+                          return `
                           <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                              <strong style="color: #fca5a5; font-size: 14px;">${rd.name}</strong>
+                              <strong style="color: #fca5a5; font-size: 14px;">${rdName}</strong>
                               <span style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">RITIRATO</span>
                             </div>
-                            <div style="font-size: 11px; color: #cbd5e1;">Ultimo Team: <strong>${rd.finalTeamName || 'Ufficiale'}</strong></div>
+                            <div style="font-size: 11px; color: #cbd5e1;">Ultimo Team: <strong>${finalTeam}</strong></div>
                             <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; margin-top: 2px;">
                               <span>Età: <strong>${rd.age} anni</strong></span>
                               <span>OVR finale: <strong>${rd.ovr}</strong></span>
                             </div>
                           </div>
-                        `).join('')}
+                        `;
+                        }).join('')}
                       </div>
                     `}
                   </div>

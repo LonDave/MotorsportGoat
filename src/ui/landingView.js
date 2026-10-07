@@ -55,80 +55,145 @@ export class LandingView {
     const tutorialSlides = [
       {
         id: 1,
-        category: "SCALATA DELLA CARRIERA",
+        category: "SCALATA DELLA CARRIERA & DISCIPLINE",
         icon: "🏁",
-        title: "Dalle Minori alle Classi Regina",
+        title: "Dalle Formule Giovanili al Titolo Iridato",
         desc: isReal
-          ? "Parti dalle categorie propedeutiche (Formula 4 per le monoposto o Moto3 per le due ruote). Conquista punti, soddisfa le aspettative del team e vinci il titolo iridato per ricevere offerte di promozione in Formula 1, MotoGP, WEC Hypercar e IndyCar."
-          : "Parti dalle categorie propedeutiche (Formula 4 Regional per le monoposto o Moto 3 Junior per le due ruote). Conquista punti, soddisfa le aspettative del team e vinci il titolo iridato per ricevere offerte di promozione in Formula Apex, Moto Apex, Hypercar Endurance e Open Wheel USA.",
+          ? "Scegli il tuo percorso tra Automobilismo (Formula 4, Formula 3, Formula 2, Formula 1 con 11 scuderie, WEC Hypercar e IndyCar) o Motociclismo (Moto3, Moto2, MotoGP e WorldSBK). Guadagna punti Superlicenza, soddisfa la dirigenza e domina per ricevere offerte di promozione nelle classi regine del motorsport."
+          : "Scegli il tuo percorso tra Automobilismo (Formula 4 Regional, Formula 3 International, Formula 2 World Series, Formula Apex con 11 scuderie, Hypercar Endurance e Speedway USA) o Motociclismo (Moto 3 Junior, Moto 2 Intermediate, Moto Apex e Superbike SBK). Guadagna punti Superlicenza, soddisfa la dirigenza e domina per ricevere offerte di promozione nelle classi regine del motorsport.",
         tips: [
-          { title: "⭐ Promozioni di Fine Anno", text: "Chiudere sul podio mondiale spalanca le porte dei team di categoria superiore." },
-          { title: "📈 Progressione OVR", text: "Ogni gara assegna punti abilità per potenziare Velocità, Sorpasso, Calma e Ritmo." }
+          { title: "⭐ Promozioni & Superlicenza", text: "Conquistare il podio mondiale o il titolo di categoria sblocca immediatamente le chiamate dei top team della classe superiore." },
+          { title: "📈 Progressione Abilità & OVR", text: "I punti abilità assegnati ad ogni weekend migliorano Giro Secco, Staccata, Gestione Gomme, Costanza, Bagnato e Telemetria." }
         ]
       },
       {
         id: 2,
-        category: "ASSETTO & TELEMETRIA",
+        category: "ASSETTO & TELEMETRIA PROVE LIBERE",
         icon: "🛠️",
-        title: "Il Bilanciamento Nelle Prove Libere",
+        title: "Il Bilanciamento Ottimale Nelle Prove Libere",
         desc: isReal
-          ? "Nelle sessioni di Prove Libere (FP1, FP2, FP3 nei weekend standard; solo FP1 nei weekend Sprint F1), metti a punto Carico Aerodinamico, Rigidità delle Sospensioni e Rapportatura del Cambio. Il riscontro dei tecnici ti indicherà la direzione esatta per raggiungere il 100% di bilanciamento."
-          : "Nelle sessioni di Prove Libere (FP1, FP2, FP3 nei weekend standard; solo FP1 nei weekend Sprint Apex), metti a punto Carico Aerodinamico, Rigidità delle Sospensioni e Rapportatura del Cambio. Il riscontro dei tecnici ti indicherà la direzione esatta per raggiungere il 100% di bilanciamento.",
+          ? "Nelle sessioni di Prove Libere (FP1-FP3 nei weekend standard; solo FP1 nei weekend Sprint F1), scendi in pista per mettere a punto Carico Aerodinamico, Rigidità Sospensioni e Rapportatura del Cambio. Il feedback degli ingegneri ti guiderà verso il 100% di bilanciamento."
+          : "Nelle sessioni di Prove Libere (FP1-FP3 nei weekend standard; solo FP1 nei weekend Sprint Apex), scendi in pista per mettere a punto Carico Aerodinamico, Rigidità Sospensioni e Rapportatura del Cambio. Il feedback degli ingegneri ti guiderà verso il 100% di bilanciamento.",
         tips: [
-          { title: "💡 Conservazione Gomme", text: "Un setup con bilanciamento elevato riduce il degrado degli pneumatici in gara fino al 30%." },
-          { title: "⏱️ Pole Position", text: "L'assetto perfetto ti regala i decimi fondamentali per superare i tagli in Qualifica." }
+          { title: "🎯 100% Bilanciamento Assetto", text: "Un setup perfetto regala fino a 3 decimi di secondo di vantaggio sul giro e riduce il degrado degli pneumatici in gara fino al 30%." },
+          { title: "🧪 Test Mescole Pneumatici", text: "Effettuare long run nelle prove libere svela il degrado al giro delle mescole slick e bagnate per impostare la strategia ideale." }
         ]
       },
       {
         id: 3,
-        category: "STRATEGIA DI GARA",
-        icon: "🛑",
-        title: "Gestione Gomme, Box & Undercut",
+        category: "QUALIFICHE SHOOTOUT & POLE POSITION",
+        icon: "⏱️",
+        title: "Il Giro Secco Perfetto nei Minuti Decisivi",
         desc: isReal
-          ? "Durante la corsa, monitora attentamente l'usura del battistrada e il meteo dinamico. Ricorda che in Formula 1 vige l'obbligo regolamentare di utilizzare almeno due mescole slick asciutte differenti. Scegli il momento ideale per il cambio gomme."
-          : "Durante la corsa, monitora attentamente l'usura del battistrada e il meteo dinamico. Ricorda che in Formula Apex vige l'obbligo regolamentare di utilizzare almeno due mescole slick asciutte differenti. Scegli il momento ideale per il cambio gomme.",
+          ? "Affronta il format a eliminazione Q1, Q2 e la sparata finale Q3 per la pole position. Gestisci con furbizia il tempo della sessione: uscire negli ultimissimi minuti sfrutta l'evoluzione della gommatura dell'asfalto e il traino delle scie avversarie."
+          : "Affronta il format a eliminazione Q1, Q2 e la sparata finale Q3 per la pole position. Gestisci con furbizia il tempo della sessione: uscire negli ultimissimi minuti sfrutta l'evoluzione della gommatura dell'asfalto e il traino delle scie avversarie.",
         tips: [
-          { title: "⚡ Mossa Undercut", text: "Fermarsi un giro prima del diretto rivale su gomma nuova consente spesso di sorpassarlo all'uscita dai box." },
-          { title: "🚨 Safety Car", text: "Approfitta delle neutralizzazioni per effettuare pit stop risparmiando tempo prezioso rispetto al ritmo di gara." }
+          { title: "⚡ Timing Negli Shootout", text: "Tieni un set di gomme soft nuove per gli ultimi secondi del Q3 quando la pista offre il massimo grip e la temperatura è ottimale." },
+          { title: "👑 Bonus Pole GOAT", text: "Partire in pole position garantisce aria pulita in Curva 1, minimizza il rischio di contatti al via e incrementa il punteggio GOAT." }
         ]
       },
       {
         id: 4,
-        category: "INGEGNERIA & SVILUPPO",
-        icon: "⚙️",
-        title: "Reparto Corse & Potenziamenti R&D",
+        category: "STRATEGIA DI GARA, METEO & SAFETY CAR",
+        icon: "🛑",
+        title: "Gestione Gomme, Undercut e Neutralizzazioni",
         desc: isReal
-          ? "Investi i premi gara e i bonus sponsor nei 4 dipartimenti tecnici della tua scuderia: Aerodinamica, Banco Motore, Telaio e Affidabilità Meccanica. Ogni livello incrementa il passo sul giro ed elimina i punti deboli della vettura."
-          : "Investi i premi gara e i bonus sponsor nei 4 dipartimenti tecnici della tua scuderia Apex: Aerodinamica, Banco Motore, Telaio e Affidabilità Meccanica. Ogni livello incrementa il passo sul giro ed elimina i punti deboli della vettura.",
+          ? "Durante il Gran Premio, monitora costantemente l'usura del battistrada e l'evoluzione meteo. Ricorda l'obbligo regolamentare di utilizzare almeno due mescole slick asciutte differenti (C1-C5). In caso di acquazzone improvviso, passa tempestivamente a gomme Intermedie o Full Wet."
+          : "Durante il Gran Premio, monitora costantemente l'usura del battistrada e l'evoluzione meteo. Ricorda l'obbligo regolamentare di utilizzare almeno due mescole slick asciutte differenti. In caso di acquazzone improvviso, passa tempestivamente a gomme Intermedie o Full Wet.",
         tips: [
-          { title: "🛡️ Protezione Anti-DNF", text: "Migliorare l'affidabilità minimizza drasticamente il rischio di ritiri improvvisi per guasto tecnico." },
-          { title: isReal ? "🏎️ Griglia Prestazionale F1" : "🏎️ Griglia Prestazionale Apex", text: "Controlla la graduatoria del centro sviluppo per portare la scuderia in cima alle gerarchie." }
+          { title: "⚡ Mossa Undercut vs Overcut", text: "Fermarsi un giro prima del rivale con gomma fresca consente di scavalcarlo all'uscita dai box prima che le sue gomme calino." },
+          { title: "🚨 Finestra di Safety Car", text: "Approfitta delle neutralizzazioni per effettuare pit stop: il delta tempo perso in corsia box è dimezzato rispetto alla bandiera verde." }
         ]
       },
       {
         id: 5,
-        category: "MERCATO & CONTRATTI",
-        icon: "💼",
-        title: "Trattative, Accordi e Clausole",
+        category: "REPARTO CORSE R&D & SUB-COMPONENTI",
+        icon: "⚙️",
+        title: "Ingegneria di Fabbrica & Breakthrough Tecnologici",
         desc: isReal
-          ? "Gestisci il tuo futuro professionale come un vero manager. Valuta le proposte di rinnovo o le offerte delle scuderie rivali di Formula 1, MotoGP, WEC e IndyCar: puoi firmare accordi annuali o biennali (con stipendio maggiorato e bonus vittoria). Se decidi di cambiare prima del termine, dovrai pagare la clausola."
-          : "Gestisci il tuo futuro professionale come un vero manager. Valuta le proposte di rinnovo o le offerte delle scuderie rivali di Formula Apex, Moto Apex, Hypercar Endurance e Open Wheel USA: puoi firmare accordi annuali o biennali (con stipendio maggiorato e bonus vittoria). Se decidi di cambiare prima del termine, dovrai pagare la clausola.",
+          ? "Sviluppa la monoposto nei 4 dipartimenti e nei dettagliati sub-componenti (Ala Anteriore, Ala Posteriore, Fondo Venturi, Motore Termico ICE, Ibrido ERS, Telaio e Affidabilità). Investi i Punti Telemetria (PT) e il budget per sbloccare salti prestazionali epocali."
+          : "Sviluppa il mezzo nei 4 dipartimenti e nei dettagliati sub-componenti (Ala Anteriore, Ala Posteriore, Fondo Venturi, Motore Termico, Sistema ERS, Telaio e Affidabilità). Investi i Punti Telemetria (PT) e il budget per sbloccare salti prestazionali epocali.",
         tips: [
-          { title: "🔒 Penale di Rescissione", text: "Abbandonare un contratto pluriennale prima della scadenza richiede il pagamento del riscatto." },
-          { title: "🥇 Prima Guida", text: "Il ruolo di prima guida garantisce bonus monetari raddoppiati e priorità nello sviluppo tecnico." }
+          { title: "💡 Breakthrough Tecnologico", text: "Ogni sviluppo completato ha una probabilità di generare una scoperta rivoluzionaria con un guadagno di decimi doppio e gratuito." },
+          { title: "🛡️ Protezione Anti-DNF", text: "Potenziare l'affidabilità meccanica azzera il rischio di ritiri per noie al motore, all'idraulica o al cambio nelle fasi calde del GP." }
         ]
       },
       {
         id: 6,
-        category: "LEGGENDA EREDITARIA",
-        icon: "👑",
-        title: "La Caccia all'Indice GOAT Mondiale",
+        category: "COMPAGNO DI SCUDERIA & SVILUPPO CONGIUNTO",
+        icon: "🤝",
+        title: "Telemetria Condivisa & Duello Interno H2H",
         desc: isReal
-          ? "Vincere qualche gara non basta: l'algoritmo GOAT valuta la grandezza della tua eredità storica a confronto con le leggende assolute del motorsport come Schumacher, Hamilton, Rossi e Senna. Conquista Titoli Mondiali, podi e pole position, e acquista proprietà e simulatori a Monte Carlo."
-          : "Vincere qualche gara non basta: l'algoritmo GOAT valuta la grandezza della tua eredità storica a confronto con le leggende eterne come Il Barone Rosso, Sir Lewis, Il Dottore e Il Mago di San Paolo. Conquista Titoli Mondiali, podi e pole, e acquista proprietà e simulatori a Monte Carlo.",
+          ? "Nel motorsport la prima regola è battere chi guida la tua stessa vettura, ma il compagno è anche la tua prima risorsa. I suoi dati telemetrici e il suo feedback tecnico contribuiscono attivamente allo sviluppo di fabbrica della scuderia."
+          : "Nel motorsport la prima regola è battere chi guida il tuo stesso veicolo, ma il compagno è anche la tua prima risorsa. I suoi dati telemetrici e il suo feedback tecnico contribuiscono attivamente allo sviluppo di fabbrica della scuderia.",
         tips: [
-          { title: "🏆 Titoli con Più Scuderie", text: isReal ? "Vincere titoli con team F1/MotoGP differenti conferisce un moltiplicatore di punteggio prestigio GOAT." : "Vincere titoli con scuderie Apex differenti conferisce un moltiplicatore di punteggio prestigio GOAT." },
-          { title: "🏰 Status da Superstar", text: "Investire nell'HQ personale e nel lifestyle aumenta la tua notorietà e attrae sponsor d'élite." }
+          { title: "🏭 Sviluppo di Fabbrica Continuo", text: "Anche tra una gara e l'altra la scuderia progredisce grazie ai dati combinati di entrambi i piloti, mantenendo il passo con i top team AI." },
+          { title: "⚔️ Gerarchia di Prima Guida", text: "Battere il compagno nei confronti diretti H2H consolida la fiducia della dirigenza, evita tagli di stipendio e dà priorità sui nuovi pacchetti." }
+        ]
+      },
+      {
+        id: 7,
+        category: "RIVALITÀ PADDOCK & CONFERENZE STAMPA",
+        icon: "🎙️",
+        title: "Interviste ai Media & Guerra Psicologica",
+        desc: isReal
+          ? "Al termine di qualifiche e gare, affronta i microfoni della stampa internazionale. Le tue dichiarazioni impattano il morale della fabbrica, la fiducia dei dirigenti e alimentano le rivalità stagionali con i piloti che lottano per i tuoi stessi obiettivi."
+          : "Al termine di qualifiche e gare, affronta i microfoni della stampa internazionale. Le tue dichiarazioni impattano il morale della fabbrica, la fiducia dei dirigenti e alimentano le rivalità stagionali con i piloti che lottano per i tuoi stessi obiettivi.",
+        tips: [
+          { title: "🎙️ Gestione delle Risposte", text: "Lodare la squadra aumenta la motivazione dei tecnici; pungolare la scuderia aumenta la pressione ma richiede risultati immediati." },
+          { title: "🔥 Punti Rivalità GOAT", text: "Lanciare guanti di sfida al rivale designato e batterlo in pista moltiplica il punteggio carisma e la tua reputazione storica." }
+        ]
+      },
+      {
+        id: 8,
+        category: "MERCATO PILOTI, CLAUSOLE & SVINCOLATI",
+        icon: "💼",
+        title: "Trattative Contrattuali, Buyout & Scelta Lineup",
+        desc: isReal
+          ? "Gestisci il tuo futuro professionale come un vero manager: firma contratti annuali o biennali (+15% stipendio e stabilità). In caso di addio anticipato è attiva la clausola di rescissione (buyout). Se firmi per un team al completo, sceglierai personalmente il tuo compagno di squadra!"
+          : "Gestisci il tuo futuro professionale come un vero manager: firma contratti annuali o biennali (+15% stipendio e stabilità). In caso di addio anticipato è attiva la clausola di rescissione (buyout). Se firmi per un team al completo, sceglierai personalmente il tuo compagno di squadra!",
+        tips: [
+          { title: "👥 Scelta del Compagno", text: "Quando ti unisci a una scuderia con sedili già occupati, decidi chi affiancare e chi rimpiazzare nel roster ufficiale." },
+          { title: "🆓 Mercato Piloti Svincolati", text: "Esplora i Free Agents: campioni senza sedile pronti a subentrare nei team che cercano rilancio o sostituzioni a stagione in corso." }
+        ]
+      },
+      {
+        id: 9,
+        category: "CICLI REGOLAMENTARI FIA, RITIRI & REGEN",
+        icon: "🔄",
+        title: "Rivoluzioni Tecniche & Nuove Leggende Nascenti",
+        desc: isReal
+          ? "Il motorsport non si ferma mai. Ogni 3-4 anni la Federazione introduce una rivoluzione tecnica regolamentare che rimescola le forze in campo. A fine stagione i piloti veterani si ritirano e lasciano il posto a giovani promesse Regen ispirate ai grandi della storia con tratti genetici unici."
+          : "Il motorsport non si ferma mai. Ogni 3-4 anni la Federazione introduce una rivoluzione tecnica regolamentare che rimescola le forze in campo. A fine stagione i piloti veterani si ritirano e lasciano il posto a giovani promesse Regen ispirate ai grandi della storia con tratti genetici unici.",
+        tips: [
+          { title: "🔄 Rivoluzione Regolamentare", text: "Accumula budget e Punti Telemetria negli anni di transizione per presentarti al nuovo ciclo regolamentare con un vantaggio devastante." },
+          { title: "⭐ Tratti DNA Regen", text: "I giovani prodigi promossi dalle academy possiedono tratti speciali (DNA da Qualifica, Maestro del Bagnato, Guerriero dei Duelli) ispirati alle leggende." }
+        ]
+      },
+      {
+        id: 10,
+        category: "INDICE GOAT, HALL OF FAME & LIFESTYLE HQ",
+        icon: "👑",
+        title: "La Caccia al Titolo di Migliore di Sempre",
+        desc: isReal
+          ? "Un algoritmo oggettivo valuta la tua eredità sportiva: vittorie, titoli, pole position, podi, dominanza percentuale e longevità a confronto con mostri sacri come Michael Schumacher, Valentino Rossi, Lewis Hamilton, Ayrton Senna e Marc Márquez."
+          : "Un algoritmo oggettivo valuta la tua eredità sportiva: vittorie, titoli, pole position, podi, dominanza percentuale e longevità a confronto con leggende eterne come Il Barone Rosso, Il Dottore, Sir Lewis, Il Mago di San Paolo e La Formica Atomica.",
+        tips: [
+          { title: "🏰 Lifestyle & Quartier Generale", text: "Investi i premi gara in simulatori di guida professionali, personal trainer, contratti sponsor e residenze a Monte Carlo per gonfiare il tuo prestigio." },
+          { title: "🏆 Titoli con Costruttori Differenti", text: "Vincere il Campionato Mondiale con scuderie diverse conferisce un moltiplicatore d'onore nel ranking della Hall of Fame." }
+        ]
+      },
+      {
+        id: 11,
+        category: "GESTIONE SALVATAGGI & MOD NOMI REALI 2026",
+        icon: "💾",
+        title: "Salvataggi Multi-Slot & Personalizzazione Totale",
+        desc: isReal
+          ? "Goditi la massima libertà di gioco con 3 slot di salvataggio indipendenti e la funzione di esportazione/importazione in file .json. Tramite il Mod Manager integrato puoi passare istantaneamente dai nomi fittizi a quelli reali 2026 (Ferrari, Ducati, Red Bull, Cadillac, Audi, Hamilton, Bagnaia...) o modificare qualsiasi nome a piacimento."
+          : "Goditi la massima libertà di gioco con 3 slot di salvataggio indipendenti e la funzione di esportazione/importazione in file .json. Tramite il Mod Manager integrato puoi passare istantaneamente dai nomi fittizi a quelli reali 2026 (Ferrari, Ducati, Red Bull, Cadillac, Audi, Hamilton, Bagnaia...) o modificare qualsiasi nome a piacimento.",
+        tips: [
+          { title: "💾 Backup Sicuro (.json)", text: "Esporta la tua carriera sul computer in un click per avere sempre un backup sicuro e condividerla tra dispositivi differenti." },
+          { title: "🎨 Mod Manager Dinamico", text: "Attiva o disattiva il database ufficiale 2026 in qualsiasi momento: l'intero circus, il paddock e i mercati si aggiornano all'istante!" }
         ]
       }
     ];
@@ -174,6 +239,13 @@ export class LandingView {
                     <small>3 Slot & Backup (.json)</small>
                   </div>
                 </button>
+                <button id="landing-btn-mod" class="landing-cta-btn mod-btn" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">
+                  <span class="cta-icon">🎨</span>
+                  <div class="cta-text-box">
+                    <strong>MOD NOMI REALI 2026</strong>
+                    <small>${isReal ? 'Attivo (F1 & MotoGP)' : 'Fittizio / Personalizzabile'}</small>
+                  </div>
+                </button>
               ` : `
                 <button id="landing-btn-start" class="landing-cta-btn primary pulse-glow">
                   <span class="cta-icon">🚀</span>
@@ -187,6 +259,13 @@ export class LandingView {
                   <div class="cta-text-box">
                     <strong>IMPORTA / GESTISCI SALVATAGGI</strong>
                     <small>Carica backup file (.json) o slot</small>
+                  </div>
+                </button>
+                <button id="landing-btn-mod" class="landing-cta-btn mod-btn" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">
+                  <span class="cta-icon">🎨</span>
+                  <div class="cta-text-box">
+                    <strong>MOD NOMI REALI 2026</strong>
+                    <small>${isReal ? 'Attivo (F1 & MotoGP)' : 'Fittizio / Personalizzabile'}</small>
                   </div>
                 </button>
               `}
@@ -263,7 +342,7 @@ export class LandingView {
             <div class="feature-card">
               <div class="feat-icon">🏠</div>
               <h4 class="feat-title">Paddock Hub & Race Control</h4>
-              <p class="feat-desc">Il centro nevralgico tra una gara e l'altra. Meteo, telemetria tracciato, radio box e la sfida all'ultimo decimo con il tuo compagno di scuderia.</p>
+              <p class="feat-desc">Il centro nevralgico della carriera: meteo, telemetria del tracciato, comunicazioni radio box, fiducia della dirigenza e sfida interna con il compagno di scuderia.</p>
             </div>
 
             <div class="feature-card">
@@ -275,13 +354,13 @@ export class LandingView {
             <div class="feature-card">
               <div class="feat-icon">📊</div>
               <h4 class="feat-title">Classifiche & Campionato</h4>
-              <p class="feat-desc">Graduatorie mondiali Piloti e Costruttori dettagliate con grafici di punti, vittorie, podi e gap dal leader sempre aggiornati.</p>
+              <p class="feat-desc">Graduatorie mondiali Piloti e Costruttori dettagliate in tempo reale, con storico gare, vittorie, podi, pole position e distacchi di classifica.</p>
             </div>
 
             <div class="feature-card">
               <div class="feat-icon">⚙️</div>
-              <h4 class="feat-title">Reparto Corse & Garage R&D</h4>
-              <p class="feat-desc">Sviluppa la tua monoposto o moto: Galleria del Vento, Banco Motore Power Unit, Telaio & Sospensioni e Affidabilità Meccanica.</p>
+              <h4 class="feat-title">Reparto Corse R&D & Sub-Componenti</h4>
+              <p class="feat-desc">Sviluppa Ali, Fondo Venturi, Motore Termico ICE, Ibrido ERS, Telaio e Sospensioni. Accumula Punti Telemetria (PT) e sblocca Breakthrough tecnologici clamorosi.</p>
             </div>
 
             <div class="feature-card">
@@ -291,21 +370,33 @@ export class LandingView {
             </div>
 
             <div class="feature-card">
-              <div class="feat-icon">💼</div>
-              <h4 class="feat-title">Mercato Piloti & Contratti</h4>
-              <p class="feat-desc">Tratta stipendi, bonus vittoria e clausole di prima guida. Scala le gerarchie e ricevi offerte dai top team mondiali.</p>
+              <div class="feat-icon">🤝</div>
+              <h4 class="feat-title">Telemetria Condivisa & Fabbrica</h4>
+              <p class="feat-desc">Il tuo compagno di squadra collabora allo sviluppo: la sua telemetria apporta miglioramenti continui alla vettura tra una gara e l'altra.</p>
             </div>
 
             <div class="feature-card">
-              <div class="feat-icon">🏛️</div>
-              <h4 class="feat-title">Lifestyle & Sponsor Personali</h4>
-              <p class="feat-desc">Gestisci i tuoi guadagni tra simulatori di guida, palestre d'élite, contratti pubblicitari e proprietà di lusso a Monte Carlo.</p>
+              <div class="feat-icon">🎙️</div>
+              <h4 class="feat-title">Interviste Media & Rivalità Paddock</h4>
+              <p class="feat-desc">Affronta le domande insidiose della stampa nel dopogara, gestisci il morale del team e alimenta accese rivalità psicologiche con i tuoi avversari diretti.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feat-icon">💼</div>
+              <h4 class="feat-title">Mercato Piloti, Buyout & Free Agents</h4>
+              <p class="feat-desc">Tratta stipendi, accordi annuali o biennali, clausole di rescissione e scegli chi affiancare come compagno quando ti unisci a un nuovo team.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feat-icon">🔄</div>
+              <h4 class="feat-title">Regolamenti FIA, Ritiri & Regens</h4>
+              <p class="feat-desc">Rivoluzioni tecniche cicliche ogni 3-4 anni per rimescolare i valori in pista, ritiri di vecchie glorie e nascita di prodigi Regen con tratti speciali unici.</p>
             </div>
 
             <div class="feature-card">
               <div class="feat-icon">👑</div>
-              <h4 class="feat-title">Algoritmo GOAT Hall of Fame</h4>
-              <p class="feat-desc">${featGoatDesc}</p>
+              <h4 class="feat-title">Algoritmo GOAT Hall of Fame & Lifestyle</h4>
+              <p class="feat-desc">${featGoatDesc} Investi in simulatori personali e proprietà a Monte Carlo per consacrare il tuo status da leggenda.</p>
             </div>
           </div>
         </section>
@@ -315,7 +406,7 @@ export class LandingView {
           <div class="section-header-box">
             <span class="section-tag">ACCADEMIA PILOTI & STRATEGIA</span>
             <h2 class="section-heading">GUIDA RAPIDA AL GIOCO</h2>
-            <p class="section-desc">Tutto ciò che devi sapere per dominare la pista, sviluppare il veicolo e scalare la Hall of Fame mondiale.</p>
+            <p class="section-desc">Tutto ciò che devi sapere per dominare la pista, sviluppare il veicolo, gestire il team e scalare la Hall of Fame mondiale.</p>
           </div>
 
           <div class="tutorial-carousel-container" id="tutorial-carousel">
@@ -326,7 +417,7 @@ export class LandingView {
                     <span class="slide-category-pill">
                       <span>${slide.icon}</span> ${slide.category}
                     </span>
-                    <span class="slide-counter">0${idx + 1} / 0${tutorialSlides.length}</span>
+                    <span class="slide-counter">${String(idx + 1).padStart(2, '0')} / ${String(tutorialSlides.length).padStart(2, '0')}</span>
                   </div>
 
                   <div class="slide-main-content">
@@ -352,13 +443,13 @@ export class LandingView {
             <div class="tutorial-nav-controls">
               <div class="tutorial-dots">
                 ${tutorialSlides.map((_, idx) => `
-                  <button class="tutorial-dot ${idx === 0 ? 'active' : ''}" data-slide="${idx}" title="Vai al tutorial ${idx + 1}"></button>
+                  <button class="tutorial-dot ${idx === 0 ? 'active' : ''}" data-slide="${idx}" title="Vai al capitolo ${idx + 1}"></button>
                 `).join('')}
               </div>
 
               <div class="carousel-btn-group">
-                <button id="tutorial-prev-btn" class="carousel-nav-btn" title="Tutorial precedente">‹</button>
-                <button id="tutorial-next-btn" class="carousel-nav-btn" title="Tutorial successivo">›</button>
+                <button id="tutorial-prev-btn" class="carousel-nav-btn" title="Capitolo precedente">‹</button>
+                <button id="tutorial-next-btn" class="carousel-nav-btn" title="Capitolo successivo">›</button>
               </div>
             </div>
           </div>
@@ -473,6 +564,16 @@ export class LandingView {
           career.career = null;
           onNavigate('creation');
         });
+      };
+    }
+
+    const modBtn = container.querySelector('#landing-btn-mod');
+    if (modBtn) {
+      modBtn.onclick = () => {
+        sound.playClick();
+        if (typeof onOpenModManager === 'function') {
+          onOpenModManager();
+        }
       };
     }
 

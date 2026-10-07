@@ -174,6 +174,8 @@ class DatabaseManager {
 
   // Risolve il nome di un pilota avversario o regen
   getDriverName(driverId, discipline = 'auto') {
+    if (!driverId) return 'Pilota';
+
     if (this.customDrivers[driverId]) {
       const cd = this.customDrivers[driverId];
       return this.isRealNames
@@ -181,10 +183,15 @@ class DatabaseManager {
         : (cd.fictionalName || cd.name || cd.displayName);
     }
 
+    // Controllo override custom per la disciplina richiesta
     const override = this.customOverrides[discipline]?.drivers?.[driverId];
-    if (override && this.isRealNames) return override.name;
+    if (override) {
+      if (this.isRealNames && override.name) return override.name;
+      if (!this.isRealNames && override.fictionalName) return override.fictionalName;
+    }
 
-    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    // Ricerca nella disciplina principale
+    let categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     for (const catKey in categories) {
       const cat = categories[catKey];
       const driver = cat.roster?.find(d => d.id === driverId);
@@ -192,6 +199,23 @@ class DatabaseManager {
         return this.isRealNames ? driver.realName : driver.fictionalName;
       }
     }
+
+    // Fallback: ricerca nell'altra disciplina (es. pilota cercato con disciplina non specificata)
+    const otherDisc = discipline === 'auto' ? 'moto' : 'auto';
+    const otherOverride = this.customOverrides[otherDisc]?.drivers?.[driverId];
+    if (otherOverride) {
+      if (this.isRealNames && otherOverride.name) return otherOverride.name;
+      if (!this.isRealNames && otherOverride.fictionalName) return otherOverride.fictionalName;
+    }
+    categories = otherDisc === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    for (const catKey in categories) {
+      const cat = categories[catKey];
+      const driver = cat.roster?.find(d => d.id === driverId);
+      if (driver) {
+        return this.isRealNames ? driver.realName : driver.fictionalName;
+      }
+    }
+
     return driverId;
   }
 
@@ -202,6 +226,8 @@ class DatabaseManager {
 
   // Risolve l'oggetto completo del pilota (inclusi Regens)
   getDriver(driverId, discipline = 'auto') {
+    if (!driverId) return { id: 'unknown', displayName: 'Pilota', ovr: 75, pace: 75 };
+
     if (this.customDrivers[driverId]) {
       const cd = this.customDrivers[driverId];
       const grown = this.aiDriverAttributes[driverId];
@@ -212,12 +238,12 @@ class DatabaseManager {
       };
     }
 
-    const categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    // Cerca nella disciplina primaria
+    let categories = discipline === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
     for (const catKey in categories) {
       const cat = categories[catKey];
       const driver = cat.roster?.find(d => d.id === driverId);
       if (driver) {
-        // Fonde gli attributi di crescita AI se disponibili
         const grown = this.aiDriverAttributes[driverId];
         const merged = grown ? { ...driver, ...grown } : driver;
         return {
@@ -226,7 +252,24 @@ class DatabaseManager {
         };
       }
     }
-    return { id: driverId, displayName: driverId, ovr: 75, pace: 75 };
+
+    // Fallback sull'altra disciplina
+    const otherDisc = discipline === 'auto' ? 'moto' : 'auto';
+    categories = otherDisc === 'auto' ? AUTO_CATEGORIES : MOTO_CATEGORIES;
+    for (const catKey in categories) {
+      const cat = categories[catKey];
+      const driver = cat.roster?.find(d => d.id === driverId);
+      if (driver) {
+        const grown = this.aiDriverAttributes[driverId];
+        const merged = grown ? { ...driver, ...grown } : driver;
+        return {
+          ...merged,
+          displayName: this.getDriverName(driverId, otherDisc)
+        };
+      }
+    }
+
+    return { id: driverId, displayName: this.getDriverName(driverId, discipline), ovr: 75, pace: 75 };
   }
 
   // Risolve il nome di un circuito
