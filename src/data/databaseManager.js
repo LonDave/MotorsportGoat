@@ -1,6 +1,7 @@
 import { AUTO_CATEGORIES } from './autoDatabase.js';
 import { MOTO_CATEGORIES } from './motoDatabase.js';
 import { CIRCUITS_DATA } from './circuitsDatabase.js';
+import { DRIVER_BASELINES } from './driverBaselines.js';
 
 class DatabaseManager {
   constructor() {
@@ -274,6 +275,15 @@ class DatabaseManager {
       if (driver) {
         return this.isRealNames ? driver.realName : driver.fictionalName;
       }
+    }
+
+    // Controllo nel database dei palmarès storici e leggende (DRIVER_BASELINES)
+    if (DRIVER_BASELINES && DRIVER_BASELINES[driverId]) {
+      const bl = DRIVER_BASELINES[driverId];
+      const blName = this.isRealNames
+        ? (bl.realName || bl.name)
+        : (bl.fictionalName || bl.name || bl.realName);
+      if (blName) return blName;
     }
 
     return driverId;

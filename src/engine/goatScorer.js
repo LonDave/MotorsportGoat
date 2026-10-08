@@ -228,7 +228,9 @@ export class GoatScorer {
       for (const [drvId, data] of Object.entries(statsPool)) {
         if (drvId === 'player') continue;
         const discipline = data.discipline || 'auto';
-        const name = db.getDriverName(drvId, discipline) || (db.isRealNames ? (data.realName || data.name) : (data.fictionalName || data.name || data.realName));
+        const name = (data.realName || data.fictionalName)
+          ? (db.isRealNames ? (data.realName || data.name) : (data.fictionalName || data.name || data.realName))
+          : db.getDriverName(drvId, discipline);
         const isLegend = !!data.isLegend;
         const isRetired = !!data.isRetired;
         const era = data.era || (isRetired ? `${data.retiredYear || 2026}` : 'Carriera');
@@ -326,7 +328,9 @@ export class GoatScorer {
         if (byCat[categoryFilter]) {
           const existing = categoryDriversMap.get(drvId) || {};
           const drvDiscipline = data.discipline || existing.discipline || targetCat?.discipline || 'auto';
-          const name = db.getDriverName(drvId, drvDiscipline) || (db.isRealNames ? (data.realName || data.name || existing.name) : (data.fictionalName || data.name || existing.name));
+          const name = (data.realName || data.fictionalName)
+            ? (db.isRealNames ? (data.realName || data.name || existing.name) : (data.fictionalName || data.name || existing.name))
+            : (db.getDriverName(drvId, drvDiscipline) || existing.name);
           const isRet = !!data.isRetired || !!existing.isRetired;
           const eraVal = data.era || existing.era || (isRet ? `${data.retiredYear || 2026}` : 'Carriera');
 
