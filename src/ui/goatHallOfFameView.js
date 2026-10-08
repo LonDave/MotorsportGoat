@@ -7,9 +7,9 @@ export class GoatHallOfFameView {
   static currentFilter = 'all'; // 'all' | 'auto_f1' | 'auto_f2' | etc.
 
   static render(container, onNavigate) {
-    const player = career.player;
-    const careerData = career.career;
-    const stats = careerData.stats;
+    const player = career.player || { firstName: 'Pilota', lastName: '', discipline: 'auto', ovr: 60 };
+    const careerData = career.career || { stats: {}, seasonNumber: 1, currentCategory: 'auto_f1' };
+    const stats = careerData.stats || {};
     const discipline = player.discipline || 'auto';
 
     const categoriesList = discipline === 'auto'
@@ -379,7 +379,7 @@ export class GoatHallOfFameView {
 
           <div class="finish-weekend-action-bar">
             <button id="btn-return-from-goat" class="start-race-button">
-              <span>RITORNA AL PADDOCK ➔</span>
+              <span>${careerData.isRetired ? 'RITORNA AL RIEPILOGO RITIRO ➔' : 'RITORNA AL PADDOCK ➔'}</span>
             </button>
           </div>
         </div>
@@ -426,7 +426,7 @@ export class GoatHallOfFameView {
       if (returnBtn) {
         returnBtn.onclick = () => {
           sound.playClick();
-          onNavigate('dashboard');
+          onNavigate(careerData.isRetired ? 'retirement' : 'dashboard');
         };
       }
     };

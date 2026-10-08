@@ -245,6 +245,7 @@ export class GoatScorer {
         let polesPts = 0;
         let podiumsPts = 0;
 
+        const byCat = data.byCategory || {};
         for (const [catKey, cs] of Object.entries(byCat)) {
           const cfg = CATEGORY_TIER_CONFIG[catKey] || CATEGORY_TIER_CONFIG.auto_f4;
           const t = cs.worldTitles || 0;
