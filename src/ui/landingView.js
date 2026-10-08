@@ -239,11 +239,11 @@ export class LandingView {
                     <small>3 Slot & Backup (.json)</small>
                   </div>
                 </button>
-                <button id="landing-btn-mod" class="landing-cta-btn mod-btn" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">
-                  <span class="cta-icon">🎨</span>
+                <button id="landing-btn-goat" class="landing-cta-btn goat-btn" style="background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.4); color: #facc15;">
+                  <span class="cta-icon">👑</span>
                   <div class="cta-text-box">
-                    <strong>MOD NOMI REALI 2026</strong>
-                    <small>${isReal ? 'Attivo (F1 & MotoGP)' : 'Fittizio / Personalizzabile'}</small>
+                    <strong>GOAT HALL OF FAME</strong>
+                    <small>Classifica Storica & Indice GOAT</small>
                   </div>
                 </button>
               ` : `
@@ -261,11 +261,11 @@ export class LandingView {
                     <small>Carica backup file (.json) o slot</small>
                   </div>
                 </button>
-                <button id="landing-btn-mod" class="landing-cta-btn mod-btn" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">
-                  <span class="cta-icon">🎨</span>
+                <button id="landing-btn-goat" class="landing-cta-btn goat-btn" style="background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.4); color: #facc15;">
+                  <span class="cta-icon">👑</span>
                   <div class="cta-text-box">
-                    <strong>MOD NOMI REALI 2026</strong>
-                    <small>${isReal ? 'Attivo (F1 & MotoGP)' : 'Fittizio / Personalizzabile'}</small>
+                    <strong>GOAT HALL OF FAME</strong>
+                    <small>Classifica Storica & Indice GOAT</small>
                   </div>
                 </button>
               `}
@@ -567,13 +567,11 @@ export class LandingView {
       };
     }
 
-    const modBtn = container.querySelector('#landing-btn-mod');
-    if (modBtn) {
-      modBtn.onclick = () => {
+    const goatBtn = container.querySelector('#landing-btn-goat');
+    if (goatBtn) {
+      goatBtn.onclick = () => {
         sound.playClick();
-        if (typeof onOpenModManager === 'function') {
-          onOpenModManager();
-        }
+        onNavigate('goat');
       };
     }
 

@@ -51,9 +51,10 @@ export class GoatHallOfFameView {
       const breakdown = GoatScorer.getScoreBreakdown(player, stats);
       const goatScore = breakdown.total;
       const verdict = GoatScorer.getTitleAndTier(goatScore);
+      const hasActivePlayer = career.hasActiveCareer() || (career.hasSavedCareer() && career.career?.isRetired);
       const hallOfFame = GoatScorer.getHallOfFameRanking(
-        goatScore,
-        player,
+        hasActivePlayer ? goatScore : 0,
+        hasActivePlayer ? player : null,
         stats,
         this.currentFilter,
         careerData.driverCareerStats
@@ -75,16 +76,18 @@ export class GoatHallOfFameView {
         <div class="goat-view-wrapper">
           <div class="goat-hero-banner">
             <div class="crown-glow-badge">👑 MOTORSPORT GOAT INDEX</div>
-            <h1 class="goat-hero-title">${verdict.title}</h1>
-            <p class="goat-hero-desc">${verdict.desc}</p>
+            <h1 class="goat-hero-title">${hasActivePlayer ? verdict.title : "ALBO D'ORO & HALL OF FAME DEI MOTORI"}</h1>
+            <p class="goat-hero-desc">${hasActivePlayer ? verdict.desc : "I miti eterni dell'automobilismo e del motociclismo a confronto. Sfida i loro record vincendo campionati per incidere il tuo nome nella storia."}</p>
             
             <div class="goat-score-meter-box">
-              <span class="meter-label">IL TUO PUNTEGGIO LEGACY GOAT</span>
-              <strong class="meter-score-glow">${goatScore} <small>PTS</small></strong>
+              <span class="meter-label">${hasActivePlayer ? 'IL TUO PUNTEGGIO LEGACY GOAT' : 'PUNTEGGIO RECORD STORICO'}</span>
+              <strong class="meter-score-glow">${hasActivePlayer ? goatScore : (hallOfFame.ranking[0]?.goatScore || 1000)} <small>PTS</small></strong>
               <span class="meter-rank">
-                ${this.currentFilter === 'all' 
-                  ? `Posizione Storica Mondiale: #${hallOfFame.playerRank} di ${hallOfFame.totalDrivers}` 
-                  : `Classifica ${currentFilterLabel}: #${hallOfFame.playerRank} di ${hallOfFame.totalDrivers}`}
+                ${hasActivePlayer 
+                  ? (this.currentFilter === 'all' 
+                      ? `Posizione Storica Mondiale: #${hallOfFame.playerRank} di ${hallOfFame.totalDrivers}` 
+                      : `Classifica ${currentFilterLabel}: #${hallOfFame.playerRank} di ${hallOfFame.totalDrivers}`)
+                  : `Classifica Storica: ${hallOfFame.totalDrivers} Piloti e Leggende del Motorsport`}
               </span>
             </div>
           </div>
@@ -379,7 +382,7 @@ export class GoatHallOfFameView {
 
           <div class="finish-weekend-action-bar">
             <button id="btn-return-from-goat" class="start-race-button">
-              <span>${careerData.isRetired ? 'RITORNA AL RIEPILOGO RITIRO ➔' : 'RITORNA AL PADDOCK ➔'}</span>
+              <span>${careerData.isRetired ? 'RITORNA AL RIEPILOGO RITIRO ➔' : (hasActivePlayer ? 'RITORNA AL PADDOCK ➔' : 'TORNA ALLA HOME ➔')}</span>
             </button>
           </div>
         </div>
@@ -426,7 +429,13 @@ export class GoatHallOfFameView {
       if (returnBtn) {
         returnBtn.onclick = () => {
           sound.playClick();
-          onNavigate(careerData.isRetired ? 'retirement' : 'dashboard');
+          if (career.hasActiveCareer()) {
+            onNavigate('dashboard');
+          } else if (career.career?.isRetired) {
+            onNavigate('retirement');
+          } else {
+            onNavigate('landing');
+          }
         };
       }
     };

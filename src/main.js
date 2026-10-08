@@ -58,7 +58,7 @@ class AppRouter {
   render() {
     // 1. Reindirizzamento: se non c'è una carriera salvata o se il pilota è ritirato
     const hasCareer = career.hasSavedCareer();
-    if (!hasCareer && this.currentRoute !== 'landing' && this.currentRoute !== 'creation' && this.currentRoute !== 'rookie-test') {
+    if (!hasCareer && !['landing', 'creation', 'rookie-test', 'goat'].includes(this.currentRoute)) {
       this.currentRoute = 'landing';
     } else if (hasCareer && career.career?.isRetired) {
       if (['dashboard', 'calendar', 'rd', 'weekend', 'market', 'lifestyle'].includes(this.currentRoute)) {

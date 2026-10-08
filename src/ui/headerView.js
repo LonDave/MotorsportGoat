@@ -16,12 +16,13 @@ export class HeaderView {
     if (!hasCareer || currentRoute === 'landing' || currentRoute === 'creation' || currentRoute === 'rookie-test') {
       container.innerHTML = `
         <header class="top-nav-bar landing-nav">
-          <div class="logo-area clickable-home-logo" id="logo-click-home" title="Clicca per tornare alla Home / Landing Page">
-            <span class="goat-badge">GOAT</span>
+          <div class="logo-area clickable-home-logo" id="logo-click-home" title="Torna alla Home del Portale">
+            <span class="goat-badge" id="btn-header-goat-badge" title="Visualizza GOAT Hall of Fame & Indice Storico">GOAT</span>
             <span class="logo-title">MOTORSPORT EDITION</span>
           </div>
 
           <div class="nav-controls">
+            <button id="btn-header-goat-nav" class="nav-icon-btn goat-btn ${currentRoute === 'goat' ? 'active' : ''}" title="GOAT Hall of Fame & Classifiche Storiche">👑</button>
             <button id="btn-header-save-manager" class="nav-icon-btn save-btn" title="Gestione Salvataggi (3 Slot & Backup JSON)">💾</button>
             <button id="btn-mod-manager" class="nav-icon-btn" title="Impostazioni & Database Nomi">⚙️</button>
             <button id="btn-toggle-sound" class="nav-icon-btn" title="Audio On/Off">
@@ -176,6 +177,23 @@ export class HeaderView {
   }
 
   static bindLandingHeaderEvents(container, onNavigate, onOpenModManager) {
+    const goatNavBtn = container.querySelector('#btn-header-goat-nav');
+    if (goatNavBtn) {
+      goatNavBtn.onclick = () => {
+        sound.playClick();
+        onNavigate('goat');
+      };
+    }
+
+    const goatBadge = container.querySelector('#btn-header-goat-badge');
+    if (goatBadge) {
+      goatBadge.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        sound.playClick();
+        onNavigate('goat');
+      };
+    }
+
     const homeLogo = container.querySelector('#logo-click-home');
     if (homeLogo) {
       homeLogo.onclick = (e) => {

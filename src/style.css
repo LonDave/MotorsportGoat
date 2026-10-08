@@ -323,6 +323,20 @@ body {
   border-color: var(--racing-red);
 }
 
+.nav-icon-btn.goat-btn {
+  background: rgba(234, 179, 8, 0.12);
+  border-color: rgba(234, 179, 8, 0.35);
+  color: #facc15;
+}
+
+.nav-icon-btn.goat-btn:hover,
+.nav-icon-btn.goat-btn.active {
+  background: rgba(234, 179, 8, 0.25);
+  border-color: #facc15;
+  box-shadow: 0 0 14px rgba(234, 179, 8, 0.4);
+  transform: translateY(-1px);
+}
+
 /* ==========================================================================
    APP MAIN CONTAINER
    ========================================================================== */
@@ -3148,6 +3162,19 @@ body {
 .landing-cta-btn.outline:hover, .landing-cta-btn.outline.active {
   border-color: var(--electric-cyan);
   background: rgba(0, 210, 190, 0.1);
+}
+
+.landing-cta-btn.goat-btn {
+  background: rgba(234, 179, 8, 0.12);
+  border-color: rgba(234, 179, 8, 0.4);
+  color: #facc15;
+}
+
+.landing-cta-btn.goat-btn:hover {
+  background: rgba(234, 179, 8, 0.22);
+  border-color: #facc15;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(234, 179, 8, 0.35);
 }
 
 .landing-cta-btn .cta-icon {
